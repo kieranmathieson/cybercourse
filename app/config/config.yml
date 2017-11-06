@@ -1,0 +1,117 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: security.yml }
+    - { resource: services.yml }
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    locale: en
+    app.site_title: 'Cyco test'
+    # Extentions allowed for user photos
+    app.user_photo_file_extentions:
+        - jpg
+        - png
+        - gif
+    # Maximum side of each user photo.
+    # Todo: Let this be expressed in K or M.
+    app.user_photo_max_file_size: 2000000
+    # How many photos each user is allowed to upload.
+    app.user_photo_max_files: 4
+    # Todo: set max file dimensions.
+    # Can users create accounts?
+    app.users_can_create_accounts: false
+    # Who to ask about accounts. Shows, e.g., on the registration page when registration is disabled.
+    app.who_to_ask_about_accounts: ',... er, someone.'
+
+framework:
+    #esi: ~
+    #translator: { fallbacks: ['%locale%'] }
+    translator: ~
+    secret: '%secret%'
+    router:
+        resource: '%kernel.project_dir%/app/config/routing.yml'
+        strict_requirements: ~
+    form: ~
+    csrf_protection: ~
+    validation: { enable_annotations: true }
+    #serializer: { enable_annotations: true }
+    templating:
+        engines: ['twig']
+    default_locale: '%locale%'
+    trusted_hosts: ~
+    session:
+        # https://symfony.com/doc/current/reference/configuration/framework.html#handler-id
+        handler_id: session.handler.native_file
+        save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
+    fragments: ~
+    http_method_override: true
+    assets: ~
+    php_errors:
+        log: true
+
+# Twig Configuration
+twig:
+    debug: '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+    globals:
+        site_title: '%app.site_title%'
+        users_can_create_acconts: '%app.users_can_create_accounts%'
+        who_to_ask_about_accounts: '%app.who_to_ask_about_accounts%'
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        driver: pdo_mysql
+        host: '%database_host%'
+        port: '%database_port%'
+        dbname: '%database_name%'
+        user: '%database_user%'
+        password: '%database_password%'
+        charset: UTF8
+    orm:
+        auto_generate_proxy_classes: '%kernel.debug%'
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        auto_mapping: true
+
+# Enable doctrine extensions.
+stof_doctrine_extensions:
+    default_locale: en_US
+    orm:
+        default:
+            sluggable: true
+
+# Swiftmailer Configuration
+swiftmailer:
+    transport: '%mailer_transport%'
+    host: '%mailer_host%'
+    username: '%mailer_user%'
+    password: '%mailer_password%'
+    spool: { type: memory }
+
+fos_user:
+    # User data comes from Doctrine.
+    db_driver: orm
+    # Entity class that has user data.
+    user_class: AppBundle\Entity\User
+    # Use extended registration form.
+    registration:
+        form:
+            type: AppBundle\Form\RegistrationFormType
+    # Use extended profile form.
+    profile:
+        form:
+            type: AppBundle\Form\ProfileFormType
+    # Name of firewall settings in security.yml.
+    firewall_name: main
+    # Values from parameters.yml used for registration and other FOS emails.
+    from_email:
+        address: "%mailer_user%"
+        sender_name: "%mailer_user%"
+vich_uploader:
+    db_driver: orm
+    mappings:
+        user_image:
+            uri_prefix:         /users
+            upload_destination: '%kernel.root_dir%/../web/users'
+            namer: user_image.namer

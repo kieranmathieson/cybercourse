@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+{% block page_header %}Keyword: {{ keyword.text }}{% endblock %}
+{% block body %}
+    {% set buttons = [
+        {
+        'caption': 'Keyword list',
+        'url': path('keyword_list'),
+        'title': 'See all of the keywords'
+        }
+    ] %}
+
+    {% include 'partials/page_actions.html.twig' with buttons %}
+
+    <p>{{ keyword.notes }}</p>
+
+{% endblock %}

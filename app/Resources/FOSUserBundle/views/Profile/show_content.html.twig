@@ -1,0 +1,31 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+<h1>Show user profile</h1>
+
+<p>Your user profile will help others get to know you. </p>
+
+<p>
+    <a class="pure-button" href="{{ path('fos_user_profile_edit') }}" role="button">Edit profile</a>
+    <a class="pure-button" href="{{ path('fos_user_change_password') }}" role="button">Change password</a>
+</p>
+
+<p>{{ 'profile.show.username'|trans }}: {{ user.username }}</p>
+<p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
+<p>{{ 'profile.show.firstName'|trans }}: {{ user.firstName }}</p>
+<p>{{ 'profile.show.lastName'|trans }}: {{ user.lastName }}</p>
+<p>{{ 'profile.show.about'|trans }}</p>
+<p class="indent1">
+    {% if user.aboutMe == "" %}
+        (Empty. You should add something.)
+    {% else %}
+        {{ user.aboutMe }}
+    {% endif %}
+</p>
+<p>{{ 'profile.show.photo'|trans }}</p>
+<p class="indent1">
+    {% if user.imageName == "" %}
+        (Empty. You should upload something.)
+    {% else %}
+        <img src="{{ vich_uploader_asset(user, 'imageFile') }}" alt="{{ user.firstName }} {{ user.lastName }}" />
+    {% endif %}
+</p>

@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Upload test 1{% endblock %}
+
+{% block page_header %}Upload test 1{% endblock %}
+
+{% block body %}
+<p>Dog</p>
+
+    <div id="uploader"></div>
+{% endblock %}
+
+
+{%  block javascripts %}
+    {{ parent() }}
+    {% include 'partials/fineuploaded.html.twig' %}
+    <script>
+        var uploader = new qq.FineUploader({
+            debug: true,
+            request: {
+                endpoint: '/test/upload-server1'
+            },
+            retry: {
+                //Offer to retry failed uploads.
+                enableAuto: true
+            },
+            deleteFile: {
+                enabled: true, // defaults to false
+                endpoint: '/test/upload-server1'
+            }
+        });
+
+
+    </script>
+
+{% endblock %}
+

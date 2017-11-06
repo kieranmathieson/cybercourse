@@ -1,0 +1,42 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: kieran
+ * Date: 10/18/2017
+ * Time: 9:52 AM
+ */
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="exercise")
+ */
+class Exercise extends CommonContentFields
+{
+
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    protected $solution;
+
+    /**
+     * @return string
+     */
+    public function getSolution(): string
+    {
+        return $this->solution;
+    }
+
+    /**
+     * @param string $solution
+     */
+    public function setSolution(string $solution)
+    {
+        $this->solution = $solution;
+    }
+
+}

@@ -1,0 +1,145 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: kieran
+ * Date: 10/18/2017
+ * Time: 10:04 AM
+ */
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+
+/**
+ * Class CommonContentFields
+ * @package LessonBundle\Entity
+ * @ORM\MappedSuperclass
+ */
+class CommonContentFields extends CommonFields
+{
+    /**
+     * @ORM\Column(type="string")
+     */
+    protected $title;
+
+    /**
+     * CommonContentFields constructor.
+     */
+    public function __construct()
+    {
+        $this->isAvailable = true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
+    /**
+     * Slug to use for URL.
+     *
+     * For new entity, slug is generated, but does not change when the title changes.
+     *
+     * That's what the custom URL field is for.
+     *
+     * TODO: Put old changed URLs somewhere for redirects, or something.
+     *
+     * @Gedmo\Slug(fields={"title"}, updatable=false)
+     * @ORM\Column(type="string", length=128, unique=true)
+     */
+    protected $slug;
+
+    /**
+     * @return mixed
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param mixed $slug
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+    }
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    protected $summary;
+
+    /**
+     * @return mixed
+     */
+    public function getSummary()
+    {
+        return $this->summary;
+    }
+
+    /**
+     * @param mixed $summary
+     */
+    public function setSummary($summary)
+    {
+        $this->summary = $summary;
+    }
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    protected $body;
+
+    /**
+     * @return string
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    /**
+     * @param string $body
+     */
+    public function setBody($body)
+    {
+        $this->body = $body;
+    }
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    protected $isAvailable;
+
+    /**
+     * @return mixed
+     */
+    public function getIsAvailable()
+    {
+        return $this->isAvailable;
+    }
+
+    /**
+     * @param mixed $isAvailable
+     */
+    public function setIsAvailable($isAvailable)
+    {
+        $this->isAvailable = $isAvailable;
+    }
+
+
+
+}

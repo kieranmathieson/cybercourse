@@ -1,0 +1,18 @@
+registration:
+    submit: "Register"
+    flash:
+        user_created: "There's a new user in town."
+profile:
+    edit:
+        submit: "Save profile"
+    show:
+        username: "Username"
+        email: "Email"
+        firstName: "First name"
+        lastName: "Last name"
+        about: "About"
+        photo: "Photo"
+security:
+    #Login form
+    login:
+        username: "Username or email"

@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block page_header %}{{ lesson.title }}{% endblock %}
+{% block body %}
+    <ul class="keyword-list">
+        {% for keyword in lesson.keywords %}
+            <li><a href="{{ path('keyword_show', {'id': keyword.id}) }}">{{ keyword.text }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <article>
+        {{ lesson.body }}
+    </article>
+
+{% endblock %}

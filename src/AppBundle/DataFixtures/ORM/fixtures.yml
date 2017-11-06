@@ -1,0 +1,151 @@
+AppBundle\Entity\User:
+    xena:
+        username: xena
+        email: xena@example.com
+        password: xena
+        lastName: Warrior Princess
+        firstName: Xena
+        aboutMe: <paragraph()>
+        enabled: true
+        roles: ['ROLE_SUPER_ADMIN']
+        updatedAt: <dateTimeBetween('now', '+3 days')>
+    instructor{1..2}:
+        username: instructor<current()>
+        email (unique): <safeEmail()>
+        password: instructor<current()>
+        lastName: <lastName()>
+        firstName: <firstName()>
+        aboutMe: <paragraph()>
+        enabled: true
+        roles: ['ROLE_USER', 'ROLE_INSTRUCTOR']
+        updatedAt: <dateTimeBetween('now', '+3 days')>
+    grader{1..2}:
+        username: grader<current()>
+        email (unique): <safeEmail()>
+        password: grader<current()>
+        lastName: <lastName()>
+        firstName: <firstName()>
+        aboutMe: <paragraph()>
+        enabled: true
+        roles: ['ROLE_USER', 'ROLE_GRADER']
+        updatedAt: <dateTimeBetween('now', '+3 days')>
+    author{1..2}:
+        username: author<current()>
+        email (unique): <safeEmail()>
+        password: author<current()>
+        lastName: <lastName()>
+        firstName: <firstName()>
+        aboutMe: <paragraph()>
+        enabled: true
+        roles: ['ROLE_USER', 'ROLE_AUTHOR']
+        updatedAt: <dateTimeBetween('now', '+3 days')>
+    admin{1..2}:
+        username: admin<current()>
+        email (unique): <safeEmail()>
+        password: admin<current()>
+        lastName: <lastName()>
+        firstName: <firstName()>
+        aboutMe: <paragraph()>
+        enabled: true
+        roles: ['ROLE_USER', 'ROLE_ADMIN']
+        updatedAt: <dateTimeBetween('now', '+3 days')>
+    student{1..20}:
+        username: student<current()>
+        email (unique): <safeEmail()>
+        password: student<current()>
+        lastName: <lastName()>
+        firstName: <firstName()>
+        aboutMe: <paragraph()>
+        enabled: true
+        roles: ['ROLE_USER', 'ROLE_STUDENT']
+        updatedAt: <dateTimeBetween('now', '+3 days')>
+AppBundle\Entity\RubricItem:
+    rubric_item{1..10}:
+        title (unique): <word()>
+        notes: <paragraph()>
+AppBundle\Entity\RubricItemResponse:
+    rub_item_response{1..20}:
+        title (unique): <word()>
+        notes: <paragraph()>
+        completesRubricItem: <boolean(30)>
+        rubricItem: '@rubric_item*'
+AppBundle\Entity\Clss:
+    clss{1..2}:
+        title: <sentence()>
+        notes: <paragraph()>
+        whenStarts: <dateTimeBetween('now', '+3 days')>
+        whenEnds: <dateTimeBetween('now', '+100 days')>
+AppBundle\Entity\Enrollment:
+    enrollment{1..20}:
+        user: '@student<current()>'
+        clss: '@clss*'
+        roles: 'ROLE_STUDENT'
+AppBundle\Entity\Keyword:
+    keyword{1..10}:
+        text: <word()>
+        notes: <paragraph()>
+AppBundle\Entity\Content:
+    lesson{1..20}:
+        contentType: lesson
+        title: <sentence()>
+        slug: lesson<current()>
+        keywords: '2x @keyword*'
+        summary: <paragraph()>
+        body: <paragraph(3)>
+        notes: <paragraph()>
+        isAvailable: <boolean(80)>
+        whenCreated: <dateTimeBetween('-30 days', 'now')>
+        whenUpdated: <dateTimeBetween('now', '+10 days')>
+    pattern{1..2}:
+        contentType: pattern
+        title: <sentence()>
+        slug: pattern<current()>
+        keywords: '2x @keyword*'
+        summary: <paragraph()>
+        patternCondition: <paragraph()>
+        patternAction: <paragraph(3)>
+        notes: <paragraph()>
+        isAvailable: <boolean(80)>
+        whenCreated: <dateTimeBetween('-30 days', 'now')>
+        whenUpdated: <dateTimeBetween('now', '+10 days')>
+    coreidea{1..2}:
+        contentType: coreidea
+        title: <sentence()>
+        slug: coreidea<current()>
+        keywords: '2x @keyword*'
+        summary: <paragraph()>
+        body: <paragraph(3)>
+        notes: <paragraph()>
+        isAvailable: <boolean(80)>
+        whenCreated: <dateTimeBetween('-30 days', 'now')>
+        whenUpdated: <dateTimeBetween('now', '+10 days')>
+    sitepage{1..20}:
+        contentType: sitepage
+        title: <sentence()>
+        slug: sitepage<current()>
+        summary: <paragraph()>
+        body: <paragraph(3)>
+        notes: <paragraph()>
+        isAvailable: <boolean(80)>
+        whenCreated: <dateTimeBetween('-30 days', 'now')>
+        whenUpdated: <dateTimeBetween('now', '+10 days')>
+    exercise{1..20}:
+        contentType: exercise
+        title: <sentence()>
+        slug: exercise<current()>
+        keywords: '2x @keyword*'
+        summary: <paragraph()>
+        body: <paragraph(3)>
+        notes: <paragraph()>
+        isAvailable: <boolean(80)>
+        whenCreated: <dateTimeBetween('-30 days', 'now')>
+        whenUpdated: <dateTimeBetween('now', '+10 days')>
+        rubricItems: '3x @rubric_item*'
+AppBundle\Entity\ExerciseSubmission:
+    submission{1..20}:
+        exercise: '@exercise*'
+        user: '@student*'
+        version: 1
+        whenCreated: <dateTimeBetween('-30 days', 'now')>
+        whenUpdated: <dateTimeBetween('now', '+10 days')>
+        complete: false

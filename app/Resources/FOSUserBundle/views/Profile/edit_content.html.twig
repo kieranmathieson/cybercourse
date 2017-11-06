@@ -1,0 +1,10 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+<h1>Edit user profile</h1>
+
+{{ form_start(form, { 'action': path('fos_user_profile_edit'), 'attr': { 'class': 'pure-form pure-form-stacked' } }) }}
+    {{ form_widget(form) }}
+    <div>
+        <button type="submit" class="pure-button pure-button-primary">{{ 'profile.edit.submit'|trans }}</button>
+    </div>
+{{ form_end(form) }}

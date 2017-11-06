@@ -1,0 +1,52 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: kieran
+ * Date: 10/17/2017
+ * Time: 5:30 PM
+ */
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="lesson")
+ */
+class Lesson extends CommonContentFields
+{
+
+    /**
+     * @var int
+     * @ORM\Column(type="integer")
+     */
+    protected $parent;
+
+    /**
+     * Lesson constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
+     * @return int
+     */
+    public function getParent(): int
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param int $parent
+     */
+    public function setParent(int $parent)
+    {
+        $this->parent = $parent;
+    }
+
+
+
+}

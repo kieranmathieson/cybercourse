@@ -1,0 +1,19 @@
+<?php
+/**
+ * A standard Web page, like About or home.
+ * User: kieran
+ * Date: 10/30/2017
+ * Time: 10:33 AM
+ */
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="site_page")
+ */
+class SitePage extends CommonContentFields
+{
+}

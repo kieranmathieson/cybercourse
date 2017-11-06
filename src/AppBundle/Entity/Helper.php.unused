@@ -1,0 +1,33 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: kieran
+ * Date: 10/31/2017
+ * Time: 10:31 AM
+ */
+
+namespace AppBundle\Entity;
+
+
+class Helper
+{
+    const LESSON = 'lesson';
+    const EXERCISE = 'exercise';
+    const EXERCISE_SUBMISSION = 'exersubmsn';
+    const PATTERN = 'pattern';
+    const CORE_IDEA = 'coreidea';
+    const RUBRIC_ITEM = 'rubricitem';
+    const RUBRIC_ITEM_RESPONSE = 'rbrcitmres';
+    const LEARNING_GROUP = 'lrngroup';
+
+    const ENTITY_TYPES = [
+        Helper::LESSON => 'Lesson',
+        Helper::EXERCISE => 'Exercise',
+        Helper::EXERCISE_SUBMISSION => 'Exercise submission',
+        Helper::PATTERN => 'Pattern',
+        Helper::CORE_IDEA => 'Core idea',
+        Helper::RUBRIC_ITEM  => 'Rubric item',
+        Helper::RUBRIC_ITEM_RESPONSE => 'Rubric item response',
+        Helper::LEARNING_GROUP => 'Learning group',
+    ];
+}

@@ -1,0 +1,26 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: kieran
+ * Date: 11/2/2017
+ * Time: 12:03 PM
+ */
+
+namespace AppBundle\Repository;
+
+use AppBundle\Entity\User;
+use Doctrine\ORM\EntityRepository;
+
+class UserRepository extends EntityRepository
+{
+    /**
+     * @return User[]
+     */
+    public function findAllUsersOrderedByUsername()
+    {
+        return $this->createQueryBuilder('user')
+            ->orderBy('username', 'ASC')
+            ->getQuery()
+            ->execute();
+    }
+}

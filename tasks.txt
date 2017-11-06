@@ -1,0 +1,44 @@
+Lessons
+x    * Entity
+x    * Persist
+x    * Display one controller
+x    * List all controller
+x    * Slug
+x    * form
+
+x Create a form for lesson.
+
+Create a tree of lessons.
+
+Learn about accessibility
+
+Setup users
+x    * Table
+x        * Encrypt passwords
+x    * Login form
+x    * Logout link
+x    * Roles
+x    * Customize labels.
+
+Config to file
+x    * Site label
+
+x ReST Parser
+
+x Doctrine: base class for shared fields.
+
+Multi-file upload
+    * Preview
+    * Delete
+    * Shared across content?
+
+User profiles only available for logged in users, where user has given permission. Or for instructors of classes the user is in.
+
+AJAX tables.
+
+Adapt to Bootstrap
+
+Accessible menus.
+
+When user registration disabled, FOSUser controller won't work.
+

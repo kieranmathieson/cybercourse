@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}REST client test 1{% endblock %}
+
+{% block page_header %}REST client test 1{% endblock %}
+
+{% block body %}
+    <p>Dogs!!</p>
+
+    <form>
+
+        <div class="form-group">
+            <button id="getTest1" type="button" class="btn btn-primary">Get</button>
+        </div>
+
+    </form>
+{% endblock %}
+
+
+{%  block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            $('#getTest1').click(function(){
+                var jqxhr = $.get( "/test/rest-server2", function(result) {
+                    if ( result['status'] === undefined || result['status'] !== 'ok' ) {
+                        alert('Sad!');
+                        console.log(result);
+                        return false;
+                    }
+                    var dogs = result['dogs'];
+                    for(dog in dogs) {
+                        alert(dogs[dog]);
+                    }
+                })
+                    .fail(function(e) {
+                        alert( "error" );
+                        alert(e);
+                        console.log(e);
+                    });
+            });
+        });
+    </script>
+{% endblock %}

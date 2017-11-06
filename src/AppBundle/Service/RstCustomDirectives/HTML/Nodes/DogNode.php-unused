@@ -1,0 +1,17 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: kieran
+ * Date: 10/19/2017
+ * Time: 8:18 AM
+ */
+
+//namespace Gregwar\RST\HTML\Nodes;
+//use Gregwar\RST\Nodes\DogNode as Base;
+//class DogNode extends Base
+//{
+//    public function render()
+//    {
+//        return "<div style='margin-left:30rem;'><h3>WOOF!</h3>".htmlspecialchars($this->value)."</div>";
+//    }
+//}

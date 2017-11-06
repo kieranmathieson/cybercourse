@@ -1,0 +1,67 @@
+<?php
+/**
+ * Keywords used by different entities.
+ * User: kieran
+ * Date: 10/31/2017
+ * Time: 9:50 AM
+ */
+
+namespace AppBundle\Entity;
+
+
+use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Helper;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="keyword_use")
+ */
+class KeywordUse
+{
+    /**
+     * @ORM\Id @ORM\Column(type="integer", nullable=false)
+     */
+    protected $contentId;
+
+    /**
+     * @ORM\Id @ORM\Column(type="integer", nullable=false)
+     */
+    protected $keywordId;
+
+    /**
+     * @return mixed
+     */
+    public function getContentId()
+    {
+        return $this->contentId;
+    }
+
+    /**
+     * @param mixed $contentId
+     */
+    public function setContentId($contentId)
+    {
+        $this->contentId = $contentId;
+    }
+
+
+
+    /**
+     * @return mixed
+     */
+    public function getKeywordId()
+    {
+        return $this->keywordId;
+    }
+
+    /**
+     * @param mixed $keywordId
+     */
+    public function setKeywordId($keywordId)
+    {
+        $this->keywordId = $keywordId;
+    }
+
+
+
+}

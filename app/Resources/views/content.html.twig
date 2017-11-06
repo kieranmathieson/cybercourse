@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {% if is_granted('ROLE_AUTHOR') %}
+
+        <h1>Authors</h1>
+        <p>Authorized users only.</p>
+        <ul>
+            <li>
+                <a href="{{ path('lesson_list') }}">Lessons</a>
+            </li>
+        </ul>
+
+    {% endif %}
+
+{% endblock %}

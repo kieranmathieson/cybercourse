@@ -1,0 +1,42 @@
+This was in the original composer.json:
+
+        "php": ">=5.5.9",
+
+File system
+
+/upload/user/{user_id}/{file name} (download private)
+/upload/author/content/{content_id}/{file name} (download public)
+/upload/submission/{exercise_id}/{learner_id}/{file name} (download private)
+/upload/content/{content_id}/{file name} (images and public attachments) (download public)
+/upload/content/hidden/{content_id}/{file name} (private attachments) (download private)
+
+/upload/psudents/{name}/{pose file name} (download public)
+
+
+Useful links:
+
+Alice for fixtures: https://github.com/nelmio/alice/tree/2.x
+
+Uses the Faker library
+
+Doctrine association mapping: http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/association-mapping.html
+
+Get settings from config.yml: https://stackoverflow.com/questions/4821692/how-do-i-read-configuration-settings-from-symfony2-config-yml
+
+YAML format: https://symfony.com/doc/current/components/yaml/yaml_format.html
+
+Bootstrap 4: https://getbootstrap.com/
+
+PHP file uploading: https://www.w3schools.com/php/php_file_upload.asp
+
+Fineuploader: https://docs.fineuploader.com/
+
+Ways to Make a UI Accessible: https://medium.com/fed-or-dead/ways-to-make-a-ui-accessible-part-i-84b5088acfb7
+
+Symfony Best Practices: https://symfony.com/doc/current/best_practices/index.html
+
+The A11Y project: a11yproject.com/resources.html
+
+Web accessibility in mind: https://webaim.org
+
+

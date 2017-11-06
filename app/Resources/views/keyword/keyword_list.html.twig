@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>Keywords</h1>
+
+    <p>Here are the keywords.</p>
+
+    {#<nav class="page-tools">#}
+        {#<a href="{{ path('lesson_new') }}" class="pure-button">Add <span class="fa fa-plus-circle"></span></a>#}
+    {#</nav>#}
+
+    <table class="pure-table">
+        <thead>
+            <tr>
+                <th>Keyword</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>{% for keyword in keywords %}
+            <tr>
+                <td><a href="{{ path('keyword_show', {'id': keyword.id}) }}">{{ keyword.text }}</a></td>
+                <td>{{ keyword.notes }}</td>
+            </tr>
+        {% endfor %}</tbody>
+    </table>
+{% endblock %}

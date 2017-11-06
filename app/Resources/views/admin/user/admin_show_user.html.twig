@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+{% trans_default_domain 'FOSUserBundle' %}
+{% block body %}
+
+<h1>Show user profile</h1>
+
+<p>Here is the user's profile.</p>
+
+<p>
+    <a class="pure-button" href="{{ path('admin_user_edit', {'id': user.id}) }}" role="button">Edit profile</a>
+</p>
+
+<p>{{ 'profile.show.username'|trans }}: {{ user.username }}</p>
+<p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
+<p>{{ 'profile.show.firstName'|trans }}: {{ user.firstName }}</p>
+<p>{{ 'profile.show.lastName'|trans }}: {{ user.lastName }}</p>
+<p>{{ 'profile.show.about'|trans }}</p>
+<p class="indent1">
+    {% if user.aboutMe == "" %}
+        (Empty.)
+    {% else %}
+        {{ user.aboutMe }}
+    {% endif %}
+</p>
+<p>{{ 'profile.show.photo'|trans }}</p>
+<p class="indent1">
+    {% if user.imageName == "" %}
+        (Empty.)
+    {% else %}
+        <img src="{{ vich_uploader_asset(user, 'imageFile') }}" alt="{{ user.firstName }} {{ user.lastName }}" />
+    {% endif %}
+</p>
+{% endblock %}

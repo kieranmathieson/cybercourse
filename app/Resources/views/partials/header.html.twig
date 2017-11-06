@@ -1,0 +1,65 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="/" title="Home page">{{ site_title }}</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#headerNav"
+            aria-controls="headerNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="headerNav">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-light" href="{{ path('content_menu') }}" id="headerNavAuthor"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Content</a>
+                <div class="dropdown-menu" aria-labelledby="headerNavAuthor">
+                    <a class="dropdown-item" href="{{ path('lesson_list') }}" title="List lessons">Lessons</a>
+                </div>
+            </li>
+            {#<li class="nav-item active">#}
+                {#<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>#}
+            {#</li>#}
+            {% if is_granted('ROLE_ADMIN') %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-light" href="{{ path('admin') }}" id="headerNavAdmin"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a>
+                    <div class="dropdown-menu" aria-labelledby="headerNavAdmin">
+                        <a class="dropdown-item" href="{{ path('admin_user_list') }}" title="Manage user accounts">Users</a>
+                    </div>
+                </li>
+            {% endif %}
+            {% if is_granted('ROLE_AUTHOR') %}
+            {% endif %}
+            {% if is_granted('ROLE_USER') %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-light" href="{{ path('fos_user_profile_show') }}" id="headerNavUser" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">User: {{ app.user.username }}</a>
+                    <div class="dropdown-menu" aria-labelledby="headerNavUser">
+                        <a class="dropdown-item" href="{{ path('fos_user_profile_show') }}" title="Show/edit your profile">Profile</a>
+                        <a class="dropdown-item" href="#" title="Log out of the system" onclick="event.preventDefault();
+                                         document.getElementById('logout-form').submit();">Logout</a>
+                        <form id="logout-form" action="{{ path('fos_user_security_logout') }}" method="POST"
+                              style="display: none;">
+                        </form>
+
+                    </div>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="{{ path('fos_user_security_login') }}" title="Log in to the system">Login</a>
+                </li>
+                {% if users_can_create_acconts %}
+                    <li class="nav-item text-light">
+                        <a class="nav-link" href="{{ path('fos_user_registration_register') }}" title="Sign up for an account">Sign Up</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link text-light" href="#" title="How to use this system">Help</a>
+            </li>
+        </ul>
+    </div>
+    <nav id="hide-left-sidebar-container">
+        <img id="hide-left-sidebar" src="{{ asset('images/octicons/triangle-left.svg') }}" alt="Hide left sidebar">
+    </nav>
+    <nav id="hide-right-sidebar-container">
+        <img id="hide-right-sidebar" src="{{ asset('images/octicons/triangle-right.svg') }}" alt="Hide right sidebar">
+    </nav>
+</nav>

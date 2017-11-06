@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block page_header %}Lessons{% endblock %}
+
+{% block body %}
+
+    <p>
+        The lessons are sorted by title, not by the order in which they should be read. If you are reading
+        the lessons for the first time, you probably want to use the lesson tree on the left.
+    </p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Keywords</th>
+            </tr>
+        </thead>
+        <tbody>{% for lesson in lessons %}
+            <tr>
+                <td><a href="{{ path('lesson_show', {'slug': lesson.slug}) }}">{{ lesson.title }}</a></td>
+            </tr>
+        {% endfor %}</tbody>
+    </table>
+{% endblock %}

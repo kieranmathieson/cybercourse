@@ -1,0 +1,26 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: kieran
+ * Date: 10/19/2017
+ * Time: 8:16 AM
+ */
+
+//namespace AppBundle\Service\RstCustomDirectives\Nodes;
+//
+////namespace Gregwar\RST\Nodes;
+//
+//use Gregwar\RST\Nodes\BlockNode;
+//
+//abstract class DogNode extends BlockNode
+//{
+//    protected $language = null;
+//    public function setLanguage($language = null)
+//    {
+//        $this->language = $language;
+//    }
+//    public function getLanguage()
+//    {
+//        return $this->language;
+//    }
+//}

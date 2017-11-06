@@ -1,0 +1,18 @@
+{{ form_start(lessonForm, { 'attr': { 'class': 'pure-form pure-form-stacked'}}) }}
+    {{ form_row(lessonForm.title) }}
+    {{ form_row(lessonForm.changeSlug) }}
+    {{ form_row(lessonForm.slug) }}
+    {{ form_row(lessonForm.summary) }}
+    {{ form_row(lessonForm.body) }}
+    {{ form_row(lessonForm.isAvailable) }}
+
+    <button type="submit" class="pure-button">Save</button>
+    {#<button type="submit" class="pure-button" formnovalidate>Save</button>#}
+    <a href="{%
+        if operation == 'new'
+            %}{{ path('lesson_list') }}{%
+        else
+            %}{{ path('lesson_edit', {'id': lesson_id}) }}{%
+        endif
+    %}" class="pure-button">Cancel <span class="fa fa-times"></span></a>
+{{ form_end(lessonForm) }}

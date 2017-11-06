@@ -1,0 +1,12 @@
+{% trans_default_domain 'FOSUserBundle' %}
+{% block page_header %}Register{% endblock %}
+{% if users_can_create_acconts %}
+    {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'pure-form pure-form-stacked'}}) }}
+        {{ form_widget(form) }}
+    <div>
+        <button type="submit" class="pure-button pure-button-primary">{{ 'registration.submit'|trans }}</button>
+    </div>
+    {{ form_end(form) }}
+{% else %}
+    <p>Sorry, user registration has been disabled. If you want an account, ask {{ who_to_ask_about_accounts }}.</p>
+{% endif %}

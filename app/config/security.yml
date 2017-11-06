@@ -1,0 +1,41 @@
+# From https://symfony.com/doc/master/bundles/FOSUserBundle/index.html
+security:
+
+    encoders:
+        # How to encrypt passwords.
+        FOS\UserBundle\Model\UserInterface: bcrypt
+
+    # Roles that users can have.
+    role_hierarchy:
+        ROLE_STUDENT:       ROLE_USER
+        ROLE_GRADER:        [ROLE_USER, ROLE_STUDENT]
+        ROLE_INSTRUCTOR:    [ROLE_USER, ROLE_STUDENT, ROLE_GRADER]
+        ROLE_AUTHOR:        [ROLE_USER, ROLE_STUDENT]
+        ROLE_ADMIN:         [ROLE_USER, ROLE_STUDENT, ROLE_AUTHOR, ROLE_GRADER, ROLE_INSTRUCTOR]
+        ROLE_SUPER_ADMIN:   ROLE_ADMIN
+
+    providers:
+        fos_userbundle:
+            id: fos_user.user_provider.username_email
+
+    firewalls:
+        main:
+            pattern: ^/
+            form_login:
+                provider: fos_userbundle
+                # Verify the CSRF token on login.
+                csrf_token_generator: security.csrf.token_manager
+            logout:       true
+            anonymous:    true
+            remember_me:
+                # Activate remember me functionality.
+                secret: '%secret%'
+
+    access_control:
+        # Set protected routes.
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/class, role: [ROLE_INSTRUCTOR, ROLE_GRADER] }
+        - { path: ^/author, role: [ROLE_AUTHOR, ROLE_ADMIN] }
+        - { path: ^/admin, role: ROLE_ADMIN }

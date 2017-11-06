@@ -1,0 +1,35 @@
+body {
+    /* Space for the fixed navbar. */
+    padding-top: 3.5rem;
+}
+
+#hide-left-sidebar-container {
+    position: absolute;
+    top: 3rem;
+    left: 0;
+}
+
+#hide-left-sidebar {
+    width: 120%;
+    padding-top: 0.5rem;
+    padding-left: 0.3rem;
+    cursor: pointer;
+}
+
+#hide-right-sidebar-container {
+    position: absolute;
+    top: 3rem;
+    right: 0;
+}
+
+#hide-right-sidebar {
+    width: 120%;
+    padding-top: 0.5rem;
+    padding-right: 0.3rem;
+    cursor: pointer;
+}
+
+/*#hide-left-sidebar:hover,*/
+/*#hide-right-sidebar:hover{*/
+    /*cursor: pointer;*/
+/*}*/

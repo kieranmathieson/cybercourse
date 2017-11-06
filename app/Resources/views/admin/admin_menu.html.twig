@@ -1,0 +1,20 @@
+{# Menu for ROLE_ADMIINs. The item text and description should match or be similar to partials/header.twig.html. #}
+{% extends 'base.html.twig' %}
+
+{% block page_header %}Administration menu{% endblock %}
+
+{% block body %}
+
+    {% if is_granted('ROLE_ADMIN') %}
+
+        <p>Authorized users only.</p>
+        <ul>
+            <li>
+                <a href="{{ path('admin_user_list') }}">Users</a><br>
+                Manage user accounts.
+            </li>
+        </ul>
+
+    {% endif %}
+
+{% endblock %}

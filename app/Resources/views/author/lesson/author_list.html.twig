@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>Lessons</h1>
+
+    <p>Here are the lessons.</p>
+
+    {% set buttons = [
+        {
+            'caption': 'Add',
+            'icon': 'plus-circle',
+            'url': path('lesson_new'),
+            'title': 'Add a new lesson'
+        }
+    ] %}
+
+    {% include 'partials/page_actions.html.twig' with buttons %}
+
+    <table class="pure-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Slug</th>
+                <th>Available?</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>{% for lesson in lessons %}
+            <tr>
+                <td><a href="{{ path('lesson_show', {'slug': lesson.slug}) }}">{{ lesson.title }}</a></td>
+                <td>{{ lesson.slug }}</td>
+                <td class="center">{% if lesson.isAvailable %}Yes{% else %}No{% endif %}</td>
+                <td>
+                    {% set buttons = [
+                        {
+                        'caption': 'Edit',
+                        'icon': 'pencil',
+                        'url': path('lesson_edit', {'id': lesson.id}),
+                        'title': 'Edit this lesson'
+                        }
+                    ] %}
+                    {% if not lesson.isAvailable %}
+                        {% set more_buttons = [
+                            {
+                            'caption': 'Delete',
+                            'icon': 'trash',
+                            'url': path('lesson_delete', {'id': lesson.id}),
+                            'title': 'Delete this lesson'
+                            }
+                        ] %}
+                        {% set buttons = buttons|merge(more_buttons) %}
+                    {% endif %}
+                    {% include 'partials/page_actions.html.twig' with buttons %}
+                </td>
+            </tr>
+        {% endfor %}</tbody>
+    </table>
+{% endblock %}
