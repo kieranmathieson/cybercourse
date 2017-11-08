@@ -1,9 +1,114 @@
 {%  extends 'base.html.twig' %}
+
 {% trans_default_domain 'FOSUserBundle' %}
 
+{% block title %}Edit user{% endblock %}
+{% block page_header %}Edit user{% endblock %}
+
 {%  block body %}
+    {{ dump() }}
 {{ form_start(form) }}
-    {{ form_widget(form) }}
+    <p>DOGS</p>
+    {{ form_label(form.id) }}
+    {{ form_widget(form.id) }}
+    {{ form_errors(form.id) }}
+
+    {#{{ form_widget(form.username) }}#}
+    {% include 'partials/form_widgets/input.html.twig' with {
+        'widget': {
+            'type': 'text',
+            'label': 'Username',
+            'value': form.children.username.vars.value,
+            'id': 'app_bundle_admin_edit_user_username',
+            'name': 'app_bundle_admin_edit_user[username]',
+            'help': 'Unique username for this account',
+            'required': true
+    } } %}
+    {% include 'partials/form_widgets/input.html.twig' with {
+        'widget': {
+        'type': 'password',
+        'label': 'New password',
+        'value': '',
+        'id': 'app_bundle_admin_edit_user_plainPassword',
+        'name': 'app_bundle_admin_edit_user[plainPassword]',
+        'help': 'New password, if you want to change it',
+        'required': false
+    } } %}
+    {% include 'partials/form_widgets/input.html.twig' with {
+        'widget': {
+            'type': 'password',
+            'label': 'Repeat password',
+            'value': '',
+            'id': 'app_bundle_admin_edit_user_plainPassword',
+            'name': 'app_bundle_admin_edit_user[plainPassword]',
+            'help': 'Repeat the new password, if you are changing the user\'s password',
+            'required': false
+        }
+    } %}
+    {% include 'partials/form_widgets/input.html.twig' with {
+        'widget': {
+            'type': 'Email',
+            'label': 'Email address',
+            'value': form.children.email.vars.value,
+            'id': 'app_bundle_admin_edit_user_email',
+            'name': 'app_bundle_admin_edit_user[email]',
+            'help': 'E.g., ann@example.com<br>Each user must have their own email address',
+            'required': true
+        }
+    } %}
+    {% include 'partials/form_widgets/input.html.twig' with {
+        'widget': {
+            'type': 'text',
+            'label': 'First name',
+            'value': form.children.firstName.vars.value,
+            'id': 'app_bundle_admin_edit_user_firstName',
+            'name': 'app_bundle_admin_edit_user[firstName]',
+            'help': 'E.g., Jackie',
+            'required': true
+        }
+    } %}
+    {% include 'partials/form_widgets/input.html.twig' with {
+        'widget': {
+            'type': 'text',
+            'label': 'Last name',
+            'value': form.children.lastName.vars.value,
+            'id': 'app_bundle_admin_edit_user_lastName',
+            'name': 'app_bundle_admin_edit_user[lastName]',
+            'help': 'E.g., Robinson',
+            'required': true
+        }
+    } %}
+    {% include 'partials/form_widgets/textarea.html.twig' with {
+        'widget': {
+            'type': 'textarea',
+            'label': 'About',
+            'value': form.children.aboutMe.vars.value,
+            'id': 'app_bundle_admin_edit_user_aboutMe',
+            'name': 'app_bundle_admin_edit_user[aboutMe]',
+            'help': 'Whatever the user wants us to know',
+            'rows': 5,
+            'required': false
+        }
+    } %}
+    {% include 'partials/form_widgets/checkbox.html.twig' with {
+        'widget': {
+            'type': 'checkbox',
+            'label': 'Enabled',
+            'value': form.children.enabled.vars.value,
+            'id': 'app_bundle_admin_edit_user_enabled',
+            'name': 'app_bundle_admin_edit_user[enabled]',
+            'help': 'Is this account active?',
+            'required': false
+        }
+    } %}
+
+    {#{{ form_widget(form.plainPassword) }}#}
+    {#{{ form_widget(form.plainPasswordRepeat) }}#}
+    {#{{ form_widget(form.email) }}#}
+    {#{{ form_widget(form.firstName) }}#}
+    {#{{ form_widget(form.lastName) }}#}
+    {#{{ form_widget(form.aboutMe) }}#}
+    {#{{ form_widget(form.enabled) }}#}
 <div>
     <input type="submit" value="{{ 'profile.edit.submit'|trans }}" />
 </div>

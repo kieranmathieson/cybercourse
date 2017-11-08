@@ -3,6 +3,19 @@ body {
     padding-top: 3.5rem;
 }
 
+/* Reset for links in the main area. */
+/*main a, main a:visited {
+    text-decoration: underline;
+    color: blue;
+}
+
+main a:hover, main a:focus {
+    text-decoration: underline;
+    background-color: #F0F0F0;
+    color: red;
+}*/
+
+
 #hide-left-sidebar-container {
     position: absolute;
     top: 3rem;
@@ -33,3 +46,29 @@ body {
 /*#hide-right-sidebar:hover{*/
     /*cursor: pointer;*/
 /*}*/
+
+
+/* For DataTables */
+.dataTable .centered {
+    text-align: center;
+}
+
+.dataTable.stripe-table .even {
+    background-color: #ffffdd;
+}
+
+.dataTable.highlight-sorting-column .sorting_asc,
+.dataTable.highlight-sorting-column .sorting_desc
+{
+    background-color: #F5F5FF;
+}
+
+.dataTable.show-hover-row .even:hover,
+.dataTable.show-hover-row .odd:hover {
+    background-color: #FBFBFB;
+}
+
+.dataTable .row-removed {
+    text-decoration: line-through;
+    color: #b3afaf;
+}

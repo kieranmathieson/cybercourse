@@ -18,6 +18,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class User extends BaseUser
 {
+    // Todo: check that user names are unique.
     public function __construct()
     {
         parent::__construct();

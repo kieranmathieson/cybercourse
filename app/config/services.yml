@@ -41,6 +41,11 @@ services:
     user_image.namer.user_image:
         class: AppBundle\Service\UserPhotoNamer
         public: true
+#    app.twig.custom_extension:
+#        class: AppBundle\Twig\Extension\RoleDisplay
+#        public: true
+#        tags:
+#            - { name: twig.extension }
     # add more services, or override services that need manual wiring
     # AppBundle\Service\ExampleService:
     #     arguments:

@@ -30,7 +30,7 @@ class UserAdminController extends Controller
             ->getQuery()
             ->execute();
 
-        return $this->render('admin/users.html.twig', [
+        return $this->render('admin/user/admin_list_user.html.twig', [
             'users' => $users,
         ]);
     }
@@ -44,7 +44,7 @@ class UserAdminController extends Controller
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function adminShowUser(User $user) {
-        return $this->render('admin/show_user_admin.html.twig', array(
+        return $this->render('admin/user/admin_show_user.html.twig', array(
             'user' => $user,
         ));
 
@@ -55,7 +55,9 @@ class UserAdminController extends Controller
      *
      * @Route("/admin/user/{id}/edit", name="admin_user_edit")
      * @Security("has_role('ROLE_ADMIN')")
+     * @param Request $request
      * @param User $user
+     * @param UserPasswordEncoderInterface $encoder
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function adminEditUser(Request $request, User $user, UserPasswordEncoderInterface $encoder) {
@@ -88,7 +90,7 @@ class UserAdminController extends Controller
             return $this->redirectToRoute('admin_user_show', ['id' => $user->getId()]);
         }
 
-        return $this->render('admin/edit_user_admin.html.twig', array(
+        return $this->render('admin/user/admin_edit_user.html.twig', array(
             'form' => $form->createView(),
         ));
 
