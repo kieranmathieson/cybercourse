@@ -1,0 +1,12 @@
+{# Show form-level errors. #}
+{% if form.vars.errors is defined %}
+    {% if form.vars.errors|length > 0 %}
+        <div class="alert alert-danger" role="alert">
+            <ul>
+            {% for formError in form.vars.errors %}
+                <li>{{ formError.message }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{% endif %}
