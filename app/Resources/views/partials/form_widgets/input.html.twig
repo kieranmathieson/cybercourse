@@ -1,44 +1,17 @@
-{# Validate the widget type. #}
-{% set badData = false %}
-{% set validTypes = ['text', 'number', 'password', 'hidden', 'email', 'url'] %}
-{% if not widget.type in validTypes %}
-    <p class="bug">Invalid widget type: {{ widget.type }}</p>
-    {% set badData = true %}
-{% endif %}
-{# Must have an id. #}
-{% if not widget.id %}
-    <p class="bug">Widget must have an id.</p>
-    {% set badData = true %}
-{% endif %}
-{# Must have an id. #}
-{% if not widget.name %}
-    <p class="bug">Widget must have a name.</p>
-    {% set badData = true %}
-{% endif %}
-
-{% if badData %}
-    <style>
-        .bug {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
-    <p class="bug">Something bad happened.</p>
-{% else %}
-    <div class="form-group">
-        {# Generate label tag. #}
-        {% if widget.label is defined %}<label for="{{ widget.id }}">{{ widget.label }}</label>{% endif %}
-        <input type="{{ widget.type }}" id="{{ widget.id }}" name="{{ widget.name }}"
-            class="form-control{% if widget.extraClasses is defined %} {{ widget.extraClasses }}{% endif %}"
-            {% if widget.value is defined %} value="{{ widget.value|raw }}" {% endif %}
-            {% if widget.placeHolder is defined %} placeholder="{{ widget.placeHolder }}" {% endif %}
-            {% if widget.readOnly is defined %}{% if widget.readOnly %} readonly disabled="disabled" {% endif %}{% endif %}
-            {% if widget.required is defined %}{% if widget.required %} required="required" {% endif %}{% endif %}
-            {% if widget.title is defined %} title="{{ widget.title }}" {% endif %}
-            {% if widget.help is defined %} aria-describedby="{{ widget.id }}help" {% endif %}
-        >
-        {% if widget.help is defined %}
-            <small id="{{ widget.id }}help" class="form-text text-muted">{{ widget.help|raw }}</small>
-        {% endif %}
-    </div>
-{% endif %}
+<div class="form-group">
+    {# Generate label tag. #}
+    {% if widget.label is defined %}<label for="{{ widget.id }}">{{ widget.label }}</label>{% endif %}
+    {% include 'partials/widget_errors.html.twig' %}
+    <input type="{{ widget.type }}" id="{{ widget.id }}" name="{{ widget.name }}"
+        class="form-control{% if widget.extraClasses is defined %} {{ widget.extraClasses }}{% endif %}"
+        {% if widget.value is defined %} value="{{ widget.value|raw }}" {% endif %}
+        {% if widget.placeHolder is defined %} placeholder="{{ widget.placeHolder }}" {% endif %}
+        {% if widget.readOnly is defined %}{% if widget.readOnly %} readonly disabled="disabled" {% endif %}{% endif %}
+        {% if widget.required is defined %}{% if widget.required %} required="required" {% endif %}{% endif %}
+        {% if widget.title is defined %} title="{{ widget.title }}" {% endif %}
+        {% if widget.help is defined %} aria-describedby="{{ widget.id }}help" {% endif %}
+    >
+    {% if widget.help is defined %}
+        <small id="{{ widget.id }}help" class="form-text text-muted">{{ widget.help|raw }}</small>
+    {% endif %}
+</div>

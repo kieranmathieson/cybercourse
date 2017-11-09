@@ -1,5 +1,6 @@
 {# Submit button form widget. #}
-<div class="form-group">
+{# Caller need to wrap in this to define approprriate group --> <div class="form-group">#}
+{# If help is set, need an id as well. #}
     <button type="submit"
         {# Id is needed when using help text. #}
         {% if widget.id is defined %} id="{{ widget.id }}" {% endif %}
@@ -10,4 +11,4 @@
     {% if widget.help is defined %}
         <small id="{{ widget.id }}help" class="form-text text-muted">{{ widget.help|raw }}</small>
     {% endif %}
-</div>
+{# End of the wrapper. Everybody off. </div>#}
