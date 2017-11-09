@@ -54,7 +54,7 @@ main a:hover, main a:focus {
 }
 
 .dataTable.stripe-table .even {
-    background-color: #ffffdd;
+    background-color: #f4fff3;
 }
 
 .dataTable.highlight-sorting-column .sorting_asc,
@@ -69,6 +69,25 @@ main a:hover, main a:focus {
 }
 
 .dataTable .row-removed {
-    text-decoration: line-through;
     color: #b3afaf;
+}
+
+/* For forms. */
+/* Overrides BS4 alert-error properties. */
+.widget-error {
+    color: red;
+    font-size: smaller;
+    background-color: white;
+    padding: 0.5rem;
+    border-style: dashed;
+    margin-left: 1rem;
+}
+
+/* For page actions, that is, list of actions at the top of a page.  */
+.page-actions {
+    margin-left: 2rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-top: thin #F0F0F0 solid;
+    border-bottom: thin #F0F0F0 solid;
 }
