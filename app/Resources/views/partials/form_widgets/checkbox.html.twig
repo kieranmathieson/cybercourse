@@ -1,60 +1,24 @@
-{# Validate the widget type. #}
-{% set badData = false %}
-{% set validTypes = ['checkbox'] %}
-{% if not widget.type in validTypes %}
-    <p class="bug">Invalid widget type: {{ widget.type }}</p>
-    {% set badData = true %}
+{# Checkbox form widget. #}
+{% include 'partials/widget_errors.html.twig' %}
+{% set checkboxValue = widget.value %}
+{# Todo The == true below might be a problem, if any string is true. #}
+{% if checkboxValue == '1' or checkboxValue == 1 or checkboxValue == true or checkboxValue == 'true' %}
+    {% set checkboxValue = 'checked' %}
 {% endif %}
-{# Must have an id. #}
-{% if not widget.id %}
-    <p class="bug">Widget must have an id.</p>
-    {% set badData = true %}
-{% endif %}
-{# Must have an id. #}
-{% if not widget.name %}
-    <p class="bug">Widget must have a name.</p>
-    {% set badData = true %}
-{% endif %}
-{# Must have a label. #}
-{% if not widget.label %}
-    <p class="bug">Checkbox widgets must have a label.</p>
-    {% set badData = true %}
-{% endif %}
-{# Must have a value. #}
-{% if not widget.value %}
-    <p class="bug">Checkbox widgets must have a value.</p>
-    {% set badData = true %}
-{% endif %}
-
-{% if badData %}
-    <style>
-        .bug {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
-    <p class="bug">Something bad happened.</p>
-{% else %}
-    {% set checkboxValue = widget.value %}
-    {# Todo The == true below might be a problem, if any string is true. #}
-    {% if checkboxValue == '1' or checkboxValue == 1 or checkboxValue == true or checkboxValue == 'true' %}
-        {% set checkboxValue = 'checked' %}
+<div class=" form-check">
+    {# Generate label tag. #}
+    <label class="form-check-label">
+        <input type="{{ widget.type }}" id="{{ widget.id }}" name="{{ widget.name }}"
+            class="form-check-input{% if widget.extraClasses is defined %} {{ widget.extraClasses }}{% endif %}"
+            {% if checkboxValue == 'checked' %} value="1" checked="checked" {% else %} value="0" {% endif %}
+            {% if widget.readOnly is defined %}{% if widget.readOnly %} readonly disabled="disabled" {% endif %}{% endif %}
+            {% if widget.required is defined %}{% if widget.required %} required="required" {% endif %}{% endif %}
+            {% if widget.title is defined %} title="{{ widget.title }}" {% endif %}
+            {% if widget.help is defined %} aria-describedby="{{ widget.id }}help" {% endif %}
+        >
+        {{ widget.label }}
+    </label>
+    {% if widget.help is defined %}
+        <small id="{{ widget.id }}help" class="form-text text-muted">{{ widget.help|raw }}</small>
     {% endif %}
-    <div class=" form-check">
-        {# Generate label tag. #}
-        <label class="form-check-label">
-            <input type="{{ widget.type }}" id="{{ widget.id }}" name="{{ widget.name }}"
-                class="form-check-input{% if widget.extraClasses is defined %} {{ widget.extraClasses }}{% endif %}"
-                {% if checkboxValue == 'checked' %} value="1" checked="checked" {% else %} value="0" {% endif %}
-                {% if widget.readOnly is defined %}{% if widget.readOnly %} readonly disabled="disabled" {% endif %}{% endif %}
-                {% if widget.required is defined %}{% if widget.required %} required="required" {% endif %}{% endif %}
-                {% if widget.title is defined %} title="{{ widget.title }}" {% endif %}
-                {% if widget.help is defined %} aria-describedby="{{ widget.id }}help" {% endif %}
-            >
-            {{ widget.label }}
-        </label>
-        {% if widget.help is defined %}
-            <small id="{{ widget.id }}help" class="form-text text-muted">{{ widget.help|raw }}</small>
-        {% endif %}
-    </div>
-{% endif %}
+</div>

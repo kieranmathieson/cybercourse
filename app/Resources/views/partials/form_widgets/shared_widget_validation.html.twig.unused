@@ -1,0 +1,39 @@
+{# This doesn't work, because included files can't return data. #}
+{# Validate the widget type. #}
+{% set badData = false %}
+{% if not widget.type is defined %}
+    <p class="bug">Widget must have a type.</p>
+    {% set badData = true %}
+{% endif %}
+{% set validTypes = ['text', 'number', 'password', 'hidden', 'email', 'url'] %}
+{% if widget.type is defined %}
+    {% if not widget.type in validTypes %}
+        <p class="bug">Invalid widget type: {{ widget.type }}</p>
+        {% set badData = true %}
+    {% endif %}
+{% endif %}
+    {% import 'partials/form_widgets/shared_widget_validation.html.twig' %}
+{# Must have an id. #}
+<p>DAWG!!!!</p>
+{% if not widget.id is defined%}
+    <p class="bug">Widget must have an id.</p>
+    {% set badData = true %}
+{% endif %}
+{# Must have a name. #}
+{% if not widget.name is defined %}
+    <p class="bug">Widget must have a name.</p>
+    {% set badData = true %}
+{% endif %}
+
+{% if badData %}
+    <style>
+        .bug {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+    <p class="bug">Something bad happened.</p>
+{% else %}
+
+
+{% endif %}
