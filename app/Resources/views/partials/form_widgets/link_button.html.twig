@@ -1,0 +1,12 @@
+{# Link rendered as a button widget. #}
+{# Caller need to wrap in this to define approprriate group --> <div class="form-group">#}
+{# If help is set, need an id as well. #}
+    <a class="btn btn-{{ widget.variant }}{% if widget.extraClasses is defined %} {{ widget.extraClasses }}{% endif %}"
+        href="{{ widget.href }}"
+        {% if widget.title is defined %} title="{{ widget.title }}" {% endif %}
+        {% if widget.help is defined %} aria-describedby="{{ widget.id }}help" {% endif %}
+    >{{ widget.caption }}</a>
+    {% if widget.help is defined %}
+        <small id="{{ widget.id }}help" class="form-text text-muted">{{ widget.help|raw }}</small>
+    {% endif %}
+{# End of the wrapper. Everybody off. </div>#}
