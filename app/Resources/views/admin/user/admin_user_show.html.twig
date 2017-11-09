@@ -1,33 +1,55 @@
 {% extends 'base.html.twig' %}
 {% trans_default_domain 'FOSUserBundle' %}
+
+{% block page_header %}User profile{% endblock %}
+
 {% block body %}
+    <p>Here is the user's profile.</p>
+    <div class="form-group page-actions">
+        {% include 'partials/form_widgets/link_button.html.twig' with {
+            'widget': {
+                'caption': 'Edit',
+                'variant': 'primary',
+                'href': path('admin_user_edit', {'id': user.id})
+            }
+        } %}
+        {% include 'partials/form_widgets/link_button.html.twig' with {
+            'widget': {
+                'caption': 'Disable',
+                'variant': 'primary',
+                'href': path('not_implemented_yet'),
+                'title': 'Disable this user\'s account. The user will not be able to log in.',
+            }
+        } %}
+        {% include 'partials/form_widgets/link_button.html.twig' with {
+        'widget': {
+        'caption': 'Delete',
+        'variant': 'primary',
+        'href': path('not_implemented_yet'),
+        'title': 'Delete this user\'s account, and all of it\'s content (e.g., submissions).',
+        }
+        } %}
+    </div>
 
-<h1>Show user profile</h1>
-
-<p>Here is the user's profile.</p>
-
-<p>
-    <a class="pure-button" href="{{ path('admin_user_edit', {'id': user.id}) }}" role="button">Edit profile</a>
-</p>
-
-<p>{{ 'profile.show.username'|trans }}: {{ user.username }}</p>
-<p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
-<p>{{ 'profile.show.firstName'|trans }}: {{ user.firstName }}</p>
-<p>{{ 'profile.show.lastName'|trans }}: {{ user.lastName }}</p>
-<p>{{ 'profile.show.about'|trans }}</p>
-<p class="indent1">
-    {% if user.aboutMe == "" %}
-        (Empty.)
-    {% else %}
-        {{ user.aboutMe }}
-    {% endif %}
-</p>
-<p>{{ 'profile.show.photo'|trans }}</p>
-<p class="indent1">
-    {% if user.imageName == "" %}
-        (Empty.)
-    {% else %}
-        <img src="{{ vich_uploader_asset(user, 'imageFile') }}" alt="{{ user.firstName }} {{ user.lastName }}" />
-    {% endif %}
-</p>
+    <p>{{ 'profile.show.username'|trans }}: {{ user.username }}</p>
+    <p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
+    <p>{{ 'profile.show.firstName'|trans }}: {{ user.firstName }}</p>
+    <p>{{ 'profile.show.lastName'|trans }}: {{ user.lastName }}</p>
+    <p>{{ 'profile.show.enabled'|trans }}: {% if user.enabled %}Yes{% else %}No{% endif %}</p>
+    <p>{{ 'profile.show.about'|trans }}</p>
+    <p class="indent1">
+        {% if user.aboutMe == "" %}
+            (Empty.)
+        {% else %}
+            {{ user.aboutMe }}
+        {% endif %}
+    </p>
+    <p>{{ 'profile.show.photo'|trans }}</p>
+    <p class="indent1">
+        {% if user.imageName == "" %}
+            (Empty.)
+        {% else %}
+            <img src="{{ vich_uploader_asset(user, 'imageFile') }}" alt="{{ user.firstName }} {{ user.lastName }}" />
+        {% endif %}
+    </p>
 {% endblock %}
