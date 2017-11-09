@@ -10,6 +10,7 @@ profile:
         email: "Email"
         firstName: "First name"
         lastName: "Last name"
+        enabled: "Enabled"
         about: "About"
         photo: "Photo"
 security:
