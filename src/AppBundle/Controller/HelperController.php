@@ -12,8 +12,11 @@ class HelperController extends Controller
      *
      * @Route("/not-implemented-yet", name="not_implemented_yet")
      */
-    public function indexAction($name)
+    public function showNotImplemented()
     {
-        return $this->render('', array('name' => $name));
+        return $this->render('helper/show_message.html.twig', [
+            'header' => 'Not implemented',
+            'message' => 'Not implemented yet.'
+        ]);
     }
 }
