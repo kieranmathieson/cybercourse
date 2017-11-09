@@ -1,19 +1,19 @@
-{%  extends 'base.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% trans_default_domain 'FOSUserBundle' %}
 
 {% block title %}Edit user{% endblock %}
 {% block page_header %}Edit user{% endblock %}
 
-{%  block body %}
+{% block body %}
     {{ dump() }}
-{{ form_start(form) }}
-    <p>DOGS</p>
-    {{ form_label(form.id) }}
-    {{ form_widget(form.id) }}
-    {{ form_errors(form.id) }}
+    {# render any "global" errors #}
+    {% include 'partials/form_errors.html.twig' %}
+    {{ form_start(form) }}
+    {#{{ form_label(form.id) }}#}
+    {#{{ form_widget(form.id) }}#}
+    {#{{ form_errors(form.id) }}#}
 
-    {#{{ form_widget(form.username) }}#}
     {% include 'partials/form_widgets/input.html.twig' with {
         'widget': {
             'type': 'text',
@@ -26,28 +26,30 @@
     } } %}
     {% include 'partials/form_widgets/input.html.twig' with {
         'widget': {
-        'type': 'password',
-        'label': 'New password',
-        'value': '',
-        'id': 'app_bundle_admin_edit_user_plainPassword',
-        'name': 'app_bundle_admin_edit_user[plainPassword]',
-        'help': 'New password, if you want to change it',
-        'required': false
+            'type': 'password',
+            'label': 'New password',
+            'value': '',
+            'id': 'app_bundle_admin_edit_user_plainPassword',
+            'errors': form.children.plainPassword.vars.errors,
+            'name': 'app_bundle_admin_edit_user[plainPassword]',
+            'help': 'New password, if you want to change it',
+            'required': false
     } } %}
     {% include 'partials/form_widgets/input.html.twig' with {
         'widget': {
             'type': 'password',
             'label': 'Repeat password',
             'value': '',
-            'id': 'app_bundle_admin_edit_user_plainPassword',
-            'name': 'app_bundle_admin_edit_user[plainPassword]',
+            'id': 'app_bundle_admin_edit_user_plainPasswordRepeat',
+            'name': 'app_bundle_admin_edit_user[plainPasswordRepeat]',
+            'errors': form.children.plainPasswordRepeat.vars.errors,
             'help': 'Repeat the new password, if you are changing the user\'s password',
             'required': false
         }
     } %}
     {% include 'partials/form_widgets/input.html.twig' with {
         'widget': {
-            'type': 'Email',
+            'type': 'email',
             'label': 'Email address',
             'value': form.children.email.vars.value,
             'id': 'app_bundle_admin_edit_user_email',
@@ -101,17 +103,25 @@
             'required': false
         }
     } %}
-
-    {#{{ form_widget(form.plainPassword) }}#}
-    {#{{ form_widget(form.plainPasswordRepeat) }}#}
-    {#{{ form_widget(form.email) }}#}
-    {#{{ form_widget(form.firstName) }}#}
-    {#{{ form_widget(form.lastName) }}#}
-    {#{{ form_widget(form.aboutMe) }}#}
-    {#{{ form_widget(form.enabled) }}#}
-<div>
-    <input type="submit" value="{{ 'profile.edit.submit'|trans }}" />
-</div>
-{{ form_end(form) }}
+    <div class="form-group">
+        {% include 'partials/form_widgets/submit.html.twig' with {
+            'widget': {
+                'caption': 'Save',
+                'variant': 'primary',
+            }
+        } %}
+        {# URL to return to on cancel. "Go back to where you came from!" - DT #}
+        {% set cancelHref = app.request.server.get('HTTP_REFERER')|default(path('admin_user_show', {'id': form.vars.data.id})) %}
+        {% include 'partials/form_widgets/link_button.html.twig' with {
+            'widget': {
+                'caption': 'Cancel',
+                'variant': 'secondary',
+                'href': cancelHref
+            }
+        } %}
+    </div>
+    {# Don't forget the CSRF token. #}
+    {{ form_widget(form._token) }}
+    {{ form_end(form, {'render_rest': false}) }}
 
 {% endblock %}
