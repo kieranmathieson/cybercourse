@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -30,7 +31,7 @@ class UserAdminController extends Controller
             ->getQuery()
             ->execute();
 
-        return $this->render('admin/user/admin_list_user.html.twig', [
+        return $this->render('admin/user/admin_user_list.html.twig', [
             'users' => $users,
         ]);
     }
@@ -44,7 +45,7 @@ class UserAdminController extends Controller
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function adminShowUser(User $user) {
-        return $this->render('admin/user/admin_show_user.html.twig', array(
+        return $this->render('admin/user/admin_user_show.html.twig', array(
             'user' => $user,
         ));
 
@@ -66,6 +67,59 @@ class UserAdminController extends Controller
         // only handles data on POST
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            //Flag to track whether errors found.
+            $errorsFound = false;
+            /** @var \AppBundle\Entity\User $user */
+            $user = $form->getData();
+            //Has the user supplied a new password?
+            $plainPw = trim($user->getPlainPassword());
+            $plainPwRepeat = trim($form->get('plainPasswordRepeat')->getData());
+            if ( strlen($plainPw) !== 0 || strlen($plainPwRepeat) !== 0 ) {
+                //Compare with password repeat.
+                if ( $plainPw !== $plainPwRepeat ) {
+                    //Don't match. Add messages to the form and the fields.
+                    $form->addError(new FormError('Sorry, the new passwords must match.'));
+                    $form->get('plainPassword')->addError(new FormError('Sorry, the new password must be typed exactly the same in both fields.'));
+                    $form->get('plainPasswordRepeat')->addError(new FormError('Sorry, the new password must be typed exactly the same in both fields.'));
+                    $errorsFound = true;
+                }
+                else {
+                    $user->setPassword($encoder->encodePassword($user, $user->getPlainPassword()));
+                }
+            }
+            if ( ! $errorsFound ) {
+                //Save all the things.
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($user);
+                $em->flush();
+                //Add message to queue for user, redirect to show new data.
+                $this->addFlash('success', 'User updated.');
+
+                return $this->redirectToRoute('admin_user_show', ['id' => $user->getId()]);
+            }
+        }
+
+        return $this->render('admin/user/admin_user_edit.html.twig', array(
+            'form' => $form->createView(),
+        ));
+
+    }
+
+    /**
+     * Edit one user's deets.
+     *
+     * @Route("/admin/user/add", name="admin_user_add")
+     * @Security("has_role('ROLE_ADMIN')")
+     * @param Request $request
+     * @param User $user
+     * @param UserPasswordEncoderInterface $encoder
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function adminAddUser(Request $request, User $user, UserPasswordEncoderInterface $encoder) {
+        $form = $this->createForm(AdminEditUserFormType::class, $user);
+        // only handles data on POST
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
             /** @var \AppBundle\Entity\User $user */
             $user = $form->getData();
             //Has the user supplied a new password?
@@ -77,7 +131,7 @@ class UserAdminController extends Controller
                     $this->addFlash('error', 'Sorry, new passwords must match.');
                     return $this->redirectToRoute('admin_user_edit', ['id' => $user->getId()]);
                 }
-                        $user->setPassword(
+                $user->setPassword(
                     $encoder->encodePassword($user, $user->getPlainPassword())
                 );
             }
@@ -85,16 +139,17 @@ class UserAdminController extends Controller
             $em->persist($user);
             $em->flush();
 
-            $this->addFlash('success', 'User updated!');
+            $this->addFlash('success', 'User added.');
 
             return $this->redirectToRoute('admin_user_show', ['id' => $user->getId()]);
         }
 
-        return $this->render('admin/user/admin_edit_user.html.twig', array(
+        return $this->render('admin/user/admin_user_edit.html.twig', array(
             'form' => $form->createView(),
         ));
 
     }
+
 
 
 }
