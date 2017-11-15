@@ -1,16 +1,16 @@
 $(document).ready(function () {
-    CycoSidebarToggle.init();
+    SkillCourseSidebarToggle.init();
     //Show/hide the left sidebar.
     $('#hide-left-sidebar').click(function () {
-        CycoSidebarToggle.toggleSidebarExpanded('left');
+        SkillCourseSidebarToggle.toggleSidebarExpanded('left');
     });
     //Show/hide the right sidebar.
     $('#hide-right-sidebar').click(function () {
-        CycoSidebarToggle.toggleSidebarExpanded('right');
+        SkillCourseSidebarToggle.toggleSidebarExpanded('right');
     });
 });
 
-var CycoSidebarToggle = {
+var SkillCourseSidebarToggle = {
     /**
      * Relative URL to where the sidebar icons are stored.
      */

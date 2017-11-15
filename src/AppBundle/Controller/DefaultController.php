@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Service\RstCustomDirectives\Directives\CycoKernel;
+use AppBundle\Service\RstCustomDirectives\Directives\SkillCourseKernel;
 use AppBundle\Service\RstCustomDirectives\Directives\Dude;
 use Gregwar\RST\Parser;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
