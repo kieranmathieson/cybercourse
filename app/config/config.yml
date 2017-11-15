@@ -7,7 +7,8 @@ imports:
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
-    app.site_title: 'Cyco test'
+    app.site_title: 'Skill course test'
+    # todo: move title to site config file.
     # Extentions allowed for user photos
     app.user_photo_file_extentions:
         - jpg
