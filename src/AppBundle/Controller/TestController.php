@@ -2,19 +2,21 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Exercise;
+//use AppBundle\Entity\Exercise;
 use AppBundle\Entity\Keyword;
-use AppBundle\Entity\KeywordUse;
-use AppBundle\Entity\Lesson;
+
+//use AppBundle\Entity\KeywordUse;
+//use AppBundle\Entity\Lesson;
 use AppBundle\Entity\User;
+use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Helper\UploadHandler;
-
-use AppBundle\Entity\Helper;
+use AppBundle\Helper\FileUploader;
+use AppBundle\Helper\FileHelper;
+//use AppBundle\Entity\Helper;
 
 class TestController extends Controller
 {
@@ -28,7 +30,7 @@ class TestController extends Controller
      */
     public function configTest1Action()
     {
-        return new Response('Poo ' . count(Helper::ENTITY_TYPES));
+        return new Response('Poo '.count(Helper::ENTITY_TYPES));
     }
 
     /**
@@ -45,7 +47,7 @@ class TestController extends Controller
         $em->persist($keyword);
         $em->flush();
 
-        return new Response('Done. Id: ' . $keyword->getId());
+        return new Response('Done. Id: '.$keyword->getId());
 
     }
 
@@ -69,7 +71,7 @@ class TestController extends Controller
             ->getQuery();
         $keyword = $query->getSingleResult();
 
-        return new Response('Text: ' . $keyword->getNotes());
+        return new Response('Text: '.$keyword->getNotes());
     }
 
     /**
@@ -144,7 +146,7 @@ class TestController extends Controller
             ->getQuery();
         $keyword = $query->getSingleResult();
 
-        return new Response('Text: ' . $keyword->getNotes());
+        return new Response('Text: '.$keyword->getNotes());
     }
 
     /**
@@ -175,9 +177,12 @@ class TestController extends Controller
      */
     public function testRestClient1Action()
     {
-        return $this->render('test/rest_client1.html.twig', [
+        return $this->render(
+            'test/rest_client1.html.twig',
+            [
 //            'lessons' => $lessons,
-        ]);
+            ]
+        );
 
     }
 
@@ -188,10 +193,12 @@ class TestController extends Controller
      */
     public function testRestServer1Action(Request $request)
     {
-        if ( $request->getMethod() == 'GET') {
+        if ($request->getMethod() == 'GET') {
             $dogs = [
-                'Renata', 'Rosie',
+                'Renata',
+                'Rosie',
             ];
+
             return new JsonResponse($dogs);
         }
     }
@@ -224,11 +231,12 @@ class TestController extends Controller
             }
         } catch (Exception $e) {
             return new JsonResponse(
-                ['status' => 'fail', 'message' => $e->getMessage() ]
+                ['status' => 'fail', 'message' => $e->getMessage()]
             );
         }
+
         return new JsonResponse(
-            ['status' => 'fail', 'message' => 'Access denied' ]
+            ['status' => 'fail', 'message' => 'Access denied']
         );
     }
 
@@ -238,19 +246,29 @@ class TestController extends Controller
      */
     public function testUploadClient1Action()
     {
-        return $this->render('test/upload_client1.hml.twig', [
+        return $this->render(
+            'test/upload_client1.hml.twig',
+            [
 //            'lessons' => $lessons,
-        ]);
+            ]
+        );
 
     }
 
     /**
      * @Route("/test/upload-server1", name="test_upload_server1")
      */
-    public function testUploadServer1Action()
+    public function testUploadServer1Action(Request $request)
     {
-
-
+        $uploadsDir = FileHelper::normalizePath(
+            $this->get('kernel')->getRootDir().'/../web'
+             . $this->container->getParameter('app.base_uploads_uri')
+        );
+        $userUploadsDir = $uploadsDir . '/user';
+        $chunksUploadsDir = $uploadsDir . '/chunks';
+        $uploader = new FileUploader($userUploadsDir, $chunksUploadsDir);
+        $result = $uploader->uploadFile($request);
+//        return new Response('DOG '. $method . $uploader->getDestinationDir());
         return new JsonResponse($result);
     }
 
@@ -260,7 +278,70 @@ class TestController extends Controller
      */
     public function testInterceptPrivateFile($rest)
     {
-        $result = '<p>Asked for ' . $rest . '</p>';
+        $result = '<p>Asked for '.$rest.'</p>';
+
+        return new Response($result);
+    }
+
+    /**
+     * @Route("/test/path1", name="test_path1")
+     */
+    public function testPath1()
+    {
+        $filePathToUploads = $this->get_absolute_path(
+            $this->get('kernel')->getRootDir().'/../web'
+            .$this->container->getParameter('app.base_uploads_uri')
+        );
+//        $filePathToUploads = 'FOFO';
+        $result = '<p>Asked for DOGAS '.$filePathToUploads.'</p>';
+
+        $result .= '<p>'.$this->container->getParameter('app.base_uploads_uri').'</p>';
+
+        return new Response($result);
+    }
+
+    protected function get_absolute_path($path)
+    {
+        $path = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
+        $parts = array_filter(explode(DIRECTORY_SEPARATOR, $path), 'strlen');
+        $absolutes = array();
+        foreach ($parts as $part) {
+            if ('.' == $part) {
+                continue;
+            }
+            if ('..' == $part) {
+                array_pop($absolutes);
+            } else {
+                $absolutes[] = $part;
+            }
+        }
+
+        return implode(DIRECTORY_SEPARATOR, $absolutes);
+    }
+
+    /**
+     * @Route("/test/upload-server2", name="test_upload_server2")
+     */
+    public function testUploadServer2Action()
+    {
+        $uploadsDir = FileHelper::normalizePath(
+            $this->get('kernel')->getRootDir().'/../web'
+            .$this->container->getParameter('app.base_uploads_uri')
+        );
+        $userUploadsDir = $uploadsDir . '/user';
+        $chunksUploadsDir = $uploadsDir . '/chunks';
+        $uploader = new FileUploader($userUploadsDir, $chunksUploadsDir);
+//
+//        return new JsonResponse($result);
+    }
+
+    /**
+     * @Route("/test/info", name="test_info")
+     */
+    public function testInfo()
+    {
+
+        $result = phpinfo();
 
         return new Response($result);
     }

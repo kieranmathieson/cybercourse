@@ -13,10 +13,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToOne;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="uploaded_file")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\UploadedFileRepository")
  */
 class UploadedFile
 {
@@ -30,7 +32,7 @@ class UploadedFile
     /**
      * @ORM\Column(type="guid")
      */
-    protected $guid;
+    protected $uuid;
 
     /**
      * Many files have one user uploader.
@@ -39,9 +41,19 @@ class UploadedFile
     protected $uploadingUser;
 
     /**
+     * URI path to the file.
+     * e.g., /this/that/puppy.png
+     *
      * @ORM\Column(type="string")
      */
-    protected $uri;
+    protected $uriPath;
+
+    /**
+     * Name and extension of the file.
+     *
+     * @ORM\Column(type="string")
+     */
+    protected $fileName;
 
     /**
      * Many files can be attached to many content objects.
@@ -73,31 +85,23 @@ class UploadedFile
     }
 
     /**
-     * @param integer $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
      * @return string
      */
-    public function getGuid()
+    public function getUuid()
     {
-        return $this->guid;
+        return $this->uuid;
     }
 
     /**
-     * @param string $guid
+     * @param string $uuid
      */
-    public function setGuid($guid)
+    public function setUuid($uuid)
     {
-        $this->guid = $guid;
+        $this->uuid = $uuid;
     }
 
     /**
-     * @return integer
+     * @return User
      */
     public function getUploadingUser()
     {
@@ -105,7 +109,7 @@ class UploadedFile
     }
 
     /**
-     * @param integer $uploadingUser
+     * @param User $uploadingUser
      */
     public function setUploadingUser($uploadingUser)
     {
@@ -115,17 +119,33 @@ class UploadedFile
     /**
      * @return string
      */
-    public function getUri()
+    public function getUriPath()
     {
-        return $this->uri;
+        return $this->uriPath;
     }
 
     /**
-     * @param string $uri
+     * @param string $uriPath
      */
-    public function setUri($uri)
+    public function setUriPath($uriPath)
     {
-        $this->uri = $uri;
+        $this->uriPath = $uriPath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileName()
+    {
+        return $this->fileName;
+    }
+
+    /**
+     * @param string $fileName
+     */
+    public function setFileName($fileName)
+    {
+        $this->fileName = $fileName;
     }
 
 

@@ -15,14 +15,20 @@ parameters:
         - gif
     # Maximum side of each user photo.
     # Todo: Let this be expressed in K or M.
-    app.user_photo_max_file_size: 2000000
+    app.user_photo_max_file_size: 500000
     # How many photos each user is allowed to upload.
     app.user_photo_max_files: 4
+    # How wide and high can user photos be? In pixels.
+    app.user_photo_max_width_height: 500
+    # Max size of thumbnails in pixels, X and Y.
+    app.thumbnails_max_size: 100
     # Todo: set max file dimensions.
     # Can users create accounts?
     app.users_can_create_accounts: false
     # Who to ask about accounts. Shows, e.g., on the registration page when registration is disabled.
-    app.who_to_ask_about_accounts: ',... er, someone.'
+    app.who_to_ask_about_accounts: ' ... er, someone.'
+    # Where uploaded files are stored, relative to the base URI. Also used for file paths.
+    app.base_uploads_uri: '/uploads'
 
 framework:
     #esi: ~

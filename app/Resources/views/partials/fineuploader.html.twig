@@ -1,3 +1,4 @@
+<script src="{{ asset('js/fineuploader/fine-uploader.min.js') }}"></script>
 <script type="text/template" id="qq-template">
     <div class="qq-uploader-selector qq-uploader qq-gallery" qq-drop-area-text="Drop files here">
         <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
@@ -76,21 +77,40 @@
 </script>
 
 <script>
-    // Some options to pass to the uploader are discussed on the next page
-    var uploader = new qq.FineUploader({
-        element: document.getElementById("uploader"),
-        debug: true,
-        request: {
-            endpoint: '/test/upload-server1'
-        },
-        retry: {
-            //Offer to retry failed uploads.
-            enableAuto: true
-        },
-        deleteFile: {
-            enabled: true, // defaults to false
-            endpoint: '/test/upload-server1'
-        }
-    });
+    function initUploader(uploadDomElement, uploadEndPoint, deleteEndPoint, maxNumFiles, maxFileSize, debugMode){
+        //The Fineuploader script creates qq.
+        var newUploader = new qq.FineUploader({
+            element: uploadDomElement, //Where to show the uploader.
+            debug: debugMode,
+            request: {
+                endpoint: uploadEndPoint
+            },
+            retry: {
+                //Offer to retry failed uploads.
+                enableAuto: true
+            },
+            deleteFile: {
+                enabled: true,
+                endpoint: deleteEndPoint
+            },
+            session: {
+                endpoint: uploadEndPoint
+            },
+            validation: {
+                itemLimit: maxNumFiles,
+                sizeLimit: maxFileSize
+            },
+            callbacks: {
+                onSessionRequestComplete: (function(response, success) {
+                    console.log('DOG: ' + this.getInProgress ());
+                    window.ee = this;
+                    window.er = response;
+                    window.ss = this.session;
+                    console.log(this);
+                })
+            }
+        });
+        return newUploader;
+    }
 </script>
 

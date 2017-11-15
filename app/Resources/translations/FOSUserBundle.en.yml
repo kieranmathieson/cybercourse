@@ -12,7 +12,8 @@ profile:
         lastName: "Last name"
         enabled: "Enabled"
         about: "About"
-        photo: "Photo"
+        photos: "Photos"
+        shareDeetsWithClass: "Share with class"
 security:
     #Login form
     login:

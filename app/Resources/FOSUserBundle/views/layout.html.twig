@@ -1,5 +1,23 @@
 {% extends 'base.html.twig' %}
+{# Slimy hack for FOSUserBundle. Set the title and page header based on the URL. #}
+{% set thisPageTitle = 'Profile' %}
+{% set thisPageHeader = 'Profile' %}
+{% if app.request.pathInfo == '/profile/' %}
+    {% set thisPageTitle = 'Your profile' %}
+    {% set thisPageHeader = 'Your profile' %}
+{% endif %}
+{% if app.request.pathInfo == '/profile/edit' %}
+    {% set thisPageTitle = 'Edit profile' %}
+    {% set thisPageHeader = 'Edit your profile' %}
+{% endif %}
+
+
+{% block title %}{{ thisPageTitle }}{% endblock %}
+
+{% block page_header %}{{ thisPageHeader }}{% endblock %}
 
 {% block body %}
+    {{ dump() }}
+    <h2>{% if app.request.pathInfo is defined %}PATH: {{ app.request.pathInfo }}{% else %}NO PATH{% endif %}</h2>
     {% block fos_user_content %}{% endblock %}
 {% endblock %}

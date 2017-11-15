@@ -42,7 +42,8 @@ class ProfileFormType extends AbstractType
                     'download_uri' => true,
                     'image_uri' => true,
                 ]
-            );;
+            )
+            ->add('shareDeetsWithClass');
     }
 
     public function configureOptions(OptionsResolver $resolver)

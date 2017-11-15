@@ -22,7 +22,7 @@ class AdminEditUserFormType extends AbstractType
             ->add('lastName')
             ->add('aboutMe')
             ->add('enabled')
-
+            ->add('shareDeetsWithClass')
         ;
     }
 

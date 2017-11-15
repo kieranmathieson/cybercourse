@@ -1,10 +1,97 @@
 {% trans_default_domain 'FOSUserBundle' %}
+    {# render any "global" errors #}
+    {% include 'partials/form_errors.html.twig' %}
 
-<h1>Edit user profile</h1>
+{{ form_start(form, { 'action': path('fos_user_profile_edit') }) }}
+{% include 'partials/form_widgets/input.html.twig' with {
+    'widget': {
+        'type': 'text',
+        'label': 'Username',
+        'value': form.children.username.vars.value,
+        'id': 'app_bundle_admin_edit_user_username',
+        'name': 'app_bundle_admin_edit_user[username]',
+        'help': 'To change your username, contact ' ~ who_to_ask_about_accounts ~ '.',
+        'readOnly': true,
+        'required': true
+    }
+} %}
+{% include 'partials/form_widgets/input.html.twig' with {
+    'widget': {
+        'type': 'email',
+        'label': 'Email address',
+        'value': form.children.email.vars.value,
+        'id': 'fos_user_profile_form_email',
+        'name': 'fos_user_profile_form[email]',
+        'help': 'E.g., ann@example.com',
+        'required': true
+    }
+} %}
+{% include 'partials/form_widgets/input.html.twig' with {
+    'widget': {
+        'type': 'text',
+        'label': 'First name',
+        'value': form.children.firstName.vars.value,
+        'id': 'fos_user_profile_form_firstName',
+        'name': 'fos_user_profile_form[firstName]',
+        'help': 'E.g., Jackie',
+        'required': true
+    }
+} %}
+{% include 'partials/form_widgets/input.html.twig' with {
+    'widget': {
+        'type': 'text',
+        'label': 'Last name',
+        'value': form.children.lastName.vars.value,
+        'id': 'fos_user_profile_form_firstName',
+        'name': 'fos_user_profile_form[firstName]',
+        'help': 'E.g., Robinson',
+        'required': true
+    }
+} %}
+{% include 'partials/form_widgets/textarea.html.twig' with {
+    'widget': {
+        'type': 'textarea',
+        'label': 'About',
+        'value': form.children.aboutMe.vars.value,
+        'id': 'fos_user_profile_form_aboutMe',
+        'name': 'fos_user_profile_form[aboutMe]',
+        'help': 'Whatever you let other students know about you',
+        'rows': 5,
+        'required': false
+    }
+} %}
+{% include 'partials/form_widgets/checkbox.html.twig' with {
+    'widget': {
+        'type': 'checkbox',
+        'label': 'Share deets with class',
+        'value': form.children.shareDeetsWithClass.vars.data,
+        'id': 'fos_user_profile_form_shareDeetsWithClass',
+        'name': 'fos_user_profile_form[shareDeetsWithClass]',
+        'help': 'If checked, other students in your class can see your name, about, and photos. Other students will <strong>never</strong> see your email address, submissions, or anything else, even if you check this box.',
+        'required': false
+    }
+} %}
+<div class="form-group">
+    {% include 'partials/form_widgets/submit.html.twig' with {
+        'widget': {
+            'caption': 'Save',
+            'variant': 'primary',
+        }
+    } %}
+    {% include 'partials/form_widgets/link_button.html.twig' with {
+        'widget': {
+            'caption': 'Cancel',
+            'variant': 'secondary',
+            'href': path('fos_user_profile_show')
+        }
+    } %}
+</div>
+{# Don't forget the CSRF token. #}
+{{ form_widget(form._token) }}
+{{ form_end(form, {'render_rest': false}) }}
 
-{{ form_start(form, { 'action': path('fos_user_profile_edit'), 'attr': { 'class': 'pure-form pure-form-stacked' } }) }}
-    {{ form_widget(form) }}
-    <div>
-        <button type="submit" class="pure-button pure-button-primary">{{ 'profile.edit.submit'|trans }}</button>
-    </div>
-{{ form_end(form) }}
+
+    {#{{ form_widget(form) }}#}
+    {#<div>#}
+        {#<button type="submit" class="pure-button pure-button-primary">{{ 'profile.edit.submit'|trans }}</button>#}
+    {#</div>#}

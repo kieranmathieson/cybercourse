@@ -9,39 +9,48 @@
 namespace AppBundle\Helper;
 
 
+use Symfony\Component\HttpFoundation\Request;
+
 class FileUploader
 {
-    public function __construct()
-    {
-        $this->allowedExtensions = ['jpg', 'gif', 'png'];
-    }
-
     protected $allowedExtensions;
     protected $sizeLimit;
+    protected $chunksDir;
     protected $destinationDir;
-    public function uploadFile() {
-        $uploader = new UploadHandler();
+    protected $fileHelper;
+    public function __construct($destinationDir, $chunksDir, FileHelper $fileHelper)
+    {
+        //Set defaults.
+        $this->allowedExtensions = ['jpg', 'gif', 'png']; //TOdo get from config.yml.
+        $this->sizeLimit = null;
+        $this->destinationDir = $destinationDir;
+        $this->chunksDir = $chunksDir;
+        $this->fileHelper = $fileHelper;
+        //Make sure the dirs exist.
+        $this->fileHelper->createFilePath($this->destinationDir);
+        $this->fileHelper->createFilePath($this->chunksDir);
+    }
+
+    public function uploadFile(Request $request) {
+        $uploader = new UploadHandler($this->getChunksDir());
         // Specify the list of valid extensions, ex. array("jpeg", "xml", "bmp")
         $uploader->allowedExtensions = array('jpg', 'gif', 'png'); // all files types allowed by default
-// Specify max file size in bytes.
+        // Specify max file size in bytes.
         $uploader->sizeLimit = null;
-// Specify the input name set in the javascript.
+        // Specify the input name set in the javascript.
         $uploader->inputName = "qqfile"; // matches Fine Uploader's default inputName value by default
-// If you want to use the chunking/resume feature, specify the folder to temporarily save parts.
-        $uploader->chunksFolder = "chunks";
-        $method = $this->get_request_method();
-
+        $method = $request->getMethod();
         if ($method == "POST") {
             // ???????? header("Content-Type: text/plain");
             // Assumes you have a chunking.success.endpoint set to point here with a query parameter of "done".
             // For example: /myserver/handlers/endpoint.php?done
             if (isset($_GET["done"])) {
-                $result = $uploader->combineChunks("users");
+                $result = $uploader->combineChunks($this->getDestinationDir());
             }
             // Handles upload requests
             else {
                 // Call handleUpload() with the name of the folder, relative to PHP's getcwd()
-                $result = $uploader->handleUpload("users");
+                $result = $uploader->handleUpload($this->getDestinationDir());
                 // To return a name used for uploaded file you can use the following line.
                 $result["uploadName"] = $uploader->getUploadName();
             }
@@ -49,7 +58,7 @@ class FileUploader
         }
 // for delete file requests
         else if ($method == "DELETE") {
-            $result = $uploader->handleDelete("users");
+            $result = $uploader->handleDelete($this->getDestinationDir());
             //echo json_encode($result);
         }
         else {
@@ -76,5 +85,70 @@ class FileUploader
         }
         return $_SERVER["REQUEST_METHOD"];
     }
+
+    /**
+     * @return array
+     */
+    public function getAllowedExtensions(): array
+    {
+        return $this->allowedExtensions;
+    }
+
+    /**
+     * @param array $allowedExtensions
+     */
+    public function setAllowedExtensions(array $allowedExtensions)
+    {
+        $this->allowedExtensions = $allowedExtensions;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSizeLimit()
+    {
+        return $this->sizeLimit;
+    }
+
+    /**
+     * @param mixed $sizeLimit
+     */
+    public function setSizeLimit($sizeLimit)
+    {
+        $this->sizeLimit = $sizeLimit;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDestinationDir()
+    {
+        return $this->destinationDir;
+    }
+
+    /**
+     * @param string $destinationDir
+     */
+    public function setDestinationDir($destinationDir)
+    {
+        $this->destinationDir = $destinationDir;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChunksDir(): string
+    {
+        return $this->chunksDir;
+    }
+
+    /**
+     * @param string $chunksDir
+     */
+    public function setChunksDir($chunksDir)
+    {
+        $this->chunksDir = $chunksDir;
+    }
+
 
 }

@@ -3,7 +3,7 @@ body {
     padding-top: 3.5rem;
 }
 
-/* Reset for links in the main area. */
+/* ---------- Reset for links in the main area. ---------- */
 /*main a, main a:visited {
     text-decoration: underline;
     color: blue;
@@ -15,6 +15,8 @@ main a:hover, main a:focus {
     color: red;
 }*/
 
+
+/* ---------- Sidebar handling ---------- */
 
 #hide-left-sidebar-container {
     position: absolute;
@@ -42,13 +44,8 @@ main a:hover, main a:focus {
     cursor: pointer;
 }
 
-/*#hide-left-sidebar:hover,*/
-/*#hide-right-sidebar:hover{*/
-    /*cursor: pointer;*/
-/*}*/
 
-
-/* For DataTables */
+/* ---------- For DataTables ---------- */
 .dataTable .centered {
     text-align: center;
 }
@@ -72,7 +69,7 @@ main a:hover, main a:focus {
     color: #b3afaf;
 }
 
-/* For forms. */
+/* ---------- For forms. ---------- */
 /* Overrides BS4 alert-error properties. */
 .widget-error {
     color: red;
@@ -83,6 +80,8 @@ main a:hover, main a:focus {
     margin-left: 1rem;
 }
 
+/* ---------- For actions. ---------- */
+
 /* For page actions, that is, list of actions at the top of a page.  */
 .page-actions {
     margin-left: 2rem;
@@ -90,4 +89,19 @@ main a:hover, main a:focus {
     padding-bottom: 1rem;
     border-top: thin #F0F0F0 solid;
     border-bottom: thin #F0F0F0 solid;
+}
+
+/* ---------- User display ---------- */
+
+ul.user-photo-list {
+    list-style: none;
+}
+
+ul.user-photo-list li {
+    margin-bottom: 2rem;
+}
+
+/* ---------- Helpers ---------- */
+.indent1 {
+    margin-left: 4rem;
 }

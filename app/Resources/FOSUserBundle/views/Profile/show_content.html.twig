@@ -1,13 +1,23 @@
 {% trans_default_domain 'FOSUserBundle' %}
 
-<h1>Show user profile</h1>
-
 <p>Your user profile will help others get to know you. </p>
 
-<p>
-    <a class="pure-button" href="{{ path('fos_user_profile_edit') }}" role="button">Edit profile</a>
-    <a class="pure-button" href="{{ path('fos_user_change_password') }}" role="button">Change password</a>
-</p>
+<div class="form-group page-actions">
+    {% include 'partials/form_widgets/link_button.html.twig' with {
+        'widget': {
+            'caption': 'Edit',
+            'variant': 'primary',
+            'href': path('fos_user_profile_edit')
+        }
+    } %}
+    {% include 'partials/form_widgets/link_button.html.twig' with {
+        'widget': {
+            'caption': 'Change password',
+            'variant': 'primary',
+            'href': path('fos_user_change_password')
+        }
+    } %}
+</div>
 
 <p>{{ 'profile.show.username'|trans }}: {{ user.username }}</p>
 <p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
@@ -24,8 +34,20 @@
 <p>{{ 'profile.show.photo'|trans }}</p>
 <p class="indent1">
     {% if user.imageName == "" %}
-        (Empty. You should upload something.)
+        (Empty. You should upload something. You can <a href="{{ path('fos_user_profile_edit') }}">edit your profile</a>.)
     {% else %}
         <img src="{{ vich_uploader_asset(user, 'imageFile') }}" alt="{{ user.firstName }} {{ user.lastName }}" />
     {% endif %}
 </p>
+<p>{{ 'profile.show.shareDeetsWithClass'|trans }}:
+    {% if user.shareDeetsWithClass %}Yes{% else %}No{% endif %}
+</p>
+<p class="indent1">
+    {% if user.shareDeetsWithClass %}
+        Other students in your class can see your name, about, and photos. They cannot see your email address, submissions, or
+        anything else. People in other classes cannot see anything about you.
+    {% else %}
+        Other students cannot see your name, about, photos, or anything else. You are a ghost!
+    {% endif %}
+</p>
+

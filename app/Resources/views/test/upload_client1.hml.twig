@@ -5,33 +5,27 @@
 {% block page_header %}Upload test 1{% endblock %}
 
 {% block body %}
-<p>Dog</p>
-
+    <p>Dog</p>
     <div id="uploader"></div>
 {% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('js/fineuploader/fine-uploader-new.min.css') }}" rel="stylesheet">
+{% endblock %}
 
 {%  block javascripts %}
     {{ parent() }}
-    {% include 'partials/fineuploaded.html.twig' %}
+    {% include 'partials/fineuploader.html.twig' %}
     <script>
-        var uploader = new qq.FineUploader({
-            debug: true,
-            request: {
-                endpoint: '/test/upload-server1'
-            },
-            retry: {
-                //Offer to retry failed uploads.
-                enableAuto: true
-            },
-            deleteFile: {
-                enabled: true, // defaults to false
-                endpoint: '/test/upload-server1'
-            }
+        $(document).ready(function(){
+            var uploader = initUploader(
+                document.getElementById("uploader"), //Where to show the uploader.
+                '/test/upload-server1', //The upload endpoint.
+                '/test/upload-server1', //The delete endpoint.
+                true //debug
+            );
         });
-
-
     </script>
-
 {% endblock %}
 

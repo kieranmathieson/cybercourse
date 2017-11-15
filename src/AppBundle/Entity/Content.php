@@ -52,7 +52,7 @@ class Content
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=10, nullable=false, options={ContentTypes::CONTENT_TYPES})
+     * @ORM\Column(type="string", length=10, nullable=false)
      */
     protected $contentType;
 

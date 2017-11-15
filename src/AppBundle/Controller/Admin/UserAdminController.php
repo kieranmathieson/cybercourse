@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\User;
+use AppBundle\Entity\UserPhoto;
 use AppBundle\Form\AdminEditUserFormType;
 use Doctrine\ORM\EntityRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -45,10 +46,24 @@ class UserAdminController extends Controller
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function adminShowUser(User $user) {
-        return $this->render('admin/user/admin_user_show.html.twig', array(
+        //Get the file ids of the user's photos.
+        $userPhotoFileIds = [];
+        /** @var \AppBundle\Entity\UserPhoto $userPhotoRecord */
+        foreach ( $user->getPhotos() as $userPhotoRecord ) {
+            $fileId = $userPhotoRecord->getUploadedFileId();
+            $userPhotoFileIds[] = $fileId;
+        }
+        //Load the uploaded files for the file ids.
+        $userPhotoUploadedFiles = [];
+        if ( count($userPhotoFileIds) > 0 ) {
+            $em = $this->getDoctrine()->getManager();
+            $userPhotoUploadedFiles =
+                $em->getRepository('AppBundle:UploadedFile')->findUploadedFilesWithIds($userPhotoFileIds);
+        }
+        return $this->render('admin/user/admin_user_show.html.twig', [
             'user' => $user,
-        ));
-
+            'userPhotoUploadedFiles' => $userPhotoUploadedFiles,
+        ]);
     }
 
     /**
@@ -63,7 +78,6 @@ class UserAdminController extends Controller
      */
     public function adminEditUser(Request $request, User $user, UserPasswordEncoderInterface $encoder) {
         $form = $this->createForm(AdminEditUserFormType::class, $user);
-
         // only handles data on POST
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -99,9 +113,11 @@ class UserAdminController extends Controller
             }
         }
 
-        return $this->render('admin/user/admin_user_edit.html.twig', array(
+        return $this->render('admin/user/admin_user_edit.html.twig', [
             'form' => $form->createView(),
-        ));
+            'max_num_photos' => $this->container->getParameter('app.user_photo_max_files'),
+            'max_photo_file_size' => $this->container->getParameter('app.user_photo_max_file_size'),
+        ]);
 
     }
 

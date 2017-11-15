@@ -36,9 +36,19 @@ User profiles only available for logged in users, where user has given permissio
 
 AJAX tables.
 
-Adapt to Bootstrap
+X Adapt to Bootstrap
 
 Accessible menus.
 
-When user registration disabled, FOSUser controller won't work.
+When user registration disabled, make FOSUser controller won't work.
+
+Better indicator for disabled users in admin list, or get rid of highlighting.
+
+X Limit uploaded user photo number.
+
+X Limit uploaded user photo individual size.
+
+When querying thumbnails during admin user edit, show throbber.
+
+More tests for filehelper.
 

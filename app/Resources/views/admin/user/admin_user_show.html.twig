@@ -1,9 +1,12 @@
 {% extends 'base.html.twig' %}
 {% trans_default_domain 'FOSUserBundle' %}
 
+{% block title %}User profile{% endblock %}
+
 {% block page_header %}User profile{% endblock %}
 
 {% block body %}
+    {{ dump() }}
     <p>Here is the user's profile.</p>
     <div class="form-group page-actions">
         {% include 'partials/form_widgets/link_button.html.twig' with {
@@ -13,21 +16,28 @@
                 'href': path('admin_user_edit', {'id': user.id})
             }
         } %}
+        {% if user.enabled %}
+            {% set cappy = 'Disable' %}
+            {% set titley = "Disable this user's account. The user will not be able to log in." %}
+        {% else %}
+            {% set cappy = 'Enable' %}
+            {% set titley = "Enable this user's account. The user will be able to log in." %}
+        {% endif %}
         {% include 'partials/form_widgets/link_button.html.twig' with {
             'widget': {
-                'caption': 'Disable',
+                'caption': cappy,
                 'variant': 'primary',
                 'href': path('not_implemented_yet'),
-                'title': 'Disable this user\'s account. The user will not be able to log in.',
+                'title': titley,
             }
         } %}
         {% include 'partials/form_widgets/link_button.html.twig' with {
-        'widget': {
-        'caption': 'Delete',
-        'variant': 'primary',
-        'href': path('not_implemented_yet'),
-        'title': 'Delete this user\'s account, and all of it\'s content (e.g., submissions).',
-        }
+            'widget': {
+                'caption': 'Delete',
+                'variant': 'danger',
+                'href': path('not_implemented_yet'),
+                'title': 'Delete this user\'s account, and all of it\'s content (e.g., submissions).',
+            }
         } %}
     </div>
 
@@ -44,12 +54,27 @@
             {{ user.aboutMe }}
         {% endif %}
     </p>
-    <p>{{ 'profile.show.photo'|trans }}</p>
+    <p>{{ 'profile.show.shareDeetsWithClass'|trans }}:
+        {% if user.shareDeetsWithClass %}Yes{% else %}No{% endif %}
+    </p>
     <p class="indent1">
-        {% if user.imageName == "" %}
-            (Empty.)
+        {% if user.shareDeetsWithClass %}
+            User's name, about, and photos are shared with other students in the same class.
         {% else %}
-            <img src="{{ vich_uploader_asset(user, 'imageFile') }}" alt="{{ user.firstName }} {{ user.lastName }}" />
+            User's name, about, and photos are not shared.
         {% endif %}
     </p>
+    {#Show photos. #}
+    <p>{{ 'profile.show.photos'|trans }}</p>
+    <p>Number of photos: {{ user.photos|length }}</p>
+    {% if user.photos|length > 0 %}
+        <ul class="user-photo-list">
+        {% for userPhoto in userPhotoUploadedFiles %}
+            <li>
+                <img src="{{ userPhoto.uriPath }}" alt="Photo for {{ user.firstName }} {{ user.lastName }}">
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
 {% endblock %}

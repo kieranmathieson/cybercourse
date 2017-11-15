@@ -103,6 +103,22 @@
             'required': false
         }
     } %}
+    {% include 'partials/form_widgets/checkbox.html.twig' with {
+        'widget': {
+            'type': 'checkbox',
+            'label': 'Share deets with class',
+            'value': form.children.shareDeetsWithClass.vars.data,
+            'id': 'app_bundle_admin_edit_user_shareDeetsWithClass',
+            'name': 'app_bundle_admin_edit_user[shareDeetsWithClass]',
+            'help': 'If checked, other students in the same classes can see this user\'s name, about, and photos.',
+            'required': false
+        }
+    } %}
+    <div class="form-group">
+        <label>User photos</label>
+        <p><small>Each user can have up to {{ max_num_photos }} photos.</small></p>
+        <div id="uploader"></div>
+    </div>
     <div class="form-group">
         {% include 'partials/form_widgets/submit.html.twig' with {
             'widget': {
@@ -122,6 +138,28 @@
     </div>
     {# Don't forget the CSRF token. #}
     {{ form_widget(form._token) }}
-    {{ form_end(form, {'render_rest': false}) }}
 
+    {{ form_end(form, {'render_rest': false}) }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% include 'partials/fineuploader_css.html.twig' %}
+{% endblock %}
+
+{%  block javascripts %}
+    {{ parent() }}
+    {% include 'partials/fineuploader.html.twig' %}
+    <script>
+        $(document).ready(function(){
+            var uploader = initUploader(
+                document.getElementById("uploader"), //Where to show the uploader.
+                '/rest/user-photo-uploader/{{ form.children.id.vars.value }}', //The upload endpoint.
+                '/rest/user-photo-delete/{{ form.children.id.vars.value }}', //The delete endpoint.
+                {{ max_num_photos }},
+                {{ max_photo_file_size }},
+                true //debug
+            );
+        });
+    </script>
 {% endblock %}

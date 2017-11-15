@@ -1,0 +1,1 @@
+The file teagan.jpg is used for testing thumbnail creation.

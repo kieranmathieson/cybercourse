@@ -12,6 +12,7 @@ File system
 
 /upload/psudents/{name}/{pose file name} (download public)
 
+/upload/chunks - temp
 
 Useful links:
 

@@ -21,6 +21,7 @@
     },
     "require": {
         "php": ">=7.1",
+        "claviska/simpleimage": "^3.3",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
         "friendsofsymfony/user-bundle": "^2.0",
@@ -42,6 +43,7 @@
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^2.4",
         "nelmio/alice": "2.1.4",
+        "phpunit/phpunit": "6.4",
         "sensio/generator-bundle": "^3.0",
         "symfony/phpunit-bridge": "^3.0"
     },

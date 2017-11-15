@@ -5,12 +5,6 @@
 
 namespace AppBundle\Helper;
 
-/**
- * Do not use or reference this directly from your client-side code.
- * Instead, this should be required via the endpoint.php or endpoint-cors.php
- * file(s).
- */
-
 class UploadHandler {
 
     public $allowedExtensions = array();
@@ -22,6 +16,16 @@ class UploadHandler {
     public $chunksExpireIn = 604800; // One week
 
     protected $uploadName;
+
+    /**
+     * UploadHandler constructor.
+     * @param string $chunksFolder
+     */
+    public function __construct($chunksFolder)
+    {
+        $this->chunksFolder = $chunksFolder;
+    }
+
 
     /**
      * Get the original filename
@@ -190,7 +194,7 @@ class UploadHandler {
             $target = $targetFolder.'/'.$partIndex;
             $success = move_uploaded_file($_FILES[$this->inputName]['tmp_name'], $target);
 
-            return array("success" => true, "uuid" => $uuid);
+            return ["success" => true, "uuid" => $uuid];
 
         }
         else {
