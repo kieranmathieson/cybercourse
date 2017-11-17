@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% include 'partials/datatables_css.html.twig' %}
+{% endblock %}
+
+{% block title %}Content with keyword: {{ keyword.text }}{% endblock %}
+{% block page_header %}Content with keyword: {{ keyword.text }}{% endblock %}
+
+{% block body %}
+{{ dump() }}
+
+    {% if keyword.notes %}
+        <p>Notes</p>
+        <p class="indent1">{{ keyword.notes }}</p>
+    {% endif %}
+
+    {#{% if authorOrBetter %}#}
+        {#{% set buttons = [#}
+            {#{#}
+                {#'caption': 'Add',#}
+                {#'icon': 'plus-circle',#}
+                {#'url': path('lesson_new'),#}
+                {#'title': 'Add a new lesson'#}
+            {#}#}
+        {#] %}#}
+        {#{% include 'partials/page_actions.html.twig' with buttons %}#}
+    {#{% endif %}#}
+
+    <table id="displayTable" class="table display stripe-table highlight-sorting-column show-hover-row" width="100%"></table>
+{% endblock %}
+
+    {% block javascripts %}
+        {{ parent() }}
+        <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.16/b-1.4.2/b-html5-1.4.2/b-print-1.4.2/fh-3.1.3/kt-2.3.2/rr-1.2.3/datatables.min.js"></script>
+        <script>
+            // Todo: fixed header not working. Extension on?
+            var tableData = [
+                {% for item in keyword.contentEntities %}
+                    {% if item.isAvailable or authorOrBetter %}
+                        {
+                            'title': "<a href='{{ path('content_show', {'contentType': item.contentType, 'slug': item.slug}) }}'>{{ item.title }}</a>",
+                            'contentType': "{{ content_type_display_name(item.contentType) }}",
+                            {% if authorOrBetter %}
+                                'available': "{{ item.isAvailable ? 'Yes' : 'No' }}",
+                                'lastUpdate': "{{ item.whenUpdated|date('M, j Y, h:i a') }}",
+                                'edit': '<a href="{{ path('lesson_edit', {'id': item.id}) }}" class="btn btn-primary" role="button">Edit</a>'
+                            {% endif %}
+                        }{% if not loop.last %},{% endif %}
+                    {% endif %}
+                {% endfor %}
+            ];
+            $(document).ready(function(){
+                $('#displayTable').DataTable( {
+                    data: tableData,
+                    //Rows per page.
+                    pageLength: {{ items_per_page }},
+                    //User cannot change rows per page.
+                    lengthChange: false,
+                    fixedHeader: {
+                        header: true
+                    },
+                    //Show user when processing is happening.
+                    processing: true,
+//                    //Called when a row is created.
+//                    createdRow: function ( row, data, index ) {
+//                        if ( data.enabled.toLowerCase() === 'no' ) {
+//                            $(row).addClass('row-removed');
+//                        }
+//                    },
+                    columns: [
+                        {data: 'title', title: 'Title'},
+                        {data: 'contentType', title: 'Content type'},
+                        {% if authorOrBetter %}
+                            {data: 'available', title: 'Available', className: 'centered'},
+                            {data: 'lastUpdate', title: 'Last update'},
+                            {data: 'edit', title: '', orderable: false}
+                        {% endif %}
+                    ]
+                } );
+            });
+        </script>
+    {% endblock %}
+
+
