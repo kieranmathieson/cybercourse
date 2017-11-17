@@ -2,19 +2,16 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.16/b-1.4.2/b-html5-1.4.2/b-print-1.4.2/fh-3.1.3/kt-2.3.2/rr-1.2.3/datatables.min.css"/>
-    {#<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">#}
+    {% include 'partials/datatables_css.html.twig' %}
 {% endblock %}
 
 {%  block page_header %}Users{% endblock %}
 
 {% block body %}
     {% if is_granted('ROLE_ADMIN') %}
-        <p>Authorized users only.</p>
-
         <p>Here are all the users. The heading of the sorting column is highlighted.</p>
 
-        <table id="userTable" class="table display stripe-table highlight-sorting-column show-hover-row" width="100%"></table>
+        <table id="displayTable" class="table display stripe-table highlight-sorting-column show-hover-row" width="100%"></table>
     {% endif %}
 {% endblock %}
 
@@ -38,10 +35,11 @@
             {% endfor %}
         ];
         $(document).ready(function(){
-            $('#userTable').DataTable( {
+            alert('dso');
+            $('#displayTable').DataTable( {
                 data: tableData,
                 //Rows per page.
-                pageLength: 20,
+                pageLength: {{ items_per_page }},
                 //User cannot change rows per page.
                 lengthChange: false,
                 fixedHeader: {
