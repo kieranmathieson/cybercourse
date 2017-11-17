@@ -30,12 +30,12 @@ class ContentFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'AppBundle\Entity\Lesson'
+            'data_class' => 'AppBundle\Entity\Content'
         ]);
     }
 
     public function getBlockPrefix()
     {
-        return 'app_bundle_lesson_form_type';
+        return 'app_bundle_content_form_type';
     }
 }
