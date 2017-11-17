@@ -23,8 +23,6 @@ class UserPhotoRepository extends EntityRepository
         $params = [ 'userId' => $user->getId() ];
         $em = $this->getEntityManager();
         $stmt = $em->getConnection()->prepare($sql);
-//        $stmt->bindValue('userId', $user->getId());
-//        $stmt->bindValue('lesson_id', $lesson->getId());
         $stmt->execute($params);
         $results = $stmt->fetchAll();
         return $results;
