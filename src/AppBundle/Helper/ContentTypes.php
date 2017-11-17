@@ -18,6 +18,15 @@ class ContentTypes
 //    const LEARNING_GROUP = 'lrngroup';
 
     const CONTENT_TYPES = [
+        ContentTypes::LESSON => 'lesson',
+        ContentTypes::EXERCISE => 'exercise',
+        ContentTypes::PATTERN => 'pattern',
+        ContentTypes::CORE_IDEA => 'coreidea',
+        ContentTypes::SITE_PAGE => 'sitepage',
+//        ContentTypes::LEARNING_GROUP => 'Learning group',
+    ];
+
+    const CONTENT_TYPE_DISPLAY_NAMES = [
         ContentTypes::LESSON => 'Lesson',
         ContentTypes::EXERCISE => 'Exercise',
         ContentTypes::PATTERN => 'Pattern',
