@@ -7,8 +7,6 @@ imports:
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
-    app.site_title: 'Skill course test'
-    # todo: move title to site config file.
     # Extentions allowed for user photos
     app.user_photo_file_extentions:
         - jpg
@@ -23,14 +21,12 @@ parameters:
     app.user_photo_max_width_height: 500
     # Max size of thumbnails in pixels, X and Y.
     app.thumbnails_max_size: 100
-    # Todo: set max file dimensions.
     # Can users create accounts?
     app.users_can_create_accounts: false
-    # Who to ask about accounts. Shows, e.g., on the registration page when registration is disabled.
-    app.who_to_ask_about_accounts: ' ... er, someone.'
     # Where uploaded files are stored, relative to the base URI. Also used for file paths.
     app.base_uploads_uri: '/uploads'
-
+    # Items per page for reports.
+    app.items_per_page: 20
 framework:
     #esi: ~
     #translator: { fallbacks: ['%locale%'] }
@@ -65,6 +61,8 @@ twig:
         site_title: '%app.site_title%'
         users_can_create_acconts: '%app.users_can_create_accounts%'
         who_to_ask_about_accounts: '%app.who_to_ask_about_accounts%'
+        # todo move out of global scope.
+        items_per_page: %app.items_per_page%
 
 # Doctrine Configuration
 doctrine:
@@ -115,10 +113,28 @@ fos_user:
     from_email:
         address: "%mailer_user%"
         sender_name: "%mailer_user%"
-vich_uploader:
-    db_driver: orm
-    mappings:
-        user_image:
-            uri_prefix:         /users
-            upload_destination: '%kernel.root_dir%/../web/users'
-            namer: user_image.namer
+
+monolog:
+    channels: ['user_activity', 'error_warning', 'general']
+    use_microseconds: false
+    handlers:
+        security:
+            type: stream
+            path: '%kernel.logs_dir%/security.log'
+            level: debug
+            channels: [security]
+            formatter: Monolog\Formatter\JsonFormatter
+        user_activity:
+            type: service
+            channels: [user_activity]
+            id: app.user_activity_logger
+        error_warning:
+            type: stream
+            path: '%kernel.logs_dir%/error_warning.log'
+            level: warning
+            channels: [error_warning]
+        general:
+            type: stream
+            path: '%kernel.logs_dir%/general.log'
+            level: info
+            channels: [general]

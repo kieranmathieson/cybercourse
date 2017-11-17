@@ -52,3 +52,18 @@ When querying thumbnails during admin user edit, show throbber.
 
 More tests for filehelper.
 
+See Log entity. Use prepersist for created in other classes.
+
+Show registration link - by default, shows who to contact to register.
+
+Logging
+
+* log events
+* Choose format of log files
+* Split logging between dev and global config.
+* Log ip addresses for security events.
+* Limit log file and table size.
+* Show user activity.
+
+
+

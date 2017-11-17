@@ -14,6 +14,20 @@ File system
 
 /upload/chunks - temp
 
+Logs
+----
+
+Log channels:
+
+* Security, to file. Notify admin?
+* Student activity, to database.
+* Errors and warnings, to file.
+* General, to file.
+
+
+
+
+
 Useful links:
 
 Alice for fixtures: https://github.com/nelmio/alice/tree/2.x

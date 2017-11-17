@@ -9,7 +9,7 @@
 namespace AppBundle\Service\RstCustomDirectives\Directives;
 use Gregwar\RST\HTML\Kernel;
 
-class CycoKernel extends Kernel
+class SkillCourseKernel extends Kernel
 {
     public function getDirectives() {
         $directives = parent::getDirectives();
