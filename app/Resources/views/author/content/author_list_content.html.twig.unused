@@ -1,11 +1,14 @@
 {% extends 'base.html.twig' %}
 
+{% include 'partials:datatables_css.html.twig' %}
+
 {% block body %}
 
-    <h1>Lessons</h1>
+    <h1>{{ contentType }}</h1>
 
-    <p>Here are the lessons.</p>
+    <p>Here are the {{ contentType }}s.</p>
 
+{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_AUTHOR') %}
     {% set buttons = [
         {
             'caption': 'Add',
@@ -14,8 +17,10 @@
             'title': 'Add a new lesson'
         }
     ] %}
-
     {% include 'partials/page_actions.html.twig' with buttons %}
+{% endif %}
+
+
 
     <table class="pure-table">
         <thead>
