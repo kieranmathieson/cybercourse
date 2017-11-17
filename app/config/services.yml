@@ -38,14 +38,18 @@ services:
         class: AppBundle\Form\ProfileFormType
         tags:
             - { name: form.type }
-    user_image.namer.user_image:
-        class: AppBundle\Service\UserPhotoNamer
-        public: true
+#    user_image.namer.user_image:
+#        class: AppBundle\Service\UserPhotoNamer
+#        public: true
     app.file_helper:
         class: AppBundle\Helper\FileHelper
         arguments: ['@service_container']
         public: true
-#    app.twig.custom_extension:
+    Monolog\Formatter\JsonFormatter: ~
+    app.user_activity_logger:
+        class: AppBundle\Helper\UserActivityLogDBHandler
+        arguments: ['@doctrine.orm.entity_manager']
+        #    app.twig.custom_extension:
 #        class: AppBundle\Twig\Extension\RoleDisplay
 #        public: true
 #        tags:
