@@ -90,4 +90,9 @@ class Keyword
         $this->notes = $notes;
     }
 
+    public function getContentEntities()
+    {
+        return $this->contentEntities;
+    }
+
 }

@@ -61,7 +61,7 @@ class RubricItem
     }
 
     /**
-     * @return mixed
+     * @return integer
      */
     public function getId()
     {

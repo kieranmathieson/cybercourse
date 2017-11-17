@@ -4,17 +4,15 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Helper\Roles;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\OneToMany;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="user")
- * @Vich\Uploadable
  */
 class User extends BaseUser
 {
@@ -194,5 +192,23 @@ class User extends BaseUser
     {
         return $this->photos;
     }
+
+    /**
+     * Is the user an author or better?
+     *
+     * @return bool True if the user has the author role or better.
+     */
+    public function isAuthorOrBetter()
+    {
+        $authorOrBetter = false;
+        $userRoles = $this->getRoles();
+        $authorOrBetter = (
+            in_array(Roles::ROLE_AUTHOR, $userRoles)
+            || in_array(Roles::ROLE_ADMIN, $userRoles)
+            || in_array(Roles::ROLE_SUPER_ADMIN, $userRoles)
+        );
+        return $authorOrBetter;
+    }
+
 
 }
