@@ -26,6 +26,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * @ORM\Entity
  * @ORM\Table(name="content")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ContentRepository")
  */
 class Content
 {
@@ -35,7 +36,7 @@ class Content
      */
     public function __construct()
     {
-        $this->isAvailable = true;
+//        $this->isAvailable = true;
         $this->keywords = new ArrayCollection();
         $this->rubricItems = new ArrayCollection();
         $this->attachedPublicFiles = new ArrayCollection();
@@ -162,19 +163,19 @@ class Content
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getEntityType()
+    public function getContentType()
     {
         return $this->contentType;
     }
 
     /**
-     * @param mixed $entityType
+     * @param string $entityType
      */
-    public function setEntityType($entityType)
+    public function setContentType($contentType)
     {
-        $this->entityType = $entityType;
+        $this->contentType = $contentType;
     }
 
     /**
