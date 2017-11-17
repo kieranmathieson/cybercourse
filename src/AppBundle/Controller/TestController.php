@@ -2,11 +2,8 @@
 
 namespace AppBundle\Controller;
 
-//use AppBundle\Entity\Exercise;
 use AppBundle\Entity\Keyword;
 
-//use AppBundle\Entity\KeywordUse;
-//use AppBundle\Entity\Lesson;
 use AppBundle\Entity\User;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -14,23 +11,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Helper\FileUploader;
-use AppBundle\Helper\FileHelper;
-//use AppBundle\Entity\Helper;
 
 class TestController extends Controller
 {
     public function indexAction($name)
     {
         return $this->render('', array('name' => $name));
-    }
-
-    /**
-     * @Route("/test/config1", name="test_config1")
-     */
-    public function configTest1Action()
-    {
-        return new Response('Poo '.count(Helper::ENTITY_TYPES));
     }
 
     /**
@@ -74,57 +60,6 @@ class TestController extends Controller
         return new Response('Text: '.$keyword->getNotes());
     }
 
-    /**
-     * @Route("/test/key3", name="test_key3")
-     */
-    public function configTestKey3Action()
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $lesson = new Lesson();
-        $lesson->setTitle('Lesson 1');
-        $lesson->setSlug('lesson1');
-        $lesson->setSummary('This is lesson 1.');
-        $lesson->setBody('This is the body of lesson 1.');
-        $lesson->setIsAvailable(true);
-        $lesson->setWhenCreated(new \DateTime());
-        $lesson->setWhenUpdated(new \DateTime());
-        $lesson->setParent(0);
-        $em->persist($lesson);
-
-        $exercise = new Exercise();
-        $exercise->setTitle('Exercise 1');
-        $exercise->setSlug('exercise1');
-        $exercise->setSummary('This is exercise 1.');
-        $exercise->setBody('This is the body of exercise 1.');
-        $exercise->setIsAvailable(true);
-        $exercise->setWhenCreated(new \DateTime());
-        $exercise->setWhenUpdated(new \DateTime());
-        $exercise->setSolution('This is the solution to exercise 1.');
-        $em->persist($exercise);
-
-        //Flush so that the objects are created, and have ids.
-        $em->flush();
-
-        $keywordRepo = $this->getDoctrine()->getRepository(Keyword::class);
-        $dogs = $keywordRepo->findOneBy(['text' => 'Dogs']);
-
-        $use1 = new KeywordUse();
-        $use1->setEntityId($lesson->getId());
-        $use1->setEntityType(Helper::LESSON);
-        $use1->setKeywordId($dogs->getId());
-        $em->persist($use1);
-
-        $use2 = new KeywordUse();
-        $use2->setEntityId($exercise->getId());
-        $use2->setEntityType(Helper::EXERCISE);
-        $use2->setKeywordId($dogs->getId());
-        $em->persist($use2);
-
-        $em->flush();
-
-        return new Response('Saved them');
-    }
 
     /**
      * @Route("/test/key4", name="test_key4")
@@ -149,28 +84,6 @@ class TestController extends Controller
         return new Response('Text: '.$keyword->getNotes());
     }
 
-    /**
-     * @Route("/test/lesson1", name="test_lesson1")
-     */
-    public function configTestLesson1Action()
-    {
-        /**
-         * @var \Doctrine\ORM\EntityRepository $lessonRepo
-         */
-        $lessonRepo = $this->getDoctrine()->getRepository(Lesson::class);
-        /** @var Lesson $lesson */
-        $lesson = $lessonRepo->findOneBy(['id' => 1]);
-
-        $lesson->setIsAvailable(true);
-        $lesson->setParent(666);
-        $lesson->setSlug('slugggg');
-
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($lesson);
-        $em->flush();
-
-        return new Response('ok');
-    }
 
     /**
      * @Route("/test/rest-client1", name="test_rest_client1")
@@ -186,22 +99,6 @@ class TestController extends Controller
 
     }
 
-    /**
-     * @Route("/test/rest-server1", name="test_rest_server1")
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function testRestServer1Action(Request $request)
-    {
-        if ($request->getMethod() == 'GET') {
-            $dogs = [
-                'Renata',
-                'Rosie',
-            ];
-
-            return new JsonResponse($dogs);
-        }
-    }
 
     /**
      * @Route("/test/rest-server2", name="test_rest_server2")
@@ -255,22 +152,7 @@ class TestController extends Controller
 
     }
 
-    /**
-     * @Route("/test/upload-server1", name="test_upload_server1")
-     */
-    public function testUploadServer1Action(Request $request)
-    {
-        $uploadsDir = FileHelper::normalizePath(
-            $this->get('kernel')->getRootDir().'/../web'
-             . $this->container->getParameter('app.base_uploads_uri')
-        );
-        $userUploadsDir = $uploadsDir . '/user';
-        $chunksUploadsDir = $uploadsDir . '/chunks';
-        $uploader = new FileUploader($userUploadsDir, $chunksUploadsDir);
-        $result = $uploader->uploadFile($request);
-//        return new Response('DOG '. $method . $uploader->getDestinationDir());
-        return new JsonResponse($result);
-    }
+
 
     /**
      * @Route("/upload/submission/{rest}", name="uploaded_submissions", requirements={"rest"=".+"})
@@ -319,21 +201,7 @@ class TestController extends Controller
         return implode(DIRECTORY_SEPARATOR, $absolutes);
     }
 
-    /**
-     * @Route("/test/upload-server2", name="test_upload_server2")
-     */
-    public function testUploadServer2Action()
-    {
-        $uploadsDir = FileHelper::normalizePath(
-            $this->get('kernel')->getRootDir().'/../web'
-            .$this->container->getParameter('app.base_uploads_uri')
-        );
-        $userUploadsDir = $uploadsDir . '/user';
-        $chunksUploadsDir = $uploadsDir . '/chunks';
-        $uploader = new FileUploader($userUploadsDir, $chunksUploadsDir);
-//
-//        return new JsonResponse($result);
-    }
+
 
     /**
      * @Route("/test/info", name="test_info")
@@ -345,4 +213,46 @@ class TestController extends Controller
 
         return new Response($result);
     }
+
+    /**
+     * @Route("/test/log1", name="test_log1")
+     */
+    public function testLog1()
+    {
+        $this->container->get('monolog.logger.user_activity')->info('something happened', [
+            'foo' => 'bar'
+        ]);
+
+        return new Response('Log dog');
+    }
+
+    /**
+     * @Route("/test/log2", name="test_log2")
+     */
+    public function testLog2()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $activityLogRepo = $em->getRepository('AppBundle:UserActivityLog');
+        $activityLogItem = $activityLogRepo->createQueryBuilder('user_activity_log')
+            ->andWhere('user_activity_log.id = :id')
+            ->setParameter('id', 1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return new Response('Log dog 2');
+    }
+
+    /**
+     * @Route("/test/log3", name="test_log3")
+     */
+    public function testLog3()
+    {
+        $this->container->get('monolog.logger.security')->info(
+            'something bad happened', [
+            'evil_doer' => 'baz'
+        ]);
+
+        return new Response('Log dog 3');
+    }
+
 }
