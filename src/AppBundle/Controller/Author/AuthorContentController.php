@@ -25,7 +25,7 @@ class AuthorContentController extends Controller
     /**
      * List all of the lessons by title.
      *
-     * @Route("/author/lesson", name="lesson_list")
+     * @Route("/author/lesson", name="author_lesson_list", defaults={"type" = "lesson"})
      */
     public function authorListLessonAction()
     {
@@ -33,6 +33,19 @@ class AuthorContentController extends Controller
         $html = $this->authorListContentAction($contentType);
         return $html;
     }
+
+    /**
+     * List all of the exercises by title.
+     *
+     * @Route("/author/exercise", name="author_exercise_list", defaults={"type" = "exercise"})
+     */
+    public function authorListExerciseAction()
+    {
+        $contentType = ContentTypes::EXERCISE;
+        $html = $this->authorListContentAction($contentType);
+        return $html;
+    }
+
     public function authorListContentAction($contentType) {
         $hasAuthorRole = $this->container->get('security.authorization_checker')
             ->isGranted(Roles::ROLE_AUTHOR);
@@ -51,6 +64,7 @@ class AuthorContentController extends Controller
             );
 
         return $this->render('author/content/author_list_content.html.twig', [
+            'contentType' => $contentType,
             'content' => $content,
         ]);
 
