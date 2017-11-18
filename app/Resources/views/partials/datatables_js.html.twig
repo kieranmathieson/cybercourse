@@ -1,0 +1,25 @@
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.16/b-1.4.2/b-html5-1.4.2/b-print-1.4.2/fh-3.1.3/kt-2.3.2/rr-1.2.3/datatables.min.js"></script>
+<script type="text/javascript" src="{{ asset('js/dataTables.conditionalPaging.js') }}"></script>
+<script>
+    "use strict";
+    var SkillCourse = SkillCourse || {};
+    (function ($) {
+        //Set default options for DataTables.
+        SkillCourse.getDataTableDefaults = function ()
+        {
+            return {
+                //Rows per page.
+                pageLength: {{ items_per_page }},
+                //User cannot change rows per page.
+                lengthChange: false,
+                fixedHeader: {
+                    header: true
+                },
+                //Show user when processing is happening.
+                processing: true,
+                //Hide paginator when not needed.
+                conditionalPaging: true
+            };
+        }
+    }(jQuery));
+</script>
