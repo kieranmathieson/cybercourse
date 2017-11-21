@@ -25,6 +25,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity
+ * @Gedmo\Tree(type="nested")
  * @ORM\Table(name="content")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ContentRepository")
  */
@@ -153,6 +154,44 @@ class Content
      * @OneToMany(targetEntity="AppBundle\Entity\ExerciseSubmission", mappedBy="exercise")
      */
     protected $exerciseSubmissions;
+
+    /**
+     * @Gedmo\TreeLeft
+     * @ORM\Column(type="integer")
+     */
+    protected $lft;
+
+    /**
+     * @Gedmo\TreeLevel
+     * @ORM\Column(type="integer")
+     */
+    protected $lvl;
+
+    /**
+     * @Gedmo\TreeRight
+     * @ORM\Column(type="integer")
+     */
+    protected $rgt;
+
+    /**
+     * @Gedmo\TreeRoot
+     * @ORM\ManyToOne(targetEntity="Content")
+     * @ORM\JoinColumn(referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $root;
+
+    /**
+     * @Gedmo\TreeParent
+     * @ORM\ManyToOne(targetEntity="Content", inversedBy="children")
+     * @ORM\JoinColumn(referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $parent;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Content", mappedBy="parent")
+     * @ORM\OrderBy({"lft" = "ASC"})
+     */
+    protected $children;
 
     /**
      * @return integer
@@ -314,5 +353,19 @@ class Content
         $this->notes = $notes;
     }
 
+    public function getRoot()
+    {
+        return $this->root;
+    }
+
+    public function setParent(Content $parent = null)
+    {
+        $this->parent = $parent;
+    }
+
+    public function getParent()
+    {
+        return $this->parent;
+    }
 
 }
