@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     {% block stylesheets %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.24.0/skin-win8-n/ui.fancytree.min.css" rel="stylesheet">
+    <link type="text/css" href="{{ asset('js/fancytree/dist/skin-bootstrap-n/ui.fancytree.css') }}">
     <link rel="stylesheet" href="{{ asset('css/skillcourse-custom.css') }}">
     {% endblock %}
 </head>
@@ -43,6 +45,48 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
 <script src="{{ asset('js/sidebar-toggle.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.24.0/jquery.fancytree-all-deps.min.js"></script>
+    <script>
+        "use strict";
+        var SkillCourse = SkillCourse || {};
+        (function($) {
+            /**
+             * Add "active" property to node with given key,
+             * in tree of nodes for FancyMenu.
+             *
+             * @param nodes Tree of nodes for FancyMenu.
+             * @param activeId Key of node to set active.
+             */
+            SkillCourse.setActiveNode = function (nodes, activeId) {
+                nodes.forEach(function (node) {
+                    if (node.key === activeId) {
+                        node.active = true;
+                        return;
+                    }
+                    if (node.children && node.children.length > 0) {
+                        SkillCourse.setActiveNode(node.children, activeId);
+                    }
+                });
+            };
+
+            $(document).ready(function () {
+                //Show the lesson tree.
+                var treeContainer = $("#lessonTree");
+                var treeData = {
+                    source: {{ lessonTree|raw }},
+                    //If the current page is for a lesson, show an active item in the tree.
+                    activeVisible: {% if contentType == 'lesson' %}true{% else %}false{% endif %}
+                };
+                {% if contentType == 'lesson' %}
+                    //Mark the current lesson as active in the lesson tree.
+                    SkillCourse.setActiveNode(treeData.source, {{ content.id }});
+                {% endif %}
+                treeContainer.fancytree(treeData);
+            });
+
+        }(jQuery));
+
+    </script>
 {% endblock %}
 
 </body>

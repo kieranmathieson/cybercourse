@@ -76,6 +76,16 @@ Content
 
 * Short title for menu use.
 
+Tree stuff
+
+* Create fields on Content
+* Update database
+* Create repo
+* Update fixture
+* Create tree viewer
+* Create Tree updater.
+
+Gedmo trees - ondata is cascade. is that right?
 
 
 

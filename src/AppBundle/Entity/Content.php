@@ -64,6 +64,13 @@ class Content
     protected $title;
 
     /**
+     * Short title for a menu tree.
+     *
+     * @ORM\Column(type="string", length=20, nullable=true)
+     */
+    protected $shortMenuTreeTitle;
+
+    /**
      * Many content entities have many keywords.
      * @ManyToMany(targetEntity="Keyword", inversedBy="contentEntities")
      * @JoinTable(name="content_keyword")
@@ -263,6 +270,22 @@ class Content
     public function setTitle($title)
     {
         $this->title = $title;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShortMenuTreeTitle()
+    {
+        return $this->shortMenuTreeTitle;
+    }
+
+    /**
+     * @param string $shortMenuTreeTitle
+     */
+    public function setShortMenuTreeTitle($shortMenuTreeTitle)
+    {
+        $this->shortMenuTreeTitle = $shortMenuTreeTitle;
     }
 
     /**

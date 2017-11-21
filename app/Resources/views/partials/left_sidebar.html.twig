@@ -1,4 +1,23 @@
+{#{% block stylesheets %}#}
+    {#{{ parent() }}#}
+    {#<link type="text/css" href="{{ asset('js/fancytree/dist/skin-bootstrap-n/ui.fancytree.css') }}">#}
+{#{% endblock %}#}
+
 <aside class="col-sm-2" id="left-sidebar">
-    <p>This is sidebar content.</p>
-    <p>So is this.</p>
+    <div id="lessonTree"></div>
 </aside>
+
+{#{% block javascripts %}#}
+    {#{{ parent() }}#}
+    {#<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.24.0/skin-win8-n/ui.fancytree.min.css" rel="stylesheet">#}
+    {#<link href="/js/fancytree/src/skin-win8/ui.fancytree.css" rel="stylesheet">#}
+{#<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.24.0/jquery.fancytree-all-deps.min.js"></script>#}
+{#<script>#}
+    {#$(document).ready(function () {#}
+        {#$("#lessonTree").fancytree({#}
+            {#source: {{ lessonTree|raw }}#}
+        {#});#}
+    {#});#}
+{#</script>#}
+{#{% endblock %}#}
+
