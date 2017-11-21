@@ -89,6 +89,7 @@ AppBundle\Entity\Content:
     lesson{1..21}:
         contentType: lesson
         title: <sentence()>
+        shortMenuTreeTitle: <word()>
         slug: lesson<current()>
         keywords: '2x @keyword*'
         summary: <paragraph()>
