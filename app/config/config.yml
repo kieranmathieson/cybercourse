@@ -62,7 +62,7 @@ twig:
         users_can_create_acconts: '%app.users_can_create_accounts%'
         who_to_ask_about_accounts: '%app.who_to_ask_about_accounts%'
         # todo move out of global scope.
-        items_per_page: %app.items_per_page%
+        items_per_page: '%app.items_per_page%'
 
 # Doctrine Configuration
 doctrine:
@@ -85,6 +85,7 @@ stof_doctrine_extensions:
     orm:
         default:
             sluggable: true
+            tree: true
 
 # Swiftmailer Configuration
 swiftmailer:

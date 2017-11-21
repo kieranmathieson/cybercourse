@@ -65,5 +65,18 @@ Logging
 * Limit log file and table size.
 * Show user activity.
 
+TableData - use new JS approach.
+
+FancyTree
+
+* ENTER should jump to selected URL.
+* Check accessibility. Navbar mark.
+
+Content
+
+* Short title for menu use.
+
+
+
 
 

@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Categories{% endblock %}
+{% block page_header %}Categories{% endblock %}
+
+{% block body %}
+{{ dump() }}
+    <p>Here are the Categories.</p>
+
+    {% if authorOrBetter %}
+        {% set buttons = [
+            {
+                'caption': 'Add',
+                'icon': 'plus-circle',
+                'url': path('lesson_new'),
+                'title': 'Add a new lesson'
+            }
+        ] %}
+        {% include 'partials/page_actions.html.twig' with buttons %}
+    {% endif %}
+
+    {{ tree|raw }}
+{% endblock %}
+
+

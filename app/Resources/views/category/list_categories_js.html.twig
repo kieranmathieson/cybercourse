@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Categories{% endblock %}
+{% block page_header %}Categories{% endblock %}
+
+{% block body %}
+{{ dump() }}
+    <p>Here are the Categories.</p>
+
+    {% if authorOrBetter %}
+        {% set buttons = [
+            {
+                'caption': 'Add',
+                'icon': 'plus-circle',
+                'url': path('lesson_new'),
+                'title': 'Add a new lesson'
+            }
+        ] %}
+        {% include 'partials/page_actions.html.twig' with buttons %}
+    {% endif %}
+
+    <div id="lessonTree"></div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link type="text/css" href="{{ asset('js/fancytree/dist/skin-bootstrap-n/ui.fancytree.css') }}">
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.24.0/skin-win8-n/ui.fancytree.min.css" rel="stylesheet">
+    {#<link href="/js/fancytree/src/skin-win8/ui.fancytree.css" rel="stylesheet">#}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.24.0/jquery.fancytree-all-deps.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#lessonTree").fancytree({
+                source: {{ tree|raw }}
+            });
+        });
+    </script>
+{% endblock %}

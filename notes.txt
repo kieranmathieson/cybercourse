@@ -25,6 +25,20 @@ Log channels:
 * General, to file.
 
 
+Tree
+----
+
+https://github.com/digbot/tree_demo
+
+FancyTree for client-side (or FancyTree)
+
+
+authors can dnd - save tree back to server, replace existing tree with the new one.
+
+Gedmo tree.
+
+
+
 
 
 
