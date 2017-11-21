@@ -85,7 +85,8 @@ AppBundle\Entity\Keyword:
         text: <word()>
         notes: <paragraph()>
 AppBundle\Entity\Content:
-    lesson{1..20}:
+    # Need the first to be the root.
+    lesson{1..21}:
         contentType: lesson
         title: <sentence()>
         slug: lesson<current()>
