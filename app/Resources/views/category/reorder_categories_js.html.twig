@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Categories{% endblock %}
+{% block page_header %}Categories{% endblock %}
+
+{% block body %}
+{{ dump() }}
+    <p>Here are the Categories.</p>
+
+    {% if authorOrBetter %}
+        {% set buttons = [
+            {
+                'caption': 'Add',
+                'icon': 'plus-circle',
+                'url': path('lesson_new'),
+                'title': 'Add a new lesson'
+            }
+        ] %}
+        {% include 'partials/page_actions.html.twig' with buttons %}
+    {% endif %}
+
+    <div id="lessonTree"></div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link type="text/css" href="{{ asset('js/fancytree/dist/skin-bootstrap-n/ui.fancytree.css') }}">
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.24.0/skin-win8-n/ui.fancytree.min.css" rel="stylesheet">
+    {#<link href="/js/fancytree/src/skin-win8/ui.fancytree.css" rel="stylesheet">#}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.24.0/jquery.fancytree-all-deps.min.js"></script>
+    <script src="{{ asset('js/fancytree/src/jquery.fancytree.dnd5.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $("#lessonTree").fancytree({
+                source: {{ tree|raw }},
+                extensions: ["dnd5"],
+                dnd5: {
+                    // Available options with their default:
+//                    autoExpandMS: 1500,      // Expand nodes after n milliseconds of hovering.
+//                    dropMarkerOffsetX: -24,  // absolute position offset for .fancytree-drop-marker
+//                                             // relatively to ..fancytree-title (icon/img near a node accepting drop)
+//                    dropMarkerInsertOffsetX: -16, // additional offset for drop-marker with hitMode = "before"/"after"
+                    preventForeignNodes: false,   // Prevent dropping nodes from different Fancytrees
+                    preventNonNodes: false,       // Prevent dropping items other than Fancytree nodes
+                    preventRecursiveMoves: true,  // Prevent dropping nodes on own descendants
+                    preventVoidMoves: true,       // Prevent dropping nodes 'before self', etc.
+                    scroll: true,                 // Enable auto-scrolling while dragging
+//                    scrollSensitivity: 20,        // Active top/bottom margin in pixel
+//                    scrollSpeed: 5,               // Pixel per event
+                    // Events (drag support)
+                    dragStart: function(node, data) {
+                        return true;
+                    },
+                    dragDrag: function(node, data) {
+                        data.dataTransfer.dropEffect = "move";
+                    },
+                    dragEnd: function(node, data) {
+                    },
+                    // Events (drop support)
+                    dragEnter: function(node, data) {
+                        data.dataTransfer.dropEffect = "move";
+                        return true;
+                    },
+                    dragOver: function(node, data) {
+                        data.dataTransfer.dropEffect = "move";
+                    },
+                    dragLeave: function(node, data) {
+                    },
+                    dragExpand: $.noop,    // Callback(targetNode, data)
+                    dragDrop: function(node, data) {
+                        /* This function MUST be defined to enable dropping of items on
+                         * the tree.
+                         */
+                        var transfer = data.dataTransfer;
+                        if( data.otherNode ) {
+                            // Drop another Fancytree node from same frame
+                            // (maybe from another tree however)
+                            var sameTree = (data.otherNode.tree === data.tree);
+
+                            data.otherNode.moveTo(node, data.hitMode);
+                        } else if( data.otherNodeData ) {
+                            // Drop Fancytree node from different frame or window, so we only have
+                            // JSON representation available
+                            node.addChild(data.otherNodeData, data.hitMode);
+                        } else {
+                            // Drop a non-node
+                            node.addNode({
+                                title: transfer.getData("text")
+                            }, data.hitMode);
+                        }
+                        node.setExpanded();
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
