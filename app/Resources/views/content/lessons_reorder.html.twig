@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reorder lessons{% endblock %}
+{% block page_header %}Reorder lessons{% endblock %}
+{% block body %}
+
+    <p>
+        Move lessons around, add new lessons, use checkboxes to mark available lessons.
+    </p>
+
+    <div id="lessonReorderTree"></div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        "use strict";
+        var SkillCourse = SkillCourse || {};
+        (function($) {
+            /**
+             * Add a span to teach title, to place controls in.
+             *
+             * @param nodes Tree of nodes for FancyMenu.
+             */
+            SkillCourse.addControlSpans = function (nodes) {
+                nodes.forEach(function (node) {
+                    node.title += '<span data-id="' + node.key + '"></span>'
+                    if (node.children && node.children.length > 0) {
+                        SkillCourse.addControlSpans(node.children);
+                    }
+                });
+            };
+            $(document).ready(function () {
+                var nodes = {{ lessonReorderTree|raw }};
+                //Add places for controls to appear when a node is selected.
+                SkillCourse.addControlSpans(nodes);
+                //Show the lesson tree.
+                var lessonReorderTreeContainer = $("#lessonReorderTree");
+                var lessonReorderTreeData = {
+                    source: nodes,
+                    selectMode: 1, //Single selection.
+                    extensions: ["dnd5", "edit"],
+                    activate: function(event, data) {
+                        console.log('activate ' + data.node.title);
+                    },
+                    deactivate: function(event, data) {
+                        console.log('deactivate ' + data.node.title);
+                    },
+                    dnd5: {
+                        // Available options with their default:
+//                    autoExpandMS: 1500,      // Expand nodes after n milliseconds of hovering.
+//                    dropMarkerOffsetX: -24,  // absolute position offset for .fancytree-drop-marker
+//                                             // relatively to ..fancytree-title (icon/img near a node accepting drop)
+//                    dropMarkerInsertOffsetX: -16, // additional offset for drop-marker with hitMode = "before"/"after"
+                        preventForeignNodes: false,   // Prevent dropping nodes from different Fancytrees
+                        preventNonNodes: false,       // Prevent dropping items other than Fancytree nodes
+                        preventRecursiveMoves: true,  // Prevent dropping nodes on own descendants
+                        preventVoidMoves: true,       // Prevent dropping nodes 'before self', etc.
+                        scroll: true,                 // Enable auto-scrolling while dragging
+//                    scrollSensitivity: 20,        // Active top/bottom margin in pixel
+//                    scrollSpeed: 5,               // Pixel per event
+                        // Events (drag support)
+                        dragStart: function(node, data) {
+                            return true;
+                        },
+                        dragDrag: function(node, data) {
+                            data.dataTransfer.dropEffect = "move";
+                        },
+                        dragEnd: function(node, data) {
+                        },
+                        // Events (drop support)
+                        dragEnter: function(node, data) {
+                            data.dataTransfer.dropEffect = "move";
+                            return true;
+                        },
+                        dragOver: function(node, data) {
+                            data.dataTransfer.dropEffect = "move";
+                        },
+                        dragLeave: function(node, data) {
+                        },
+                        dragExpand: $.noop,    // Callback(targetNode, data)
+                        dragDrop: function(node, data) {
+                            /* This function MUST be defined to enable dropping of items on
+                             * the tree.
+                             */
+                            var transfer = data.dataTransfer;
+                            if( data.otherNode ) {
+                                // Drop another Fancytree node from same frame
+                                // (maybe from another tree however)
+                                var sameTree = (data.otherNode.tree === data.tree);
+
+                                data.otherNode.moveTo(node, data.hitMode);
+                            } else if( data.otherNodeData ) {
+                                // Drop Fancytree node from different frame or window, so we only have
+                                // JSON representation available
+                                node.addChild(data.otherNodeData, data.hitMode);
+                            } else {
+                                // Drop a non-node
+                                node.addNode({
+                                    title: transfer.getData("text")
+                                }, data.hitMode);
+                            }
+                            node.setExpanded();
+                        }
+                    }
+                };
+                lessonReorderTreeContainer.fancytree(lessonReorderTreeData);
+            });
+
+        }(jQuery));
+
+    </script>
+
+{% endblock %}
