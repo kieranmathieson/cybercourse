@@ -38,17 +38,38 @@ services:
         class: AppBundle\Form\ProfileFormType
         tags:
             - { name: form.type }
-#    user_image.namer.user_image:
-#        class: AppBundle\Service\UserPhotoNamer
-#        public: true
+    # Service to help with content types.
+    app.content_types:
+        class: AppBundle\Helper\ContentTypes
+        public: true
+    # Service to help with roles.
+    app.roles:
+        class: AppBundle\Helper\Roles
+        public: true
+    # Service to help with file processing.
     app.file_helper:
         class: AppBundle\Helper\FileHelper
         arguments: ['@service_container']
         public: true
+    # Service to help build nav links between lessons.
+    app.lesson_nav_link_helper:
+        class: AppBundle\Helper\LessonNavLinkHelper
+        arguments: ['@doctrine.orm.entity_manager', '@security.token_storage']
+        public: true
+    # Service to help with users.
+    app.user_helper:
+        class: AppBundle\Helper\UserHelper
+        arguments: ['@security.token_storage']
+        public: true
+    # Service to make lesson trees.
+    app.lesson_tree_maker:
+        class: AppBundle\Helper\LessonTreeMaker
+        arguments: ['@security.token_storage']
+        public: true
     Monolog\Formatter\JsonFormatter: ~
     app.user_activity_logger:
         class: AppBundle\Helper\UserActivityLogDBHandler
-        arguments: ['@doctrine.orm.entity_manager']
+        arguments: ['@doctrine.orm.entity_manager', '@app.user_helper', '@router']
         #    app.twig.custom_extension:
 #        class: AppBundle\Twig\Extension\RoleDisplay
 #        public: true
