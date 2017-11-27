@@ -70,18 +70,21 @@
             };
 
             $(document).ready(function () {
-                //Show the lesson tree.
-                var treeContainer = $("#lessonTree");
-                var treeData = {
-                    source: {{ lessonTree|raw }},
-                    //If the current page is for a lesson, show an active item in the tree.
-                    activeVisible: {% if contentType == 'lesson' %}true{% else %}false{% endif %}
-                };
-                {% if contentType == 'lesson' %}
-                    //Mark the current lesson as active in the lesson tree.
-                    SkillCourse.setActiveNode(treeData.source, {{ content.id }});
+                //Slimy patch? For when FOSUser controllers are being used.
+                {% if lessonTree is defined %}
+                    //Show the lesson tree.
+                    var treeContainer = $("#lessonTree");
+                    var treeData = {
+                        source: {{ lessonTree|raw }},
+                        //If the current page is for a lesson, show an active item in the tree.
+                        activeVisible: {% if showingLesson is defined and showingLesson %}true{% else %}false{% endif %}
+                    };
+                    {% if showingLesson is defined and showingLesson %}
+                        //Mark the current lesson as active in the lesson tree.
+                        SkillCourse.setActiveNode(treeData.source, {{ content.id }});
+                    {% endif %}
+                    treeContainer.fancytree(treeData);
                 {% endif %}
-                treeContainer.fancytree(treeData);
             });
 
         }(jQuery));
