@@ -1,0 +1,19 @@
+{% if lessonNavLinks is defined %}
+    {% if not (lessonNavLinks.parent is null) %}
+        <p>Up: <a href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.parent.slug }) }}"
+            >{{ lessonNavLinks.parent.title }}</a></p>
+    {% endif %}
+    {% if not (lessonNavLinks.left is null) %}
+        <p>Previous: <a href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.left.slug }) }}">{{ lessonNavLinks.left.title }}</a></p>
+    {% endif %}
+    {% if not (lessonNavLinks.right is null) %}
+        <p>Next: <a href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.right.slug }) }}">{{ lessonNavLinks.right.title }}</a></p>
+    {% endif %}
+    {% if not (lessonNavLinks.children is null) %}
+        <ul>
+            {% for child in lessonNavLinks.children %}
+                <li><a href="{{ path('content_show', {'contentType': contentType, 'slug': child.slug }) }}">{{ child.title }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endif %}
