@@ -12,6 +12,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\ManyToOne;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\LogRepository")
@@ -25,44 +26,50 @@ class UserActivityLog
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
-     * @ORM\Column(name="message", type="text")
+     * Many activity log entries have one user.
+     * @ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="activityLogEntries")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
      */
-    private $message;
+    protected $user;
 
     /**
-     * @ORM\Column(name="context", type="array")
+     * Roles user had at time of the event.
+     *
+     * @ORM\Column(type="json", nullable=true)
      */
-    private $context;
+    protected $roles;
 
     /**
-     * @ORM\Column(name="level", type="smallint")
+     * @ORM\Column(type="string", length=16)
      */
-    private $level;
+    protected $eventType;
 
     /**
-     * @ORM\Column(name="level_name", type="string", length=50)
+     * @ORM\Column(type="string", nullable=true)
      */
-    private $levelName;
+    protected $url;
 
     /**
-     * @ORM\Column(name="extra", type="array")
+     * Extra data in JSON.
+     *
+     * @ORM\Column(type="json", nullable=true)
      */
-    private $extra;
+    protected $extra;
 
     /**
-     * @ORM\Column(name="created_at", type="datetime")
+     * @ORM\Column(type="datetime")
      */
-    private $createdAt;
+    protected $when;
 
     /**
      * @ORM\PrePersist
      */
     public function onPrePersist()
     {
-        $this->createdAt = new \DateTime();
+        $this->when = new \DateTime();
     }
 
     /**
@@ -76,121 +83,47 @@ class UserActivityLog
     }
 
     /**
-     * Set message
-     *
-     * @param string $message
-     *
-     * @return Log
-     */
-    public function setMessage($message)
-    {
-        $this->message = $message;
-
-        return $this;
-    }
-
-    /**
-     * Get message
-     *
-     * @return string
-     */
-    public function getMessage()
-    {
-        return $this->message;
-    }
-
-    /**
-     * Set context
-     *
-     * @param array $context
-     *
-     * @return Log
-     */
-    public function setContext($context)
-    {
-        $this->context = $context;
-
-        return $this;
-    }
-
-    /**
-     * Get context
-     *
-     * @return array
-     */
-    public function getContext()
-    {
-        return $this->context;
-    }
-
-    /**
-     * Set level
-     *
-     * @param integer $level
-     *
-     * @return Log
-     */
-    public function setLevel($level)
-    {
-        $this->level = $level;
-
-        return $this;
-    }
-
-    /**
-     * Get level
-     *
-     * @return integer
-     */
-    public function getLevel()
-    {
-        return $this->level;
-    }
-
-    /**
-     * Set levelName
-     *
-     * @param string $levelName
-     *
-     * @return Log
-     */
-    public function setLevelName($levelName)
-    {
-        $this->levelName = $levelName;
-
-        return $this;
-    }
-
-    /**
-     * Get levelName
-     *
-     * @return string
-     */
-    public function getLevelName()
-    {
-        return $this->levelName;
-    }
-
-    /**
-     * Set extra
+     * Set extra, pass array.
      *
      * @param array $extra
      *
-     * @return Log
+     * @return UserActivityLog
      */
     public function setExtra($extra)
     {
-        $this->extra = $extra;
-
+        $this->extra = json_encode($extra);
         return $this;
     }
 
     /**
-     * Get extra
+     * Set extra, pass string, assume JSON encoded.
+     *
+     * @param string $extra
+     *
+     * @return UserActivityLog
+     */
+    public function setExtraJson($extra)
+    {
+        $this->extra = $extra;
+        return $this;
+    }
+
+    /**
+     * Get extra, return array.
      *
      * @return array
      */
     public function getExtra()
+    {
+        return json_decode($this->extra);
+    }
+
+    /**
+     * Set extra, return string, assume JSON.
+     *
+     * @return string
+     */
+    public function getExtraJson()
     {
         return $this->extra;
     }
@@ -198,24 +131,80 @@ class UserActivityLog
     /**
      * Set createdAt
      *
-     * @param \DateTime $createdAt
+     * @param \DateTime $when
      *
-     * @return Log
+     * @return UserActivityLog
      */
-    public function setCreatedAt($createdAt)
+    public function setWhen($when)
     {
-        $this->createdAt = $createdAt;
+        $this->when = $when;
 
         return $this;
     }
 
     /**
-     * Get createdAt
+     * Get when.
      *
      * @return \DateTime
      */
-    public function getCreatedAt()
+    public function getWhen()
     {
-        return $this->createdAt;
+        return $this->when;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @param array $roles
+     * @return UserActivityLog
+     */
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEventType()
+    {
+        return $this->eventType;
+    }
+
+    /**
+     * @param string $eventType
+     * @return UserActivityLog
+     */
+    public function setEventType($eventType)
+    {
+        $this->eventType = $eventType;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * @param string $url
+     * @return UserActivityLog
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+        return $this;
+    }
+
+
 }
