@@ -36,13 +36,8 @@ class UserActivityLog
     protected $user;
 
     /**
-     * Roles user had at time of the event.
+     * What happened. See AppBundle\Helper\ActivityLogHelper.
      *
-     * @ORM\Column(type="json", nullable=true)
-     */
-    protected $roles;
-
-    /**
      * @ORM\Column(type="string", length=16)
      */
     protected $eventType;
@@ -51,6 +46,12 @@ class UserActivityLog
      * @ORM\Column(type="string", nullable=true)
      */
     protected $url;
+
+    /**
+     * IP address. Length allows for IPv6
+     * @ORM\Column(type="string", length=45, nullable=true)
+     */
+    protected $ip;
 
     /**
      * Extra data in JSON.
@@ -62,14 +63,14 @@ class UserActivityLog
     /**
      * @ORM\Column(type="datetime")
      */
-    protected $when;
+    protected $whenEvent;
 
     /**
      * @ORM\PrePersist
      */
     public function onPrePersist()
     {
-        $this->when = new \DateTime();
+        $this->whenEvent = new \DateTime();
     }
 
     /**
@@ -81,6 +82,26 @@ class UserActivityLog
     {
         return $this->id;
     }
+
+    /**
+     * @return User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User $user
+     * @return $this
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+
 
     /**
      * Set extra, pass array.
@@ -131,13 +152,13 @@ class UserActivityLog
     /**
      * Set createdAt
      *
-     * @param \DateTime $when
+     * @param \DateTime $whenEvent
      *
      * @return UserActivityLog
      */
-    public function setWhen($when)
+    public function setWhenEvent($whenEvent)
     {
-        $this->when = $when;
+        $this->whenEvent = $whenEvent;
 
         return $this;
     }
@@ -147,27 +168,9 @@ class UserActivityLog
      *
      * @return \DateTime
      */
-    public function getWhen()
+    public function getWhenEvent()
     {
-        return $this->when;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRoles()
-    {
-        return $this->roles;
-    }
-
-    /**
-     * @param array $roles
-     * @return UserActivityLog
-     */
-    public function setRoles($roles)
-    {
-        $this->roles = $roles;
-        return $this;
+        return $this->whenEvent;
     }
 
     /**
@@ -206,5 +209,22 @@ class UserActivityLog
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getIp()
+    {
+        return $this->ip;
+    }
+
+    /**
+     * @param string $ip
+     * @return UserActivityLog
+     */
+    public function setIp($ip)
+    {
+        $this->ip = $ip;
+        return $this;
+    }
 
 }
