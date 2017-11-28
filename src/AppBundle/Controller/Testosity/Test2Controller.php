@@ -3,21 +3,26 @@
 namespace AppBundle\Controller\Testosity;
 
 use AppBundle\Entity\Category;
+use AppBundle\Helper\UserActivityLogHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class Test2Controller extends Controller
 {
 
     protected $em;
+    protected $activityLogger;
 
     /**
      * Test2Controller constructor.
      */
-    public function __construct(EntityManagerInterface $em) {
+    public function __construct(EntityManagerInterface $em,
+            UserActivityLogHelper $activityLogger) {
         $this->em = $em;
+        $this->activityLogger = $activityLogger;
     }
 
 
@@ -179,4 +184,24 @@ class Test2Controller extends Controller
         return new Response('Moooooved');
 
     }
+
+    /**
+     * @Route("/test2/t8", name="test2_t8")
+     */
+    public function t8(Request $request) {
+        $this->activityLogger->logEvent(UserActivityLogHelper::VIEW_EXERCISE, $request);
+        return new Response('logged');
+    }
+
+    /**
+     * @Route("/test2/t9", name="test2_t9")
+     */
+    public function t9(Request $request) {
+        $this->activityLogger->logEvent(
+            UserActivityLogHelper::VIEW_EXERCISE,
+            $request,
+            ['best' => 'dogs']);
+        return new Response('log dog');
+    }
+
 }

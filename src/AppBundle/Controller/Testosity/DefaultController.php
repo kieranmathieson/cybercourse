@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Testosity;
 
 use AppBundle\Service\RstCustomDirectives\Directives\SkillCourseKernel;
 use AppBundle\Service\RstCustomDirectives\Directives\Dude;
