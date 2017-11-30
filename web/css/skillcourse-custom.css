@@ -50,9 +50,9 @@ main a:hover, main a:focus {
     text-align: center;
 }
 
-.dataTable.stripe-table .even {
-    background-color: #f4fff3;
-}
+/*.dataTable.stripe-table .even {*/
+    /*background-color: #f4fff3;*/
+/*}*/
 
 .dataTable.highlight-sorting-column .sorting_asc,
 .dataTable.highlight-sorting-column .sorting_desc
@@ -65,8 +65,8 @@ main a:hover, main a:focus {
     background-color: #FBFBFB;
 }
 
-.dataTable .row-removed {
-    color: #b3afaf;
+.dataTable .not-available {
+    background-color: #F0F0F0;
 }
 
 /* ---------- For forms. ---------- */
