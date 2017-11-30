@@ -1,18 +1,30 @@
-{{ form_start(lessonForm, { 'attr': { 'class': 'pure-form pure-form-stacked'}}) }}
-    {{ form_row(lessonForm.title) }}
-    {{ form_row(lessonForm.changeSlug) }}
-    {{ form_row(lessonForm.slug) }}
-    {{ form_row(lessonForm.summary) }}
-    {{ form_row(lessonForm.body) }}
-    {{ form_row(lessonForm.isAvailable) }}
+{# Included from author_content_new/edit. Form is almost the same for both. #}
+    {# render any "global" errors #}
+    {#{% include 'partials/form_errors.html.twig' %}#}
+{{ form_start(contentForm) }}
+    {{ form_row(contentForm.title) }}
+    {% if contentForm.shortMenuTreeTitle is defined %}
+        {{ form_row(contentForm.shortMenuTreeTitle) }}
+    {% endif %}
+    {{ form_row(contentForm.changeSlug) }}
+    {{ form_row(contentForm.slug) }}
+    {{ form_row(contentForm.summary) }}
+    {{ form_row(contentForm.body) }}
+    {% if contentForm.patternCondition is defined %}
+        {{ form_row(contentForm.patternCondition) }}
+    {% endif %}
+    {% if contentForm.patternAction is defined %}
+        {{ form_row(contentForm.patternAction) }}
+    {% endif %}
+    {{ form_row(contentForm.isAvailable) }}
+    {{ form_row(contentForm.notes) }}
 
-    <button type="submit" class="pure-button">Save</button>
-    {#<button type="submit" class="pure-button" formnovalidate>Save</button>#}
+    <button type="submit" class="btn btn-primary" title="Save the content">Save</button>
     <a href="{%
         if operation == 'new'
-            %}{{ path('lesson_list') }}{%
+            %}{{ path('content_list') }}{%
         else
-            %}{{ path('lesson_edit', {'id': lesson_id}) }}{%
+            %}{{ path('content_edit', {'contentType': contentType, 'id': lesson_id}) }}{%
         endif
-    %}" class="pure-button">Cancel <span class="fa fa-times"></span></a>
-{{ form_end(lessonForm) }}
+    %}" class="btn btn-secondary" title="Fuggedaboudit">Cancel</a>
+{{ form_end(contentForm) }}
