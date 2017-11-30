@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Category;
 
 use AppBundle\Entity\Category;
 use AppBundle\Entity\User;
