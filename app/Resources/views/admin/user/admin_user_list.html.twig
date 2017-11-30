@@ -10,14 +10,15 @@
 {% block body %}
     {% if is_granted('ROLE_ADMIN') %}
         <p>Here are all the users. The heading of the sorting column is highlighted.</p>
-
-        <table id="displayTable" class="table display stripe-table highlight-sorting-column show-hover-row" width="100%"></table>
+        <table id="displayTable" {{
+            constant('AppBundle\\Helper\\DataTableHelper::STANDARD_ATTRS')
+        }}></table>
     {% endif %}
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.16/b-1.4.2/b-html5-1.4.2/b-print-1.4.2/fh-3.1.3/kt-2.3.2/rr-1.2.3/datatables.min.js"></script>
+    {% include 'partials/datatables_js.html.twig' %}
     <script>
         // Todo: fixed header not working. Extension on?
         var tableData = [
@@ -35,34 +36,25 @@
             {% endfor %}
         ];
         $(document).ready(function(){
-            alert('dso');
-            $('#displayTable').DataTable( {
-                data: tableData,
-                //Rows per page.
-                pageLength: {{ items_per_page }},
-                //User cannot change rows per page.
-                lengthChange: false,
-                fixedHeader: {
-                    header: true
-                },
-                //Show user when processing is happening.
-                processing: true,
-                //Called when a row is created.
-                createdRow: function ( row, data, index ) {
-                    if ( data.enabled.toLowerCase() === 'no' ) {
-                        $(row).addClass('row-removed');
-                    }
-                },
-                columns: [
-                    { data: 'username', title: 'User name' },
-                    { data: 'first_name', title: 'First name' },
-                    { data: 'last_name', title: 'Last name' },
-                    { data: 'roles', title: 'Roles' },
-                    { data: 'enabled', title: 'Enabled', className: 'centered' },
-                    { data: 'email', title: 'Email' },
-                    { data: 'edit', title: '', orderable: false }
-                ]
-            } );
+            //Prepare the options.
+            var dataTableOptions = SkillCourse.getDataTableDefaults();
+            //Called when a row is created.
+            dataTableOptions.createdRow = function ( row, data, index ) {
+                if ( ! data.enabled ) {
+                    $(row).addClass('not-available');
+                }
+            };
+            dataTableOptions.columns = [
+                { data: 'username', title: 'User name' },
+                { data: 'first_name', title: 'First name' },
+                { data: 'last_name', title: 'Last name' },
+                { data: 'roles', title: 'Roles' },
+                { data: 'enabled', title: 'Enabled', className: 'centered' },
+                { data: 'email', title: 'Email' },
+                { data: 'edit', title: '', orderable: false }
+            ];
+            dataTableOptions.data = tableData;
+            $('#displayTable').DataTable( dataTableOptions );
         });
     </script>
 {% endblock %}
