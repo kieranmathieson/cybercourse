@@ -9,10 +9,13 @@
 
 namespace AppBundle\Helper;
 
+use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UserHelper
 {
+    const ANONYMOUS_USER_NAME = 'anon.';
+
     /** @var TokenStorageInterface $tokenStorage */
     protected $tokenStorage;
 
@@ -45,5 +48,32 @@ class UserHelper
             return $loggedInUser->isAuthorOrBetter();
         }
         return false;
+    }
+
+    /**
+     * Get the logged in user.
+     * Null if there isn't one.
+     *
+     * @return User|null
+     */
+    public function getLoggedInUser() {
+        /** @var \AppBundle\Entity\User|string|null $loggedInUser */
+        $loggedInUser = $this->tokenStorage->getToken()->getUser();
+        if ( ! $loggedInUser instanceof User ) {
+            $loggedInUser = null;
+        }
+        return $loggedInUser;
+    }
+
+    /**
+     * Get the id of the logged in user.
+     * anon. for anonymous, null, or integer.
+     *
+     * @return integer|string|null
+     */
+    public function getLoggedInUserId() {
+        /** @var \AppBundle\Entity\User|string|null $loggedInUser */
+        $loggedInUser = $this->tokenStorage->getToken()->getUser();
+        return $loggedInUser->getId();
     }
 }
