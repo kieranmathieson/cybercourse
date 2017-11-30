@@ -1,0 +1,15 @@
+{% block checkbox_row %}
+    <div class="form-check{% if attr.extraClasses is defined %} {{ attr.extraClasses }}{% endif %}">
+        <label class="form-check-label">
+            <input class="form-check-input" type="checkbox"
+                    {% if value %} value="1" checked="checked" {% else %} value="0" {% endif %}
+                    {{ block('widget_attribs') }}
+            >
+            {{ label }}
+        </label>
+        {% if attr.help is defined %}
+            <small id="{{ id }}help" class="form-text text-muted">{{ attr.help|raw }}</small>
+        {% endif %}
+        {{ block('form_errors') }}
+    </div>
+{% endblock %}

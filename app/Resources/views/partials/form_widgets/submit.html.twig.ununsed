@@ -1,0 +1,14 @@
+{# Submit button form widget. #}
+{# Caller need to wrap in this to define approprriate group --> <div class="form-group">#}
+{# If help is set, need an id as well. #}
+    <button type="submit"
+        {# Id is needed when using help text. #}
+        {% if widget.id is defined %} id="{{ widget.id }}" {% endif %}
+        class="btn btn-{{ widget.variant }}{% if widget.extraClasses is defined %} {{ widget.extraClasses }}{% endif %}"
+        {% if widget.title is defined %} title="{{ widget.title }}" {% endif %}
+        {% if widget.help is defined %} aria-describedby="{{ widget.id }}help" {% endif %}
+    >{{ widget.caption }}</button>
+    {% if widget.help is defined %}
+        <small id="{{ widget.id }}help" class="form-text text-muted">{{ widget.help|raw }}</small>
+    {% endif %}
+{# End of the wrapper. Everybody off. </div>#}

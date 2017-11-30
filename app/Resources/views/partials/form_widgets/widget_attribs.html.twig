@@ -1,0 +1,9 @@
+{% block widget_attribs %}
+    {# Common attributes of widgets. #}
+    name="{{ name }}" id="{{ id }}"
+    {% if required %} required {% endif %}
+    {% if disabled %} disabled="disabled" readonly {% endif %}
+    {% if attr.title is defined %} title="{{ attr.title }}" {% endif %}
+    {% if attr.placeholder is defined %} placeholder="{{ attr.placeholder }}" {% endif %}
+    {% if attr.help is defined %} aria-describedby="{{ id }}help" {% endif %}
+{% endblock %}

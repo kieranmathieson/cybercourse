@@ -1,0 +1,12 @@
+{% block text_row %}
+    <div class="form-group">
+        {{ block('label') }}
+        {{ block('form_errors') }}
+        <input class="form-control{% if attr.extraClasses is defined %} {{ attr.extraClasses }}{% endif %}" name="{{ name }}" id="{{ id }}"
+                {{ block('widget_attribs') }}
+               value="{{ value|raw }}">
+        {% if attr.help is defined %}
+            <small id="{{ id }}help" class="form-text text-muted">{{ attr.help|raw }}</small>
+        {% endif %}
+    </div>
+{% endblock %}
