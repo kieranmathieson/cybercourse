@@ -8,7 +8,7 @@ x    * form
 
 x Create a form for lesson.
 
-Create a tree of lessons.
+x Create a tree of lessons.
 
 Learn about accessibility
 
@@ -34,7 +34,7 @@ Multi-file upload
 
 User profiles only available for logged in users, where user has given permission. Or for instructors of classes the user is in.
 
-AJAX tables.
+AJAX tables page for when lotsa records.
 
 X Adapt to Bootstrap
 
@@ -87,6 +87,29 @@ Tree stuff
 
 Gedmo trees - ondata is cascade. is that right?
 
+Remove FOSUser? Not using my controller.
 
+
+
+DOcumentation
+DRY
+Testing.
+
+
+Security.
+  * Check CSRF protection on forms.
+  * Check AJAX calls - protected?
+
+
+Site pages
+
+Naming standards
+
+    X-list.html.twig
+    X-show
+
+Lesson nav - next lesson could be first lesson in next subtree.
+
+User - show most recent lesson in the lesson tree, if not on a lesson showing page.
 
 
