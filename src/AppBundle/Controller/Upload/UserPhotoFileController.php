@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller\Rest;
+namespace AppBundle\Controller\Upload;
 
 use AppBundle\Entity\UploadedFile;
 use AppBundle\Entity\User;

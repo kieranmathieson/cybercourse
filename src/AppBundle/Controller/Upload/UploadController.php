@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Upload;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
