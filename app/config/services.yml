@@ -42,6 +42,10 @@ services:
     app.content_types:
         class: AppBundle\Helper\ContentTypes
         public: true
+    # Service to help with data tables on the client.
+    app.data_tables:
+        class: AppBundle\Helper\DataTableHelper
+        public: true
     # Service to help with roles.
     app.roles:
         class: AppBundle\Helper\Roles
@@ -64,12 +68,16 @@ services:
     # Service to make lesson trees.
     app.lesson_tree_maker:
         class: AppBundle\Helper\LessonTreeMaker
-        arguments: ['@security.token_storage']
+        arguments: ['@doctrine.orm.entity_manager', '@app.user_helper', '@router']
+        public: true
+    app.user_activity_logger:
+        class: AppBundle\Helper\UserActivityLogHelper
+        arguments: ['@doctrine.orm.entity_manager', '@app.user_helper']
         public: true
     Monolog\Formatter\JsonFormatter: ~
-    app.user_activity_logger:
-        class: AppBundle\Helper\UserActivityLogDBHandler
-        arguments: ['@doctrine.orm.entity_manager', '@app.user_helper', '@router']
+#    app.user_activity_logger:
+#        class: AppBundle\Helper\UserActivityLogDBHandler
+#        arguments: ['@doctrine.orm.entity_manager', '@app.user_helper', '@router']
         #    app.twig.custom_extension:
 #        class: AppBundle\Twig\Extension\RoleDisplay
 #        public: true
