@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Author;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -18,6 +18,5 @@ class AuthorController extends Controller
     public function indexAction()
     {
         return new Response('Author menu');
-        return $this->render('', array('name' => $name));
     }
 }
