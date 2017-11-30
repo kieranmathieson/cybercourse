@@ -9,33 +9,38 @@
 {% block page_header %}{{ contentTypeDisplayName }}s{% endblock %}
 
 {% block body %}
-{{ dump() }}
     <p>Here are the {{ contentType }}s.</p>
 
     {% if authorOrBetter %}
         {% set buttons = [
             {
                 'caption': 'Add',
-                'icon': 'plus-circle',
-                'url': path('lesson_new'),
-                'title': 'Add a new lesson'
+                'url': path('content_new', {'contentType': contentType}),
+                'title': 'Add a new ' ~ contentType
             }
         ] %}
         {% include 'partials/page_actions.html.twig' with buttons %}
     {% endif %}
 
-    <table id="displayTable" class="table display stripe-table highlight-sorting-column show-hover-row" width="100%"></table>
+    <table id="displayTable" {{
+        constant('AppBundle\\Helper\\DataTableHelper::STANDARD_ATTRS')
+    }}></table>
 {% endblock %}
 
-    {% block javascripts %}
-        {{ parent() }}
-        <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.16/b-1.4.2/b-html5-1.4.2/b-print-1.4.2/fh-3.1.3/kt-2.3.2/rr-1.2.3/datatables.min.js"></script>
-        <script>
-            // Todo: fixed header not working. Extension on?
-            var tableData = [
-                {% for item in content %}
+{% block javascripts %}
+    {{ parent() }}
+    {% include 'partials/datatables_js.html.twig' %}
+    <script>
+        // Todo: fixed header not working. Extension on?
+        var tableData = [
+            {% for item in content %}
+                {% set showUrl = path('content_show', {'contentType': contentType, 'slug': item.slug }) %}
+                {% set title = "<a href='#{showUrl}'>#{ item.title }</a>"|raw %}
+                {% if contentType == constant('AppBundle\\Helper\\ContentTypes::LESSON') %}
+                    {% set title = title ~ "<br><br>Tree title: #{ item.shortMenuTreeTitle }"|raw %}
+                {% endif %}
                 {
-                    'title': "<a href='{{ path('content_show', {'contentType': contentType, 'slug': item.slug}) }}'>{{ item.title }}</a>",
+                    'title': "{{ title|raw }}",
                     'keywords': "{%
                         for keyword in item.keywords
                             %}<a href='{{ path('content_list_with_keyword', {'id': keyword.id}) }}'>{{ keyword.text }}</a>{%
@@ -44,41 +49,35 @@
                     {% if authorOrBetter %}
                         'available': "{{ item.isAvailable ? 'Yes' : 'No' }}",
                         'lastUpdate': "{{ item.whenUpdated|date('M, j Y, h:i a') }}",
-                        'edit': '<a href="{{ path('lesson_edit', {'id': item.id}) }}" class="btn btn-primary" role="button">Edit</a>'
+                        'edit': '<a href="{{
+                            path('content_edit', {'contentType': contentType, 'id': item.id})
+                        }}" class="btn btn-primary" role="button">Edit</a>'
                     {% endif %}
                 }{% if not loop.last %},{% endif %}
-                {% endfor %}
-            ];
-            $(document).ready(function(){
-                $('#displayTable').DataTable( {
-                    data: tableData,
-                    //Rows per page.
-                    pageLength: {{ items_per_page }},
-                    //User cannot change rows per page.
-                    lengthChange: false,
-                    fixedHeader: {
-                        header: true
-                    },
-                    //Show user when processing is happening.
-                    processing: true,
-//                    //Called when a row is created.
-//                    createdRow: function ( row, data, index ) {
-//                        if ( data.enabled.toLowerCase() === 'no' ) {
-//                            $(row).addClass('row-removed');
-//                        }
-//                    },
-                    columns: [
-                        {data: 'title', title: 'Title'},
-                        {data: 'keywords', title:'Keywords', orderable: false},
-                        {% if authorOrBetter %}
-                            {data: 'available', title: 'Available', className: 'centered'},
-                            {data: 'lastUpdate', title: 'Last update'},
-                            {data: 'edit', title: '', orderable: false}
-                        {% endif %}
-                    ]
-                } );
-            });
-        </script>
-    {% endblock %}
+            {% endfor %}
+        ];
+        //Prepare the options.
+        var dataTableOptions = SkillCourse.getDataTableDefaults();
+        //Called when a row is created.
+        dataTableOptions.createdRow = function ( row, data, index ) {
+            if ( data.available.toLowerCase() === 'no' ) {
+                $(row).addClass('not-available');
+            }
+        };
+        dataTableOptions.columns = [
+            {data: 'title', title: 'Title'},
+            {data: 'keywords', title:'Keywords', orderable: false},
+            {% if authorOrBetter %}
+                {data: 'available', title: 'Available', className: 'centered'},
+                {data: 'lastUpdate', title: 'Last update'},
+                {data: 'edit', title: '', orderable: false}
+            {% endif %}
+        ];
+        dataTableOptions.data = tableData;
+        $(document).ready(function(){
+            $('#displayTable').DataTable( dataTableOptions );
+        });
+    </script>
+{% endblock %}
 
 
