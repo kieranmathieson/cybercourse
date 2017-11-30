@@ -1,3 +1,5 @@
+{% block submit %}
+    {{ dump() }}
 {# Submit button form widget. #}
 {# Caller need to wrap in this to define approprriate group --> <div class="form-group">#}
 {# If help is set, need an id as well. #}
@@ -12,3 +14,4 @@
         <small id="{{ widget.id }}help" class="form-text text-muted">{{ widget.help|raw }}</small>
     {% endif %}
 {# End of the wrapper. Everybody off. </div>#}
+{% endblock %}
