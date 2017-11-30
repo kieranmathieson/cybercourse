@@ -1,12 +1,16 @@
 <nav class="page-actions">
     {% for button in buttons %}
-        <a class="pure-button page-action-button{%
+        {# Work out the button style. #}
+        {% set buttonStyle = 'primary' %}
+        {% if button.style is defined %}
+                {% set buttonStyle = button.style %}
+        {% endif %}
+        <a class="btn btn-{{ buttonStyle }}{%
             if button.classes is defined %} {{ button.classes }}{% endif
         %}" href="{{ button.url }}"
         {% if button.title is defined %}
             title="{{ button.title }}"
         {% endif %}
-        >{{ button.caption|raw }}{%
-            if button.icon is defined %} <span class="fa fa-{{ button.icon }}"></span>{% endif %}</a>
+        >{{ button.caption|raw }}</a>
     {% endfor %}
 </nav>
