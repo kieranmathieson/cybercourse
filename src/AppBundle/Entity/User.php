@@ -24,6 +24,7 @@ class User extends BaseUser
         $this->exerciseSubmissions = new ArrayCollection();
         $this->enrollments = new ArrayCollection();
         $this->photos = new ArrayCollection();
+        $this->activityLogEntries = new ArrayCollection();
     }
 
     /**
@@ -36,11 +37,7 @@ class User extends BaseUser
     /**
      * @ORM\Column(type="string")
      */
-
     protected $firstName;
-    /**
-     * @return string
-     */
 
     /**
      * @ORM\Column(type="string")
@@ -51,8 +48,6 @@ class User extends BaseUser
      * @ORM\Column(type="text", nullable=true)
      */
     protected $aboutMe;
-
-
 
     /**
      * @ORM\Column(type="datetime")
@@ -97,6 +92,12 @@ class User extends BaseUser
      * @OneToMany(targetEntity="AppBundle\Entity\UserPhoto", mappedBy="user")
      */
     protected $photos;
+
+    /**
+     * One user has many activity log entries.
+     * @OneToMany(targetEntity="AppBundle\Entity\UserActivityLog", mappedBy="user")
+     */
+    protected $activityLogEntries;
 
 
     public function getFirstName()
@@ -208,6 +209,10 @@ class User extends BaseUser
             || in_array(Roles::ROLE_SUPER_ADMIN, $userRoles)
         );
         return $authorOrBetter;
+    }
+
+    public function getActivityLogEntries() {
+        return $this->activityLogEntries;
     }
 
 
