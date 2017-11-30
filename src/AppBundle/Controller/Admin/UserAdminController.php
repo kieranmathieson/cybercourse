@@ -3,7 +3,6 @@
 namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\User;
-use AppBundle\Entity\UserPhoto;
 use AppBundle\Form\AdminEditUserFormType;
 use Doctrine\ORM\EntityRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
