@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller\Keyword;
 
+use AppBundle\Entity\Keyword;
+use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -26,17 +28,24 @@ class KeywordController extends Controller
     /**
      * @Route("/keyword/{id}", name="keyword_show")
      */
-    public function showKeywordAction($id)
+    public function showKeywordAction(Keyword $keyword)
     {
-        /** @var \Doctrine\ORM\EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-        $keyword = $em->getRepository('AppBundle:Keyword')
-            ->find($id);
-        if (!$keyword) {
-            throw $this->createNotFoundException('Keyword not found: '.$id);
+        //Load the logged in user.
+        /** @var User|string $loggedInUser */
+        $loggedInUser = $this->getUser();
+        //Most users only see content that is marked available.
+        $authorOrBetter = false;
+        if (!is_null($loggedInUser)) {
+            $authorOrBetter = $loggedInUser->isAuthorOrBetter();
         }
-        return $this->render('keyword/keyword_show.html.twig', array(
-            'keyword' => $keyword,
-        ));
+        //Because of Doctrine relationship magic, the links to content are already loaded.
+        return $this->render(
+            'keyword/keyworded_content_list.html.twig',
+            [
+                'authorOrBetter' => $authorOrBetter,
+                'keyword' => $keyword,
+            ]
+        );
     }
+
 }

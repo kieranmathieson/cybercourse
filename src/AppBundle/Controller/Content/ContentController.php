@@ -135,32 +135,6 @@ class ContentController extends Controller
     }
 
     /**
-     * Show content.
-     *
-     * @Route("/keyword/{id}", name="content_list_with_keyword")
-     * @param Keyword $keyword
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function listContentWithKeyword(Keyword $keyword)
-    {
-        //Load the logged in user.
-        /** @var User|string $loggedInUser */
-        $loggedInUser = $this->getUser();
-        //Most users only see content that is marked available.
-        $authorOrBetter = false;
-        if (!is_null($loggedInUser)) {
-            $authorOrBetter = $loggedInUser->isAuthorOrBetter();
-        }
-        return $this->render(
-            'keyword/list_keyworded_content.html.twig',
-            [
-                'authorOrBetter' => $authorOrBetter,
-                'keyword' => $keyword,
-            ]
-        );
-    }
-
-    /**
      * @Route("/content/lesson/reorder", name="reorder_lessons")
      * @Security("has_role('ROLE_ADMIN', 'ROLE_SUPER_ADMIN', 'ROLE_AUTHOR')")
      */

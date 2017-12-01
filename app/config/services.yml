@@ -60,6 +60,15 @@ services:
         class: AppBundle\Helper\LessonNavLinkHelper
         arguments: ['@doctrine.orm.entity_manager', '@security.token_storage']
         public: true
+    # Service to help with keywords.
+    app.keywords_helper:
+        class: AppBundle\Helper\KeywordHelper
+        arguments: ['@doctrine.orm.entity_manager']
+        public: true
+    # Service to help with form error messages.
+    app.form_error_message_helper:
+        class: AppBundle\Helper\FormErrorMessageHelper
+        public: true
     # Service to help with users.
     app.user_helper:
         class: AppBundle\Helper\UserHelper

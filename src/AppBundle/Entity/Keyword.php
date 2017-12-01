@@ -9,6 +9,7 @@
 namespace AppBundle\Entity;
 
 
+use AppBundle\Helper\KeywordHelper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\ManyToMany;
@@ -27,17 +28,31 @@ class Keyword
     protected $id;
 
     /**
+     * @ORM\Column(type="string", nullable=false)
+     */
+    protected $title;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $notes;
+
+    /**
      * Many keywords have many content entities.
      * @ManyToMany(targetEntity="Content", mappedBy="keywords")
      */
     protected $contentEntities;
 
+    /** @var KeywordHelper  */
+    protected $keywordHelper;
+
     /**
      * Keyword constructor.
      */
-    public function __construct()
+    public function __construct(KeywordHelper $keywordHelper)
     {
         $this->contentEntities = new ArrayCollection();
+        $this->keywordHelper = $keywordHelper;
     }
 
     /**
@@ -49,30 +64,23 @@ class Keyword
     }
 
     /**
-     * @ORM\Column(type="string")
-     */
-    protected $text;
-
-    /**
      * @return string
      */
-    public function getText()
+    public function getTitle()
     {
-        return $this->text;
+        return $this->title;
     }
 
     /**
      * @param mixed string
      */
-    public function setText($text)
+    public function setTitle($title)
     {
-        $this->text = $text;
+//        if ( ! $this->keywordHelper->validateTitleFormat($title) ) {
+//            throw new \Exception('Invalid keyword format: ' . htmlspecialchars($title)  );
+//        }
+        $this->title = $title;
     }
-
-    /**
-     * @ORM\Column(type="string")
-     */
-    protected $notes;
 
     /**
      * @return string
@@ -93,6 +101,19 @@ class Keyword
     public function getContentEntities()
     {
         return $this->contentEntities;
+    }
+
+    /**
+     * @param mixed $contentEntities
+     */
+    public function setContentEntities($contentEntities)
+    {
+        $this->contentEntities = $contentEntities;
+    }
+
+    public function __toString()
+    {
+        return $this->getTitle();
     }
 
 }

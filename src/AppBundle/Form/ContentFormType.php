@@ -16,9 +16,10 @@ class ContentFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var Content $contentEntity */
-        $contentEntity = $builder->getData();
+//        $contentEntity = $builder->getData();
         $builder
-            ->add('title', TextType::class);
+            ->add('title');
+        return;
         if ($contentEntity->getContentType() === ContentTypes::LESSON) {
             $builder->add(
                 'shortMenuTreeTitle',
@@ -105,8 +106,8 @@ class ContentFormType extends AbstractType
         );
     }
 
-    public function getBlockPrefix()
-    {
-        return 'app_bundle_content_form_type';
-    }
+//    public function getBlockPrefix()
+//    {
+//        return 'app_bundle_content_form_type';
+//    }
 }

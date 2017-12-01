@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}New {{ contentType }}{% endblock %}
+{% block page_header %}New {{ contentType }}{% endblock %}
+
 {% block body %}
-    <h1>New lesson</h1>
-    {{ include('admin/lesson/_form.html.twig') }}
+    {{ include('author/content/_content_form.html.twig') }}
 {% endblock %}

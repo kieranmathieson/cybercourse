@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -104,8 +105,8 @@ class AuthorContentController extends Controller
             ]);
         }
 
-        return $this->render('author/content/author_new_content.html.twig', [
-            'lessonForm' => $form->createView(),
+        return $this->render('author/content/author_content_new.html.twig', [
+            'contentForm' => $form->createView(),
             'operation' => 'new',
             'contentType' => $contentType,
         ]);
@@ -120,13 +121,19 @@ class AuthorContentController extends Controller
      */
     public function editContentAction($contentType, $id, Request $request, Content $content)
     {
-        $form = $this->createForm(ContentFormType::class, $content);
-
+//        $form = $this->createForm(ContentFormType::class, $content);
+        $form = $this->createFormBuilder($content)
+            ->add('title')
+            ->add('save', SubmitType::class, array('label' => 'Saave'))
+            ->getForm();
         // only handles data on POST
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var \AppBundle\Entity\Content $content */
-            $content = $form->getData();
+        if ($request->isMethod('POST')) {
+            $form->submit($request->request->get($form->getName()));
+//            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                /** @var \AppBundle\Entity\Content $content */
+                $content = $form->getData();
+                $content->setTitle($request->get('title'));
 
 //            $x = $form->get('isAvailable');
 //            $v = $x->getViewData();
@@ -136,15 +143,24 @@ class AuthorContentController extends Controller
 
 //            $lesson->setIsAvailable( false );
 
-            $content->setWhenUpdated(new \DateTime()); #Todo: use real date/time.
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($content);
-            $em->flush();
+                $content->setWhenUpdated(new \DateTime()); #Todo: use real date/time.
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($content);
+                $em->flush();
 
-            $this->addFlash('success',
-                ContentTypes::CONTENT_TYPE_DISPLAY_NAMES[$contentType] . ' updated!');
+                $this->addFlash(
+                    'success',
+                    ContentTypes::CONTENT_TYPE_DISPLAY_NAMES[$contentType].' updated!'
+                );
 
-            return $this->redirectToRoute('lesson_list');
+                return $this->redirectToRoute(
+                    'content_show',
+                    [
+                        'contentType' => $contentType,
+                        'slug' => $content->getSlug(),
+                    ]
+                );
+            }
         }
 
         return $this->render('author/content/author_content_edit.html.twig', [

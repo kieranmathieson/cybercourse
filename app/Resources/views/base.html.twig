@@ -70,6 +70,7 @@
             };
 
             $(document).ready(function () {
+                console.log($('form input'));
                 //Slimy patch? For when FOSUser controllers are being used.
                 {% if lessonTree is defined %}
                     //Show the lesson tree.

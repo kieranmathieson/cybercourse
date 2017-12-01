@@ -2,29 +2,14 @@
     {# render any "global" errors #}
     {#{% include 'partials/form_errors.html.twig' %}#}
 {{ form_start(contentForm) }}
-    {{ form_row(contentForm.title) }}
-    {% if contentForm.shortMenuTreeTitle is defined %}
-        {{ form_row(contentForm.shortMenuTreeTitle) }}
-    {% endif %}
-    {{ form_row(contentForm.changeSlug) }}
-    {{ form_row(contentForm.slug) }}
-    {{ form_row(contentForm.summary) }}
-    {{ form_row(contentForm.body) }}
-    {% if contentForm.patternCondition is defined %}
-        {{ form_row(contentForm.patternCondition) }}
-    {% endif %}
-    {% if contentForm.patternAction is defined %}
-        {{ form_row(contentForm.patternAction) }}
-    {% endif %}
-    {{ form_row(contentForm.isAvailable) }}
-    {{ form_row(contentForm.notes) }}
+{{ form_widget(contentForm) }}
+<h2>CAMELS</h2>
+    <input type="submit" value="send">
 
-    <button type="submit" class="btn btn-primary" title="Save the content">Save</button>
-    <a href="{%
-        if operation == 'new'
-            %}{{ path('content_list') }}{%
-        else
-            %}{{ path('content_edit', {'contentType': contentType, 'id': lesson_id}) }}{%
-        endif
-    %}" class="btn btn-secondary" title="Fuggedaboudit">Cancel</a>
 {{ form_end(contentForm) }}
+
+DOOOG
+DOOOG
+hhhhhhhhhhhhhhhhh asdfasfd
+
+

@@ -41,6 +41,7 @@ class Content
         $this->keywords = new ArrayCollection();
         $this->rubricItems = new ArrayCollection();
         $this->attachedPublicFiles = new ArrayCollection();
+        $this->attachedHiddenFiles = new ArrayCollection();
         $this->exerciseSubmissions = new ArrayCollection();
     }
 
@@ -297,6 +298,14 @@ class Content
     }
 
     /**
+     * @param mixed $keywords
+     */
+    public function setKeywords($keywords)
+    {
+        $this->keywords = $keywords;
+    }
+
+    /**
      * @return mixed
      */
     public function getSlug()
@@ -313,7 +322,7 @@ class Content
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getSummary()
     {
@@ -321,7 +330,7 @@ class Content
     }
 
     /**
-     * @param mixed $summary
+     * @param string $summary
      */
     public function setSummary($summary)
     {
@@ -345,7 +354,7 @@ class Content
     }
 
     /**
-     * @return mixed
+     * @return boolean
      */
     public function getIsAvailable()
     {
@@ -353,11 +362,43 @@ class Content
     }
 
     /**
-     * @param mixed $isAvailable
+     * @param boolean $isAvailable
      */
     public function setIsAvailable($isAvailable)
     {
         $this->isAvailable = $isAvailable;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPatternCondition()
+    {
+        return $this->patternCondition;
+    }
+
+    /**
+     * @param string $patternCondition
+     */
+    public function setPatternCondition($patternCondition)
+    {
+        $this->patternCondition = $patternCondition;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPatternAction()
+    {
+        return $this->patternAction;
+    }
+
+    /**
+     * @param string $patternAction
+     */
+    public function setPatternAction($patternAction)
+    {
+        $this->patternAction = $patternAction;
     }
 
     /**
@@ -389,6 +430,11 @@ class Content
     public function getParent()
     {
         return $this->parent;
+    }
+
+    public function __toString()
+    {
+        return $this->getTitle();
     }
 
 }

@@ -55,10 +55,10 @@ framework:
 twig:
     form_themes:
         - 'partials/form_widgets/text_row.html.twig'
-        - 'partials/form_widgets/textarea_row.html.twig'
-        - 'partials/form_widgets/checkbox_row.html.twig'
+#        - 'partials/form_widgets/textarea_row.html.twig'
+#        - 'partials/form_widgets/checkbox_row.html.twig'
         - 'partials/form_widgets/label.html.twig'
-#        - 'partials/form_widgets/submit.html.twig'
+##        - 'partials/form_widgets/submit.html.twig'
         - 'partials/form_widgets/form_errors.html.twig'
         - 'partials/form_widgets/widget_attribs.html.twig'
     debug: '%kernel.debug%'

@@ -27,7 +27,7 @@ class TestController1 extends Controller
         $em = $this->getDoctrine()->getManager(); //->getRepository('AppBundle:Keyword');
 
         $keyword = new Keyword();
-        $keyword->setText('Dogs');
+        $keyword->setTitle('Dogs');
         $keyword->setNotes('This is about dogs.');
 
         $em->persist($keyword);
