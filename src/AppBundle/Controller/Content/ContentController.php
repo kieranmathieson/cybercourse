@@ -63,16 +63,16 @@ class ContentController extends Controller
         $contentRepo = $this->getDoctrine()
             ->getRepository('AppBundle:Content');
         $content = $contentRepo->findAllContentByTitle($contentType, $authorOrBetter);
-        //Make a lesson tree, with no current lesson.
-        //Todo: Expand to show most recent lesson?
-        $lessonTree = json_encode( $this->lessonTreeMaker
-                ->setMakeLinks(true)
-                ->makeTree()->getLessonTree()
-        );
+//        //Make a lesson tree, with no current lesson.
+//        //Todo: Expand to show most recent lesson?
+//        $lessonTree = json_encode( $this->lessonTreeMaker
+//                ->setMakeLinks(true)
+//                ->makeTree()->getLessonTree()
+//        );
         return $this->render(
             'content/content_list.html.twig',
             [
-                'lessonTree' => $lessonTree,
+//                'lessonTree' => $lessonTree,
                 'contentType' => $contentType,
                 'contentTypeDisplayName' => ContentTypes::CONTENT_TYPE_DISPLAY_NAMES[$contentType],
                 'authorOrBetter' => $authorOrBetter,
@@ -128,13 +128,13 @@ class ContentController extends Controller
              ];
         }
         //Make a lesson tree, showing the current lesson as active.
-        $lessonTree = json_encode( $this->lessonTreeMaker
-            ->setMakeLinks(true)
-            ->setExpandActive(true)
-            ->setActiveId($content->getId())
-            ->makeTree()->getLessonTree()
-        );
-        $renderData['lessonTree'] = $lessonTree;
+//        $lessonTree = json_encode( $this->lessonTreeMaker
+//            ->setMakeLinks(true)
+//            ->setExpandActive(true)
+//            ->setActiveId($content->getId())
+//            ->makeTree()->getLessonTree()
+//        );
+//        $renderData['lessonTree'] = $lessonTree;
         if ( $contentType == ContentTypes::LESSON ) {
             //In the session, record this as the last lesson shown.
             //It's used by a Twig extension to show the last session accessed.

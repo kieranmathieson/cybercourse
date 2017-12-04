@@ -70,22 +70,21 @@
             };
 
             $(document).ready(function () {
-                console.log($('form input'));
                 //Slimy patch? For when FOSUser controllers are being used.
-                {% if lessonTree is defined %}
+                {#{% if lessonTree is defined %}#}
                     //Show the lesson tree.
                     var treeContainer = $("#lessonTree");
                     var treeData = {
-                        source: {{ lessonTree|raw }},
+                        source: {{ get_lesson_tree()|raw }},
                         //If the current page is for a lesson, show an active item in the tree.
-                        activeVisible: {% if showingLesson is defined and showingLesson %}true{% else %}false{% endif %}
+                        activeVisible: true
                     };
-                    {% if showingLesson is defined and showingLesson %}
-                        //Mark the current lesson as active in the lesson tree.
-                        SkillCourse.setActiveNode(treeData.source, {{ content.id }});
-                    {% endif %}
+                    {#{% if showingLesson is defined and showingLesson %}#}
+                        //Mark the most recent lesson as active in the lesson tree.
+                        SkillCourse.setActiveNode(treeData.source, {{ get_last_lesson_id() }});
+                    {#{% endif %}#}
                     treeContainer.fancytree(treeData);
-                {% endif %}
+                {#{% endif %}#}
             });
 
         }(jQuery));
