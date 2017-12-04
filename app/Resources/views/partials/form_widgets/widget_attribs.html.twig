@@ -1,6 +1,7 @@
 {% block widget_attribs %}
     {# Common attributes of widgets. #}
-    {#name="{{ full_name }}" id="{{ id }}"#}
+    {% if full_name is defined %} name="{{ full_name }}" {% endif %}
+    {% if id is defined %} id="{{ id }}" {% endif %}
     {% if required %} required {% endif %}
     {% if disabled %} disabled="disabled" readonly {% endif %}
     {% if attr.title is defined %} title="{{ attr.title }}" {% endif %}

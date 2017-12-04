@@ -1,15 +1,13 @@
 {% block text_row %}
-    {#{{ dump() }}#}
     <div class="form-group">
         {{ block('label') }}
-        {#{{ block('form_errors') }}#}
-        <input class="form-control{% if attr.extraClasses is defined %} {{ attr.extraClasses }}{% endif %}" name="{{ name }}" id="{{ id }}"
-               name="{{ form.vars.full_name }}" data-dogs="{{ full_name }}" id="{{ id }}"
+        {{ block('widget_errors') }}
+        <input class="form-control{% if attr.extraClasses is defined %} {{ attr.extraClasses }}{% endif %}"
                 {{ block('widget_attribs') }}
                 {% if value is not empty %}value="{{ value }}" {% endif %}
+        >
         {% if attr.help is defined %}
             <small id="{{ id }}help" class="form-text text-muted">{{ attr.help|raw }}</small>
         {% endif %}
     </div>
-    <h2>DONUT {{ form.vars.full_name }}</h2>
 {% endblock %}

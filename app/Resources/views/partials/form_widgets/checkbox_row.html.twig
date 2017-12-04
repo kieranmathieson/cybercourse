@@ -10,6 +10,6 @@
         {% if attr.help is defined %}
             <small id="{{ id }}help" class="form-text text-muted">{{ attr.help|raw }}</small>
         {% endif %}
-        {{ block('form_errors') }}
+        {{ block('widget_errors') }}
     </div>
 {% endblock %}

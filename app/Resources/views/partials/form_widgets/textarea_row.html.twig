@@ -1,11 +1,11 @@
 {% block textarea_row %}
     <div class="form-group">
         {{ block('label') }}
-        {{ block('form_errors') }}
+        {{ block('widget_errors') }}
         <textarea class="form-control{% if attr.extraClasses is defined %} {{ attr.extraClasses }}{% endif %}"
                 {% if attr.rows is defined %} rows="{{ attr.rows }}" {% else %} rows="5" {% endif %}
                 {{ block('widget_attribs') }}
-        >{{ value|raw }}</textarea>
+        >{% if value is not empty %}value="{{ value }}" {% endif %}</textarea>
         {% if attr.help is defined %}
             <small id="{{ id }}help" class="form-text text-muted">{{ attr.help|raw }}</small>
         {% endif %}

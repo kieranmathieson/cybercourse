@@ -1,9 +1,0 @@
-{# Show errors for a form widget. #}
-{# Todo: check a11y #}
-{% if widget.errors is defined %}
-    {% if widget.errors|length > 0 %}
-        {% for err in widget.errors %}
-            <p class="alert alert-danger widget-error" role="alert">{{ err.message }}</p>
-        {% endfor %}
-    {% endif %}
-{% endif %}
