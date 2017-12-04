@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit keyword: {{ keyword.title }}{% endblock %}
+{% block page_header %}Edit keyword: {{ keyword.title }}{% endblock %}
+
+{% block body %}
+    {{ include('keyword/_keyword_form.html.twig') }}
+{% endblock %}

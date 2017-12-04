@@ -1,16 +1,93 @@
 {% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% include 'partials/datatables_css.html.twig' %}
+{% endblock %}
+
+{% block title %}Keyword: {{ keyword.title }}{% endblock %}
 {% block page_header %}Keyword: {{ keyword.title }}{% endblock %}
+
 {% block body %}
-    {% set buttons = [
-        {
+    {% set buttons = [{
         'caption': 'Keyword list',
         'url': path('keyword_list'),
         'title': 'See all of the keywords'
-        }
-    ] %}
-
+    }] %}
+    {% if authorOrBetter %}
+        {% set authorButtons = [
+            {
+                'caption': 'New',
+                'url': path('keyword_new'),
+                'title': 'Add a new keyword'
+            },
+            {
+                'caption': 'Edit',
+                'url': path('keyword_edit', {'id': keyword.id}),
+                'title': 'Edit this keyword'
+            }
+        ] %}
+        {% set buttons = buttons|merge(authorButtons) %}
+    {% endif %}
     {% include 'partials/page_actions.html.twig' with buttons %}
 
-    <p>{{ keyword.notes }}</p>
-
+    <p>Notes:</p>
+    {% if keyword.notes %}
+        <p class="indent1">{{ keyword.notes }}</p>
+    {% else %}
+        <p class="indent1">(There are no notes.)</p>
+    {% endif %}
+    {% if keyword.contentEntities|length == 0 %}
+        <p>No content is using the keyword.</p>
+    {% else %}
+        <p>Content tagged with the keyword "{{ keyword.title }}."</p>
+        <table id="displayTable" {{
+            constant('AppBundle\\Helper\\DataTableHelper::STANDARD_ATTRS')
+        }}></table>
+    {% endif %}
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if keyword.contentEntities|length > 0 %}
+        {% include 'partials/datatables_js.html.twig' %}
+        <script>
+    "use strict";
+    var SkillCourse = SkillCourse || {};
+    (function ($) {
+        // Todo: fixed header not working. Extension on?
+        var contentEntityData = [
+            {% for item in keyword.contentEntities %}
+            {% if item.isAvailable or authorOrBetter %}
+            {
+                'title': "<a href='{{ path('content_show', {'contentType': item.contentType, 'slug': item.slug}) }}'>{{ item.title }}</a>",
+                'contentType': "{{ content_type_display_name(item.contentType) }}",
+                {% if authorOrBetter %}
+                'available': "{{ item.isAvailable ? 'Yes' : 'No' }}",
+                'lastUpdate': "{{ item.whenUpdated|date('M, j Y, h:i a') }}",
+                'edit': '<a href="{{ path('content_edit', {'contentType': item.contentType, 'id': item.id}) }}" class="btn btn-primary" role="button">Edit</a>'
+                {% endif %}
+            }{% if not loop.last %},{% endif %}
+            {% endif %}
+            {% endfor %}
+        ];
+        $(document).ready(function(){
+            var dataTableOptions = SkillCourse.getDataTableDefaults();
+            dataTableOptions.columns = [
+                {data: 'title', title: 'Title'},
+                {data: 'contentType', title: 'Content type'},
+                {% if authorOrBetter %}
+                {data: 'available', title: 'Available', className: 'centered'},
+                {data: 'lastUpdate', title: 'Last update'},
+                {data: 'edit', title: '', orderable: false}
+                {% endif %}
+            ];
+            dataTableOptions.data = contentEntityData;
+            $('#displayTable').DataTable( dataTableOptions );
+        });
+    }(jQuery));
+</script>
+    {% endif %}
+{% endblock %}
+
+

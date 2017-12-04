@@ -1,27 +1,68 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
+{% block stylesheets %}
+    {{ parent() }}
+    {% include 'partials/datatables_css.html.twig' %}
+{% endblock %}
 
-    <h1>Keywords</h1>
+{% block title %}Keywords{% endblock %}
+{% block page_header %}Keywords{% endblock %}
+
+{% block body %}
 
     <p>Here are the keywords.</p>
 
-    {#<nav class="page-tools">#}
-        {#<a href="{{ path('lesson_new') }}" class="pure-button">Add <span class="fa fa-plus-circle"></span></a>#}
-    {#</nav>#}
+    {% if authorOrBetter %}
+        {% set buttons = [{
+            'caption': 'New',
+            'url': path('keyword_new'),
+            'title': 'Add a new keyword'
+        }] %}
+        {% include 'partials/page_actions.html.twig' with buttons %}
+    {% endif %}
 
-    <table class="pure-table">
-        <thead>
-            <tr>
-                <th>Keyword</th>
-                <th>Note</th>
-            </tr>
-        </thead>
-        <tbody>{% for keyword in keywords %}
-            <tr>
-                <td><a href="{{ path('keyword_show', {'id': keyword.id}) }}">{{ keyword.text }}</a></td>
-                <td>{{ keyword.notes }}</td>
-            </tr>
-        {% endfor %}</tbody>
-    </table>
+    <table id="displayTable" {{
+        constant('AppBundle\\Helper\\DataTableHelper::STANDARD_ATTRS')
+    }}></table>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% include 'partials/datatables_js.html.twig' %}
+    <script>
+        // Todo: fixed header not working. Extension on?
+        var tableData = [
+            {% for keyword in keywords %}
+                {% set showUrl = path('keyword_show', { 'id': keyword.id }) %}
+                {% set title = "<a href='#{showUrl}'>#{ keyword.title }</a>"|raw %}
+                {
+                    'title': "{{ title|raw }}",
+                    {% if authorOrBetter %}
+                        'edit': '<a href="{{
+                            path('keyword_edit', {'id': keyword.id})
+                        }}" class="btn btn-primary" role="button">Edit</a>'
+                    {% endif %}
+                }{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ];
+        //Prepare the options.
+        var dataTableOptions = SkillCourse.getDataTableDefaults();
+        //Called when a row is created.
+//        dataTableOptions.createdRow = function ( row, data, index ) {
+//            if ( data.available.toLowerCase() === 'no' ) {
+//                $(row).addClass('not-available');
+//            }
+//        };
+        dataTableOptions.columns = [
+            {data: 'title', title: 'Title'},
+            {% if authorOrBetter %}
+                {data: 'edit', title: '', orderable: false}
+            {% endif %}
+        ];
+        dataTableOptions.data = tableData;
+        $(document).ready(function(){
+            $('#displayTable').DataTable( dataTableOptions );
+        });
+    </script>
 {% endblock %}

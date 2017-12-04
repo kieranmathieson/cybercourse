@@ -1,0 +1,23 @@
+{# Form for editing and creating keywords. #}
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{# Page actions and form actions are defined differently. Probably should merge them. #}
+<nav class="form-actions">
+    {% include 'partials/form_widgets/button.html.twig' with {
+        'attr': {
+        'type': 'submit',
+        'caption': 'Save',
+        'title': 'Save the data',
+    }
+    } %}
+    {% include 'partials/form_widgets/button.html.twig' with {
+    'attr': {
+        'type': 'link',
+        'caption': 'Cancel',
+        'variant': 'secondary',
+        'title': 'Fuggedaboudit',
+        'href': cancel_destination
+    }
+    } %}
+</nav>
+{{ form_end(form) }}
