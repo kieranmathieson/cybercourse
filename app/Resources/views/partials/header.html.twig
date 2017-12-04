@@ -19,6 +19,8 @@
                        title="List patterns">Patterns</a>
                     <a class="dropdown-item" href="{{ path('content_list', {'contentType': 'coreidea'}) }}"
                        title="List core ideas">Core ideas</a>
+                    <a class="dropdown-item" href="{{ path('keyword_list') }}"
+                       title="List core ideas">Keywords</a>
                 </div>
             </li>
             {#<li class="nav-item active">#}
@@ -70,3 +72,5 @@
         <img id="hide-right-sidebar" src="{{ asset('images/octicons/triangle-right.svg') }}" alt="Hide right sidebar">
     </nav>
 </nav>
+
+<p>Last lesson id: {% if get_last_lesson_id() == 0 %}None{% else %}{{ get_last_lesson_id() }}{% endif %}</p>

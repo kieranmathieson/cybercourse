@@ -7,9 +7,12 @@ use AppBundle\Entity\User;
 use AppBundle\Helper\ContentTypes;
 use AppBundle\Helper\LessonTreeMaker;
 use AppBundle\Service\RstTransformer;
+use AppBundle\Twig\Extension\LastLesson;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ContentController extends Controller
@@ -40,11 +43,14 @@ class ContentController extends Controller
      * @throws \Exception
      */
 
-    public function listContentAction($contentType)
+    public function listContentAction($contentType, SessionInterface $session)
     {
         if (!in_array($contentType, ContentTypes::CONTENT_TYPES)) {
             throw new \Exception('listContentAction: bad content type: '.$contentType);
         }
+        $session->set('lastList', $contentType);
+
+
         //Load the logged in user.
         /** @var User|string $loggedInUser */
         $loggedInUser = $this->getUser();
@@ -83,7 +89,7 @@ class ContentController extends Controller
      * @param $slug
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showContentAction($contentType, $slug)
+    public function showContentAction($contentType, $slug, SessionInterface $session)
     {
         //Load the logged in user.
         /** @var User|string $loggedInUser */
@@ -129,6 +135,11 @@ class ContentController extends Controller
             ->makeTree()->getLessonTree()
         );
         $renderData['lessonTree'] = $lessonTree;
+        if ( $contentType == ContentTypes::LESSON ) {
+            //In the session, record this as the last lesson shown.
+            //It's used by a Twig extension to show the last session accessed.
+            $session->set( LastLesson::LAST_LESSON_SESSION_KEY, $content->getId() );
+        }
         //ReST transform.
         $renderData['renderableBody'] = $this->rstTransformer->transform($content->getBody());
         return $this->render('content/content_show.html.twig', $renderData );
