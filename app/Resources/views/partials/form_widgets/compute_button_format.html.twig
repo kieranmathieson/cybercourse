@@ -1,0 +1,16 @@
+{% block compute_button_format %}
+    {# Compute button variant #}
+    {% set btnType = 'primary' %}
+    {% if attr.variant is defined %}
+        {% set btnType = attr.variant %}
+    {% endif %}
+    {# Compute the caption #}
+    {% set buttonCaption = 'DOGS ARE THE BEST!' %}
+    {% if attr.caption is defined %}
+        {% set buttonCaption = attr.caption %}
+    {% else %}
+        {% if value is defined %}
+            {% set buttonCaption = value %}
+        {% endif %}
+    {% endif %}
+{% endblock %}

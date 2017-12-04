@@ -1,0 +1,59 @@
+{# Button form widget. #}
+{# Buttons are defined in templates, not in form classes, so they are configured differently from other widgets. #}
+{# Caller needs to wrap this to define approprriate group, like <nav class="page-tools"> #}
+{# If help is set, need an id as well. #}
+    {% if attrib.id is defined %}
+        {% set buttonId = attr.id %}
+    {% else %}
+        {# id is not defined. #}
+        {% if attr.help is defined %}
+            <p class="widget-error">Internal template error: If help is defined, id must be, too.</p>
+            {% set buttonId = 'missing' %}
+        {% endif %}
+        {# Note: buttonId will be undefined if there is no id and no help. #}
+    {% endif %}
+    {# Compute button variant #}
+    {% set buttonVariant = 'primary' %}
+    {% if attr.variant is defined %}
+        {% set buttonVariant = attr.variant %}
+    {% endif %}
+    {# Compute the caption #}
+    {% set buttonCaption = 'DOGS ARE THE BEST!' %}
+    {% if attr.caption is defined %}
+        {% set buttonCaption = attr.caption %}
+    {% else %}
+        {% if value is defined %}
+            {% set buttonCaption = value %}
+        {% endif %}
+    {% endif %}
+    {% if attr.type == 'submit' %}
+        <button type="submit"
+    {% elseif attr.type == 'link' %}
+        <a
+    {% elseif attr.type == 'button' %}
+        <button type="submit"
+    {% else %}
+        <p class="widget-error">Unknown button type: {{ attr.type }}</p>
+        <p
+    {% endif %}
+        class="btn btn-{{ buttonVariant }}{% if attr.extraClasses is defined %} {{ attr.extraClasses }}{% endif %}"
+        {% if attr.full_name is defined %} name="{{ attr.full_name }}" {% endif %}
+        {% if buttonId is defined %} id="{{ buttonId }}" {% endif %}
+        {% if attr.disabled is defined %}
+            {% if attr.disabled %} disabled="disabled" readonly {% endif %}
+        {% endif %}
+        {% if attr.title is defined %} title="{{ attr.title }}" {% endif %}
+        {% if attr.help is defined %} aria-describedby="{{ attr.id }}help" {% endif %}
+        {% if attr.type == 'link' %} href="{{ attr.href }}"{% endif %}
+    >{{ buttonCaption }}
+    {% if attr.type == 'submit' or attr.type == 'button' %}
+        </button>
+    {% elseif attr.type == 'link' %}
+        </a>
+    {% else %}
+        </p>
+    {% endif %}
+    {% if attr.help is defined %}
+        <small id="{{ buttonId }}help" class="form-text text-muted">{{ attr.help|raw }}</small>
+    {% endif %}
+{# End the wrapper. Everybody off. </nav>#}
