@@ -43,7 +43,7 @@
                     'title': "{{ title|raw }}",
                     'keywords': "{%
                         for keyword in item.keywords
-                            %}<a href='{{ path('content_list_with_keyword', {'id': keyword.id}) }}'>{{ keyword.text }}</a>{%
+                            %}<a href='{{ path('keyword_show', {'id': keyword.id}) }}'>{{ keyword.title }}</a>{%
                             if not loop.last %}, {% endif %}{%
                         endfor %}",
                     {% if authorOrBetter %}
