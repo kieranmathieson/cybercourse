@@ -1,19 +1,32 @@
 {% if lessonNavLinks is defined %}
-    {% if not (lessonNavLinks.parent is null) %}
-        <p>Up: <a href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.parent.slug }) }}"
-            >{{ lessonNavLinks.parent.title }}</a></p>
-    {% endif %}
+    <ul class="nav justify-content-center"> {# Start of prev/nect/up. #}
     {% if not (lessonNavLinks.left is null) %}
-        <p>Previous: <a href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.left.slug }) }}">{{ lessonNavLinks.left.title }}</a></p>
+        <li><a class="btn btn-primary" role="button"
+                href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.left.slug }) }}"
+            ><img src="{{ asset('images/octicons/triangle-left.svg') }}" alt="Previous" title="Previous"
+                >{{ lessonNavLinks.left.shortMenuTreeTitle }}</a></li>
+    {% endif %}
+    {% if not (lessonNavLinks.parent is null) %}
+        <li><a class="btn btn-primary" role="button"
+               href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.parent.slug }) }}"
+            ><img src="{{ asset('images/octicons/triangle-up.svg') }}" alt="Up" title="Up"
+                >{{ lessonNavLinks.parent.shortMenuTreeTitle }}</a></li>
     {% endif %}
     {% if not (lessonNavLinks.right is null) %}
-        <p>Next: <a href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.right.slug }) }}">{{ lessonNavLinks.right.title }}</a></p>
+        <li><a class="btn btn-primary" role="button"
+               href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.right.slug }) }}"
+            ><img src="{{ asset('images/octicons/triangle-right.svg') }}" alt="Next" title="Next"
+                >{{ lessonNavLinks.right.shortMenuTreeTitle }}</a></li>
     {% endif %}
-    {% if not (lessonNavLinks.children is null) %}
+    </ul> {# End of prev/nect/up. #}
+    {% if showChildren and not (lessonNavLinks.children is null) %}
+        {# Show the children. #}
         <ul>
             {% for child in lessonNavLinks.children %}
-                <li><a href="{{ path('content_show', {'contentType': contentType, 'slug': child.slug }) }}">{{ child.title }}</a></li>
+                <li><a href="{{ path('content_show', {'contentType': contentType, 'slug': child.slug }) }}"
+                    >{{ child.shortMenuTreeTitle }}</a></li>
             {% endfor %}
         </ul>
     {% endif %}
+    </ul>
 {% endif %}
