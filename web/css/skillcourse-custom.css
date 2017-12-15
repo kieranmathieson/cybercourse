@@ -101,6 +101,80 @@ ul.user-photo-list li {
     margin-bottom: 2rem;
 }
 
+/* ---------- Lesson nav ---------- */
+div.lesson-nav {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    border-top: thin #F0F0F0 solid;
+    border-bottom: thin #F0F0F0 solid;
+}
+
+
+div.lesson-nav .left-nav img {
+    margin-right: 1rem;
+    width: 0.6rem;
+}
+
+div.lesson-nav .up-nav img {
+    margin-right: 1rem;
+    width: 1.2rem; /* The up svg has strange dimensions. */
+}
+
+div.lesson-nav .right-nav img {
+    margin-left: 1rem;
+    width: 0.6rem;
+}
+
+
+/* ---------- Fine bucket ---------- */
+#file-bucket {
+    padding: 0;
+}
+
+#file-bucket .ui-widget.ui-widget-content {
+    border: none;
+    padding: 0;
+}
+
+#file-bucket .ui-tabs-panel {
+    padding: 0;
+}
+
+#file-bucket .qq-gallery.qq-uploader {
+    padding: 5px;
+    border: none;
+    border-radius: 0;
+    background-color: inherit;
+}
+
+#file-bucket img.qq-thumbnail-selector {
+    max-height: 80px;
+    max-width: 80px;
+}
+
+#file-bucket .qq-upload-button {
+    font-size: 0.8rem;
+    width: auto;
+}
+
+#file-bucket ul li.ui-tabs-tab {
+    font-size: 0.8rem;
+}
+
+#file-bucket .qq-gallery .qq-upload-list li {
+    margin: 0 10px 10px 0;
+    height: auto;
+}
+
+#file-bucket .qq-gallery .qq-thumbnail-wrapper {
+    height: 90px;
+    width: 90px;
+    margin: auto;
+}
+
+
 /* ---------- Helpers ---------- */
 .indent1 {
     margin-left: 4rem;
