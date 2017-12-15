@@ -1,9 +1,11 @@
 <?php
-
+/**
+ * Form for creating content.
+ */
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Content;
-use AppBundle\Helper\ContentTypes;
+use AppBundle\Helper\ContentHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -16,15 +18,16 @@ class ContentFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var Content $contentEntity */
-//        $contentEntity = $builder->getData();
+        $contentEntity = $builder->getData();
         $builder
-            ->add('title');
-        return;
-        if ($contentEntity->getContentType() === ContentTypes::LESSON) {
+            ->add('title', TextType::class, [
+                'label' => 'Title',
+            ]);
+        if ($contentEntity->getContentType() === ContentHelper::LESSON) {
             $builder->add(
                 'shortMenuTreeTitle',
                 TextType::class,
-                [
+                [ 'label' => 'Short title for lesson tree',
                     'attr' => [
                         'help' => 'This is the title used in the lesson tree.',
                     ],
@@ -44,10 +47,11 @@ class ContentFormType extends AbstractType
                     'help' => 'Check if you want to change the slug.',
                 ],
             ])
-            ->add('slug', TextType::class, ['disabled' => true])
+            ->add('slug', TextType::class, ['label' => 'Slug', 'disabled' => true])
             ->add(
             'summary',
             TextareaType::class,[
+                'label' => 'Summary',
                 'attr' => [
                     'help' => 'Short summary used in lists. One sentence is good.',
                     'title' => 'Short summary used in lists',
@@ -56,15 +60,17 @@ class ContentFormType extends AbstractType
             ->add(
             'body',
             TextareaType::class, [
+                'label' => 'Body',
                 'attr' => [
                     'help' => 'Main content.',
                 ],
             ]);
-        if ($contentEntity->getContentType() === ContentTypes::PATTERN) {
+        if ($contentEntity->getContentType() === ContentHelper::PATTERN) {
             $builder
                 ->add(
                 'patternCondition',
                 TextareaType::class, [
+                    'label' => 'Pattern condition',
                     'attr' => [
                         'help' => 'When the pattern is relevant.',
                     ],
@@ -72,6 +78,7 @@ class ContentFormType extends AbstractType
                 ->add(
                     'patternAction',
                     TextareaType::class, [
+                    'label' => 'Pattern action',
                     'attr' => [
                         'help' => 'What the pattern is.',
                     ],
@@ -90,6 +97,7 @@ class ContentFormType extends AbstractType
             ->add(
                 'notes',
                 TextareaType::class, [
+                'label' => 'Notes',
                 'attr' => [
                     'help' => 'Tasks, deleted content, whatevs.',
                 ],
