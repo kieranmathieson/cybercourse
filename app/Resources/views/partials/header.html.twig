@@ -7,17 +7,22 @@
 
     <div class="collapse navbar-collapse" id="headerNav">
         <ul class="navbar-nav mr-auto">
+            {# Show content list menu items. #}
+            {% set contentListPath = 'content_list' %}
+            {#{% if is_granted('ROLE_AUTHOR') or is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN') %}#}
+                {#{% set contentListPath = 'author_content_list' %}#}
+            {#{% endif %}#}
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle text-light" href="{{ path('content_list', {'contentType': 'all'}) }}"
                    id="headerNavAuthor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Content</a>
                 <div class="dropdown-menu" aria-labelledby="headerNavAuthor">
-                    <a class="dropdown-item" href="{{ path('content_list', {'contentType': 'lesson'}) }}"
+                    <a class="dropdown-item" href="{{ path(contentListPath, {'contentType': 'lesson'}) }}"
                        title="List lessons">Lessons</a>
-                    <a class="dropdown-item" href="{{ path('content_list', {'contentType': 'exercise'}) }}"
+                    <a class="dropdown-item" href="{{ path(contentListPath, {'contentType': 'exercise'}) }}"
                        title="List exercises">Exercises</a>
-                    <a class="dropdown-item" href="{{ path('content_list', {'contentType': 'pattern'}) }}"
+                    <a class="dropdown-item" href="{{ path(contentListPath, {'contentType': 'pattern'}) }}"
                        title="List patterns">Patterns</a>
-                    <a class="dropdown-item" href="{{ path('content_list', {'contentType': 'coreidea'}) }}"
+                    <a class="dropdown-item" href="{{ path(contentListPath, {'contentType': 'coreidea'}) }}"
                        title="List core ideas">Core ideas</a>
                     <a class="dropdown-item" href="{{ path('keyword_list') }}"
                        title="List core ideas">Keywords</a>
@@ -34,8 +39,6 @@
                         <a class="dropdown-item" href="{{ path('admin_user_list') }}" title="Manage user accounts">Users</a>
                     </div>
                 </li>
-            {% endif %}
-            {% if is_granted('ROLE_AUTHOR') %}
             {% endif %}
             {% if is_granted('ROLE_USER') %}
                 <li class="nav-item dropdown">
@@ -72,5 +75,3 @@
         <img id="hide-right-sidebar" src="{{ asset('images/octicons/triangle-right.svg') }}" alt="Hide right sidebar">
     </nav>
 </nav>
-
-<p>Last lesson id: {% if get_last_lesson_id() == 0 %}None{% else %}{{ get_last_lesson_id() }}{% endif %}</p>

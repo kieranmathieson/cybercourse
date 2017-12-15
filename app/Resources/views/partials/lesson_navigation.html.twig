@@ -1,24 +1,44 @@
 {% if lessonNavLinks is defined %}
-    <ul class="nav justify-content-center"> {# Start of prev/nect/up. #}
-    {% if not (lessonNavLinks.left is null) %}
-        <li><a class="btn btn-primary" role="button"
-                href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.left.slug }) }}"
-            ><img src="{{ asset('images/octicons/triangle-left.svg') }}" alt="Previous" title="Previous"
-                >{{ lessonNavLinks.left.shortMenuTreeTitle }}</a></li>
-    {% endif %}
-    {% if not (lessonNavLinks.parent is null) %}
-        <li><a class="btn btn-primary" role="button"
-               href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.parent.slug }) }}"
-            ><img src="{{ asset('images/octicons/triangle-up.svg') }}" alt="Up" title="Up"
-                >{{ lessonNavLinks.parent.shortMenuTreeTitle }}</a></li>
-    {% endif %}
-    {% if not (lessonNavLinks.right is null) %}
-        <li><a class="btn btn-primary" role="button"
-               href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.right.slug }) }}"
-            ><img src="{{ asset('images/octicons/triangle-right.svg') }}" alt="Next" title="Next"
-                >{{ lessonNavLinks.right.shortMenuTreeTitle }}</a></li>
-    {% endif %}
-    </ul> {# End of prev/nect/up. #}
+    {# Start of prev/next/up. #}
+    <div class="row lesson-nav" role="navigation">
+        <div class="col-sm left-nav">
+            {% if not (lessonNavLinks.left is null) %}
+                <a class="btn btn-primary" role="button"
+                   href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.left.slug }) }}"
+                ><img src="{{ asset('images/octicons/triangle-left-white.svg') }}" alt="Previous" title="Previous"
+                    >{{ lessonNavLinks.left.shortMenuTreeTitle }}</a>
+            {% endif %}
+        </div>
+        <div class="col-sm up-nav">
+            {% if not (lessonNavLinks.parent is null) %}
+                <a class="btn btn-primary" role="button"
+                   href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.parent.slug }) }}"
+                ><img src="{{ asset('images/octicons/triangle-up-white.svg') }}" alt="Up" title="Up"
+                    >{{ lessonNavLinks.parent.shortMenuTreeTitle }}</a>
+            {% endif %}
+        </div>
+        <div class="col-sm right-nav">
+            {% if not (lessonNavLinks.right is null) %}
+                <a class="btn btn-primary" role="button"
+                   href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.right.slug }) }}"
+                >{{ lessonNavLinks.right.shortMenuTreeTitle }}<img
+                            src="{{ asset('images/octicons/triangle-right-white.svg') }}" alt="Next" title="Next"
+                    ></a>
+            {% else %}
+                {# There is no right link. If there is a child, use it as the right link. #}
+                {% if not (lessonNavLinks.children is null) %}
+                    {% if lessonNavLinks.children|length > 0 %}
+                        {% set firstChild = lessonNavLinks.children[0] %}
+                        <a class="btn btn-primary" role="button"
+                           href="{{ path('content_show', {'contentType': contentType, 'slug': firstChild.slug }) }}"
+                        >{{ firstChild.shortMenuTreeTitle }}<img
+                                    src="{{ asset('images/octicons/triangle-right-white.svg') }}" alt="Next" title="Next"
+                            ></a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div> {# End of prev/next/up. #}
     {% if showChildren and not (lessonNavLinks.children is null) %}
         {# Show the children. #}
         <ul>
