@@ -1,0 +1,17 @@
+# Course-specific configuration.
+allowed_upload_file_extentions:
+    all_users:
+        - txt
+        - doc
+        - docx
+        - xls
+        - xlsx
+        - xlsx
+        - ppt
+        - pptx
+        - pdf
+        - jpg
+        - png
+        - gif
+    privileged_users_extra:
+        - all
