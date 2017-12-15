@@ -11,12 +11,10 @@ namespace AppBundle\Helper;
 use AppBundle\Repository\ContentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\RouterInterface;
+use AppBundle\Entity\Content;
 
 class LessonTreeMaker
 {
-
-    /** How to mark a lesson as unavailable. */
-    const UNAVAILABLE_MARKER = '(u)&nbsp;';
 
     /** @var EntityManagerInterface $entityManager */
     protected $entityManager;
@@ -98,7 +96,7 @@ class LessonTreeMaker
                 $title = isset($node['shortMenuTreeTitle']) ? $node['shortMenuTreeTitle'] : $node['title'];
                 //Add unavailable marker?
                 if (! $node['isAvailable']) {
-                    $title = static::UNAVAILABLE_MARKER . $title;
+                    $title = Content::NOT_AVAILABLE_MARKER . $title;
                 }
                 if ($this->isMakeLinks()) {
                     //Turn the title into a link.

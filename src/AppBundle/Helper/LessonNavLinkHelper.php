@@ -56,13 +56,14 @@ class LessonNavLinkHelper
     }
 
     /**
-     * Find the parent, sibs, and children of a lesson.
+     * Find the parent, sibs, and children of a lesson. What is found depends on permissions of current user.
+     * Authors or better have unavailable pages included.
      *
      * @param Content $contentItem The lesson.
      * @throws \Exception $contentItem is not a lesson.
      */
     public function findFriends(Content $contentItem) {
-        if ( $contentItem->getContentType() !== ContentTypes::LESSON ) {
+        if ( $contentItem->getContentType() !== ContentHelper::LESSON ) {
             throw new \Exception('Not a lesson:' . $contentItem->getContentType());
         }
         $this->contentItem = $contentItem;
@@ -73,8 +74,9 @@ class LessonNavLinkHelper
             /** @var Content $leftSib */
             $leftSib = end($leftSibs);
             //Is it available?
-            if ( $leftSib->getIsAvailable() || $authorOrBetter ) {
+            if ( $leftSib->isAvailable() || $authorOrBetter ) {
                 $this->leftSib = $leftSib;
+                $this->leftSib->changeShortMenuTreeTitleIfNotAvailable();
             }
         }
         //Compute the right sibling, if there is one.
@@ -84,8 +86,9 @@ class LessonNavLinkHelper
             /** @var Content $rightSib */
             $rightSib = $rightSibs[0];
             //Is it available?
-            if ( $rightSib->getIsAvailable() || $authorOrBetter ) {
+            if ( $rightSib->isAvailable() || $authorOrBetter ) {
                 $this->rightSib = $rightSib;
+                $this->rightSib->changeShortMenuTreeTitleIfNotAvailable();
             }
         }
         //Parent.
@@ -93,15 +96,21 @@ class LessonNavLinkHelper
         if ( count($path) > 1 ) {
             /** @var Content $parent */
             $parent = $path[ count($path) - 2 ];
-            //Is it available?
-            if ( $parent->getIsAvailable() || $authorOrBetter ) {
-                $this->parent = $parent;
+            //Can't go up to the root - it is not shown.
+            $rootLesson = $this->repository->findRootLesson();
+            if ( $rootLesson !== $parent ) {
+                //Is it available, or is user special?
+                if ($parent->isAvailable() || $authorOrBetter) {
+                    $this->parent = $parent;
+                    $this->parent->changeShortMenuTreeTitleIfNotAvailable();
+                }
             }
         }
         //Children.
         /** @var Content $child */
-        foreach ($this->repository->children($contentItem) as $child) {
-            if ( $child->getIsAvailable() || $authorOrBetter ) {
+        foreach ($this->repository->children($contentItem, true) as $child) {
+            if ( $child->isAvailable() || $authorOrBetter ) {
+                $child->changeShortMenuTreeTitleIfNotAvailable();
                 $this->children[] = $child;
             }
         }
@@ -140,7 +149,19 @@ class LessonNavLinkHelper
         return $this->children;
     }
 
-
-
+    /**
+     * Get all the links needed to make a lesson nav bar.
+     *
+     * @return array All the links.
+     */
+    public function getNavbarLinks() {
+        $result = [
+            'parent' => $this->getParent(),
+            'left' => $this->getLeftSib(),
+            'right' => $this->getRightSib(),
+            'children' => $this->getChildren(),
+        ];
+        return $result;
+    }
 
 }
