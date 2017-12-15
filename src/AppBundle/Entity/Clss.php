@@ -20,6 +20,7 @@ use Doctrine\ORM\Mapping\OneToMany;
  */
 class Clss
 {
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -49,7 +50,7 @@ class Clss
 
     /**
      * One class has many enrollments.
-     * @OneToMany(targetEntity="AppBundle\Entity\Enrollment", mappedBy="clss")
+     * @OneToMany(targetEntity="AppBundle\Entity\Enrollment", mappedBy="clss", fetch="EXTRA_LAZY")
      */
     protected $enrollments;
 
@@ -62,11 +63,11 @@ class Clss
     }
 
     /**
-     * @param integer $id
+     * @return integer
      */
-    public function setId($id)
+    public function getId()
     {
-        $this->id = $id;
+        return $this->id;
     }
 
     /**
@@ -133,5 +134,32 @@ class Clss
         $this->notes = $notes;
     }
 
+    /**
+     * @return ArrayCollection
+     */
+    public function getEnrollments()
+    {
+        return $this->enrollments;
+    }
+
+    public function addEnrollment(Enrollment $enrollment) {
+        if ($this->enrollments->contains($enrollment)) {
+            //Already a member.
+            return;
+        }
+        $this->enrollments[] = $enrollment;
+        // not needed for persistence, just keeping both sides in sync
+        $enrollment->setClss($this);
+    }
+
+    public function removeEnrollment(Enrollment $enrollment)
+    {
+        if (!$this->enrollments->contains($enrollment)) {
+            return;
+        }
+        $this->enrollments->removeElement($enrollment);
+        // not needed for persistence, just keeping both sides in sync
+        //$user->removeEnrollment($this);
+    }
 
 }
