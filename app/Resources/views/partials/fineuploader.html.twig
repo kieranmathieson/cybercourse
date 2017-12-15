@@ -8,7 +8,7 @@
             <span class="qq-upload-drop-area-text-selector"></span>
         </div>
         <div class="qq-upload-button-selector qq-upload-button">
-            <div>Upload a file</div>
+            <div>Upload</div>
         </div>
         <span class="qq-drop-processing-selector qq-drop-processing">
                 <span>Processing dropped files...</span>
@@ -22,7 +22,11 @@
                 </div>
                 <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
                 <div class="qq-thumbnail-wrapper">
-                    <img class="qq-thumbnail-selector" qq-max-size="120" qq-server-scale>
+                    <img class="qq-thumbnail-selector" qq-max-size="120" qq-server-scale="false">
+                    {#
+                    qq-server-scale false is needed for the SVG thumbnails to size correctly.
+                    https://github.com/FineUploader/fine-uploader/issues/1902
+                    #}
                 </div>
                 <button type="button" class="qq-upload-cancel-selector qq-upload-cancel">X</button>
                 <button type="button" class="qq-upload-retry-selector qq-upload-retry">
@@ -79,15 +83,18 @@
 <script>
     function initUploader(uploadDomElement, uploadEndPoint, deleteEndPoint, maxNumFiles, maxFileSize, debugMode){
         //The Fineuploader script creates qq.
-        var newUploader = new qq.FineUploader({
+        var options = {
             element: uploadDomElement, //Where to show the uploader.
             debug: debugMode,
             request: {
                 endpoint: uploadEndPoint
             },
             retry: {
-                //Offer to retry failed uploads.
-                enableAuto: true
+                //Do not retry failed uploads.
+                //Need logic for dealing with creation of DB
+                //records when there is a failure partway
+                //through. Transactions?
+                enableAuto: false
             },
             deleteFile: {
                 enabled: true,
@@ -95,10 +102,6 @@
             },
             session: {
                 endpoint: uploadEndPoint
-            },
-            validation: {
-                itemLimit: maxNumFiles,
-                sizeLimit: maxFileSize
             },
             callbacks: {
                 onSessionRequestComplete: (function(response, success) {
@@ -109,7 +112,14 @@
                     console.log(this);
                 })
             }
-        });
+        };
+        if ( maxFileSize > 0 && maxNumFiles > 0 ) {
+            options.validation = {
+                itemLimit: maxNumFiles,
+                sizeLimit: maxFileSize
+            };
+        }
+        var newUploader = new qq.FineUploader(options);
         return newUploader;
     }
 </script>
