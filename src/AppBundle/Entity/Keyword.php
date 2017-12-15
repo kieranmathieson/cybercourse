@@ -13,10 +13,13 @@ use AppBundle\Helper\KeywordHelper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\ManyToMany;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="keyword")
+ * @UniqueEntity("title")
  */
 class Keyword
 {
@@ -28,7 +31,17 @@ class Keyword
     protected $id;
 
     /**
-     * @ORM\Column(type="string", nullable=false)
+     * @Assert\NotBlank()
+     * @Assert\NotNull()
+     * @Assert\Type("string")
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 50,
+     *      minMessage = "Keywords must be at least {{ limit }} characters long",
+     *      maxMessage = "Keywords cannot be longer than {{ limit }} characters"
+     * )
+     * @ORM\Column(type="string", nullable=false, unique=true, length=50)
+     *
      */
     protected $title;
 
@@ -43,16 +56,13 @@ class Keyword
      */
     protected $contentEntities;
 
-    /** @var KeywordHelper  */
-    protected $keywordHelper;
-
     /**
      * Keyword constructor.
      */
-    public function __construct(KeywordHelper $keywordHelper)
+    public function __construct()
     {
         $this->contentEntities = new ArrayCollection();
-        $this->keywordHelper = $keywordHelper;
+//        $this->keywordHelper = $keywordHelper;
     }
 
     /**
@@ -76,9 +86,6 @@ class Keyword
      */
     public function setTitle($title)
     {
-//        if ( ! $this->keywordHelper->validateTitleFormat($title) ) {
-//            throw new \Exception('Invalid keyword format: ' . htmlspecialchars($title)  );
-//        }
         $this->title = $title;
     }
 
