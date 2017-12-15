@@ -11,17 +11,6 @@
 {% block body %}
     <p>Here are the {{ contentType }}s.</p>
 
-    {% if authorOrBetter %}
-        {% set buttons = [
-            {
-                'caption': 'Add',
-                'url': path('content_new', {'contentType': contentType}),
-                'title': 'Add a new ' ~ contentType
-            }
-        ] %}
-        {% include 'partials/page_actions.html.twig' with buttons %}
-    {% endif %}
-
     <table id="displayTable" {{
         constant('AppBundle\\Helper\\DataTableHelper::STANDARD_ATTRS')
     }}></table>
@@ -45,33 +34,21 @@
                         for keyword in item.keywords
                             %}<a href='{{ path('keyword_show', {'id': keyword.id}) }}'>{{ keyword.title }}</a>{%
                             if not loop.last %}, {% endif %}{%
-                        endfor %}",
-                    {% if authorOrBetter %}
-                        'available': "{{ item.isAvailable ? 'Yes' : 'No' }}",
-                        'lastUpdate': "{{ item.whenUpdated|date('M, j Y, h:i a') }}",
-                        'edit': '<a href="{{
-                            path('content_edit', {'contentType': contentType, 'id': item.id})
-                        }}" class="btn btn-primary" role="button">Edit</a>'
-                    {% endif %}
+                        endfor %}"
                 }{% if not loop.last %},{% endif %}
             {% endfor %}
         ];
         //Prepare the options.
         var dataTableOptions = SkillCourse.getDataTableDefaults();
         //Called when a row is created.
-        dataTableOptions.createdRow = function ( row, data, index ) {
-            if ( data.available.toLowerCase() === 'no' ) {
-                $(row).addClass('not-available');
-            }
-        };
+//        dataTableOptions.createdRow = function ( row, data, index ) {
+//            if ( data.available.toLowerCase() === 'no' ) {
+//                $(row).addClass('not-available');
+//            }
+//        };
         dataTableOptions.columns = [
             {data: 'title', title: 'Title'},
-            {data: 'keywords', title:'Keywords', orderable: false},
-            {% if authorOrBetter %}
-                {data: 'available', title: 'Available', className: 'centered'},
-                {data: 'lastUpdate', title: 'Last update'},
-                {data: 'edit', title: '', orderable: false}
-            {% endif %}
+            {data: 'keywords', title:'Keywords', orderable: false}
         ];
         dataTableOptions.data = tableData;
         $(document).ready(function(){

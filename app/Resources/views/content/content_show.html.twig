@@ -1,24 +1,32 @@
+{# Show content to anon. or regular user. #}
+
 {% extends 'base.html.twig' %}
 
 {% block title %}{{ content.title }}{% endblock %}
 {% block page_header %}{{ content.title }}{% endblock %}
 {% block body %}
-    {% if authorOrBetter %}
-        <p>Author or better</p>
+
+    {% if content.keywords|length > 0 %}
+        <p>Keywords:</p>
+            <ul class="keyword-list">
+            {% for keyword in content.keywords %}
+                <li><a href="{{ path('keyword_show', {'id': keyword.id}) }}">{{ keyword.title }}</a></li>
+            {% endfor %}
+            </ul>
+
     {% endif %}
 
-    {#<ul class="keyword-list">#}
-        {#{% for keyword in lesson.keywords %}#}
-            {#<li><a href="{{ path('keyword_show', {'id': keyword.id}) }}">{{ keyword.title }}</a></li>#}
-        {#{% endfor %}#}
-    {#</ul>#}
-
-    {% include ':partials:lesson_navigation.html.twig' %}
+    {% if contentType == constant('AppBundle\\Helper\\ContentHelper::LESSON') %}
+        {% include ':partials:lesson_navigation.html.twig' with { 'showChildren': false } %}
+    {% endif %}
 
     <article>
         {{ content.body }}
     </article>
 
-    {% include ':partials:lesson_navigation.html.twig' %}
+    {% if contentType == constant('AppBundle\\Helper\\ContentHelper::LESSON') %}
+        {# Don't show child links in lesson nav. #}
+        {% include ':partials:lesson_navigation.html.twig' with { 'showChildren': false } %}
+    {% endif %}
 
 {% endblock %}
