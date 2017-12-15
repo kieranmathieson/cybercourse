@@ -17,7 +17,6 @@ class HomeController extends Controller
 
         $lastListType = $session->get('lastList');
         return $this->render('default/index.html.twig', [
-            'lastListType' => $lastListType,
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
         ]);
     }
