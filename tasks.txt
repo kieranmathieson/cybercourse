@@ -108,8 +108,50 @@ Naming standards
     X-list.html.twig
     X-show
 
-Lesson nav - next lesson could be first lesson in next subtree.
+X Lesson nav - next lesson could be first lesson in next subtree.
 
 User - show most recent lesson in the lesson tree, if not on a lesson showing page.
 
+Content uploader
+----------------
 
+Test upload non-image files to media.
+
+Test upload to public attachments
+
+Test upload to hidden attachments
+
+What happens when no success on upload?
+
+Delete files
+
+Showing content - public attachments.
+
+Showing content - hidden attachments.
+
+Styling of bucket.
+
+Replace FB with icon for file bucket.
+
+When delete node, remove its files.
+
+Check that max number files works.
+
+
+Classes
+-------
+
+Routes
+/clss - show the list of classes, using a data table
+/clss/<id> - show one class. Includes enrollments.
+/clss/<id>/edit - edit basic fields.
+/clss/<id>/enrollments - edit enrollments in the class.
+/clss/new
+
+
+Settings page
+-------------
+
+Site name
+
+Allowed upload file extensions.
