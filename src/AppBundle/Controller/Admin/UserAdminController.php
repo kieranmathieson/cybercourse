@@ -18,7 +18,7 @@ class UserAdminController extends Controller
      * List all of the users.
      *
      * @Route("/admin/user", name="admin_user_list")
-     * @Security("has_role('ROLE_ADMIN')")
+     * @Security("has_role('ROLE_ADMIN') or has_role('ROLE_SUPER_ADMIN')")
      */
     public function listUsersAction()
     {
@@ -40,7 +40,7 @@ class UserAdminController extends Controller
      * Show one user's deets.
      *
      * @Route("/admin/user/{id}", name="admin_user_show")
-     * @Security("has_role('ROLE_ADMIN')")
+     * @Security("has_role('ROLE_ADMIN') or has_role('ROLE_SUPER_ADMIN')")
      * @param User $user
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -69,7 +69,7 @@ class UserAdminController extends Controller
      * Edit one user's deets.
      *
      * @Route("/admin/user/{id}/edit", name="admin_user_edit")
-     * @Security("has_role('ROLE_ADMIN')")
+     * @Security("has_role('ROLE_ADMIN') or has_role('ROLE_SUPER_ADMIN')")
      * @param Request $request
      * @param User $user
      * @param UserPasswordEncoderInterface $encoder
@@ -116,6 +116,8 @@ class UserAdminController extends Controller
             'form' => $form->createView(),
             'max_num_photos' => $this->container->getParameter('app.user_photo_max_files'),
             'max_photo_file_size' => $this->container->getParameter('app.user_photo_max_file_size'),
+            //Where to go if the user cancels the operation.
+            'cancel_destination' => $this->generateUrl('admin_user_list'),
         ]);
 
     }
@@ -124,7 +126,7 @@ class UserAdminController extends Controller
      * Edit one user's deets.
      *
      * @Route("/admin/user/add", name="admin_user_add")
-     * @Security("has_role('ROLE_ADMIN')")
+     * @Security("has_role('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
      * @param Request $request
      * @param User $user
      * @param UserPasswordEncoderInterface $encoder
