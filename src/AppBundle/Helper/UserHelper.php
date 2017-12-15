@@ -44,7 +44,7 @@ class UserHelper
         if ( $loggedInUser === 'anon.' ) {
             return false;
         }
-        if ( is_callable($loggedInUser, 'isAuthorOrBetter') ) {
+        if ( $loggedInUser instanceof User ) {
             return $loggedInUser->isAuthorOrBetter();
         }
         return false;
@@ -76,4 +76,5 @@ class UserHelper
         $loggedInUser = $this->tokenStorage->getToken()->getUser();
         return $loggedInUser->getId();
     }
+
 }
