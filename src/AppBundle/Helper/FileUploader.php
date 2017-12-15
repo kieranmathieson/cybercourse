@@ -13,30 +13,93 @@ use Symfony\Component\HttpFoundation\Request;
 
 class FileUploader
 {
+    /** @var array File extensions that are allowed for upload. */
     protected $allowedExtensions;
+
+    /** @var integer File size limit. */
     protected $sizeLimit;
+
+    /** @var string Path to the chunks directory. */
     protected $chunksDir;
+
+    /** @var string Destination for uploads. */
     protected $destinationDir;
+
+    /** @var FileHelper $fileHelper */
     protected $fileHelper;
-    public function __construct($destinationDir, $chunksDir, FileHelper $fileHelper)
+
+    /** @var ConfigHelper $configHelper */
+    protected $configHelper;
+
+    /** @var UserHelper $userHelper */
+    protected $userHelper;
+
+    public function __construct(
+            FileHelper $fileHelper, ConfigHelper $configHelper, UserHelper $userHelper
+    )
     {
-        //Set defaults.
-        $this->allowedExtensions = ['jpg', 'gif', 'png']; //TOdo get from config.yml.
-        $this->sizeLimit = null;
-        $this->destinationDir = $destinationDir;
-        $this->chunksDir = $chunksDir;
         $this->fileHelper = $fileHelper;
-        //Make sure the dirs exist.
-        $this->fileHelper->createFilePath($this->destinationDir);
-        $this->fileHelper->createFilePath($this->chunksDir);
+        $this->configHelper = $configHelper;
+        $this->userHelper = $userHelper;
+        //Set defaults.
+        $this->sizeLimit = null;
+        $this->destinationDir = null;
+        $this->chunksDir = $this->fileHelper->getFileChunksUploadDirectory();
+        //Compute the allowed extensions for uploads.
+        $this->computeDefaultAllowedExtensions();
     }
 
+    /**
+     * Compute file extensions that are allowed.
+     * @throws \Exception
+     */
+    protected function computeDefaultAllowedExtensions() {
+        //Compute allowed extensions from config, based on user role.
+        //Get the extensions allowed for all users.
+        $config = $this->configHelper->getCourseConfig();
+        if ( ! isset($config['allowed_upload_file_extentions']['all_users']) ) {
+            throw new \Exception('Missing upload file extensions in course config file');
+        }
+        $customExtensions = $config['allowed_upload_file_extentions']['all_users'];
+        //Adjust if the current user is privileged.
+        if ( $this->userHelper->isLoggedInUserAuthorOrBetter() ) {
+            if ( ! isset($config['allowed_upload_file_extentions']['privileged_users_extra']) ) {
+                throw new \Exception('Missing upload file extensions for privileged users in course config file');
+            }
+            $extraExtensions = $config['allowed_upload_file_extentions']['privileged_users_extra'];
+            $customExtensions = array_merge($customExtensions, $extraExtensions);
+        }
+        //Check if there is an 'all' in the array. If so, all files are allowed.
+        $all = in_array('all', $customExtensions);
+        if ( $all ) {
+            //All are allowed. Indicated by an MT array.
+            $this->setAllowedExtensions([]);
+        }
+        else {
+            //Don't have 'all' permission.
+            $this->setAllowedExtensions( $customExtensions );
+        }
+    }
+
+
     public function uploadFile(Request $request) {
+        //Need a dest dir first.
+        if ( ! $this->getDestinationDir() ) {
+            throw new \Exception('Upload file dest no set.');
+        }
+        //Make sure the dirs exist.
+        $this->fileHelper->createFilePath($this->getDestinationDir());
+        $this->fileHelper->createFilePath($this->getChunksDir());
         $uploader = new UploadHandler($this->getChunksDir());
-        // Specify the list of valid extensions, ex. array("jpeg", "xml", "bmp")
-        $uploader->allowedExtensions = array('jpg', 'gif', 'png'); // all files types allowed by default
+        // Specify the list of valid extensions.
+        // All files types allowed by default.
+        if ( count($this->getAllowedExtensions()) > 0 ) {
+            $uploader->allowedExtensions = $this->getAllowedExtensions();
+        }
         // Specify max file size in bytes.
-        $uploader->sizeLimit = null;
+        if ( $this->getSizeLimit() ) {
+            $uploader->sizeLimit = $this->getSizeLimit();
+        }
         // Specify the input name set in the javascript.
         $uploader->inputName = "qqfile"; // matches Fine Uploader's default inputName value by default
         $method = $request->getMethod();
@@ -97,7 +160,7 @@ class FileUploader
     /**
      * @param array $allowedExtensions
      */
-    public function setAllowedExtensions(array $allowedExtensions)
+    public function setAllowedExtensions($allowedExtensions)
     {
         $this->allowedExtensions = $allowedExtensions;
     }
