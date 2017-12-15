@@ -56,6 +56,12 @@ class UploadedFile
     protected $fileName;
 
     /**
+     * Content media files belong to.
+     * @ManyToMany(targetEntity="AppBundle\Entity\Content", mappedBy="media")
+     */
+    protected $contentMedia;
+
+    /**
      * Many files can be attached to many content objects.
      * @ManyToMany(targetEntity="AppBundle\Entity\Content", mappedBy="attachedPublicFiles")
      */
