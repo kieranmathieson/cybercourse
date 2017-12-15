@@ -1,0 +1,53 @@
+<script
+        src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+        crossorigin="anonymous"></script>
+<script>
+    "use strict";
+    var SkillCourse = SkillCourse || {};
+    (function ($) {
+        $(document).ready(function () {
+            $('#headerNav').append(
+                '<div id="toggleFileBucket" title="File bucket">FB</div>'
+            );
+            $('body').append(
+                '<div id="file-bucket" style="display:none"><ul></ul></div>');
+            var fileBucket = $("#file-bucket").dialog({
+                autoOpen: false,
+                title: 'File bucket',
+                dialogClass: 'fixed-dialog',
+                classes: {
+                    "ui-dialog-titlebar": "fileBucketTitlebar"
+                },
+                width: 430,
+                height: 290
+            });
+            //Add the tabs.
+            var $fileBucketTabLabels = $(fileBucket.find('ul'));
+            {% for fileGroup in fileGroups %}
+                $fileBucketTabLabels.append(
+                    '<li><a href="#{{ fileGroup.group }}">{{ fileGroup.tabLabel }}</a></li>'
+                );
+                fileBucket.append('<div id="{{ fileGroup.group }}"></div>');
+                initUploader(
+                    document.getElementById('{{ fileGroup.group }}'),
+                    '/rest/content-file-upload/{{ content_id }}/{{ fileGroup.group }}',
+                    '/rest/content-file-delete/{{ content_id }}/{{ fileGroup.group }}',
+                    0, //No number of files limit.
+                    0, //No file size limit.
+                    true //debug
+                );
+            {% endfor %}
+            //Show the tabs.
+            fileBucket.tabs();
+            $('#toggleFileBucket').on('click', function (ev) {
+                if (fileBucket.dialog('isOpen')) {
+                    fileBucket.dialog('close');
+                }
+                else {
+                    fileBucket.dialog('open');
+                }
+            });
+        });
+    }(jQuery));
+</script>
