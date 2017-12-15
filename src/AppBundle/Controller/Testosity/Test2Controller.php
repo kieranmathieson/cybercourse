@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Yaml\Yaml;
 
 class Test2Controller extends Controller
 {
@@ -202,6 +203,18 @@ class Test2Controller extends Controller
             $request,
             ['best' => 'dogs']);
         return new Response('log dog');
+    }
+
+    /**
+     * @Route("/test2/t10", name="test2_t10")
+     */
+    public function t10(Request $request) {
+        $root = $this->get('kernel')->getRootDir();
+        $path = $root . '/config/skill_course.yml';
+        $config = Yaml::parseFile($path);
+        $t = $config['allowed_upload_file_extentions']['privileged_users_extra'][0];
+
+        return new Response('config dog: ' . $t);
     }
 
 }
