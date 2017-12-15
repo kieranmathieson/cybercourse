@@ -71,7 +71,7 @@ class User extends BaseUser
 
     /**
      * One user has many enrollments.
-     * @OneToMany(targetEntity="AppBundle\Entity\Enrollment", mappedBy="user")
+     * @OneToMany(targetEntity="AppBundle\Entity\Enrollment", mappedBy="user", fetch="EXTRA_LAZY")
      */
     protected $enrollments;
 
@@ -195,13 +195,41 @@ class User extends BaseUser
     }
 
     /**
+     * @return mixed
+     */
+    public function getEnrollments()
+    {
+        return $this->enrollments;
+    }
+
+
+    public function addEnrollment(Enrollment $enrollment) {
+        if ($this->enrollments->contains($enrollment)) {
+            //Already a member.
+            return;
+        }
+        $this->enrollments[] = $enrollment;
+        // not needed for persistence, just keeping both sides in sync
+        $enrollment->setUser($this);
+    }
+
+    public function removeEnrollment(Enrollment $enrollment)
+    {
+        if (!$this->enrollments->contains($enrollment)) {
+            return;
+        }
+        $this->enrollments->removeElement($enrollment);
+        // not needed for persistence, just keeping both sides in sync
+        //$user->removeEnrollment($this);
+    }
+
+    /**
      * Is the user an author or better?
      *
      * @return bool True if the user has the author role or better.
      */
     public function isAuthorOrBetter()
     {
-        $authorOrBetter = false;
         $userRoles = $this->getRoles();
         $authorOrBetter = (
             in_array(Roles::ROLE_AUTHOR, $userRoles)
@@ -209,6 +237,21 @@ class User extends BaseUser
             || in_array(Roles::ROLE_SUPER_ADMIN, $userRoles)
         );
         return $authorOrBetter;
+    }
+
+    /**
+     * Is the user an admin or better?
+     *
+     * @return bool True if the user has the admin role or better.
+     */
+    public function isAdminOrBetter()
+    {
+        $userRoles = $this->getRoles();
+        $adminOrBetter = (
+               in_array(Roles::ROLE_ADMIN, $userRoles)
+            || in_array(Roles::ROLE_SUPER_ADMIN, $userRoles)
+        );
+        return $adminOrBetter;
     }
 
     public function getActivityLogEntries() {
