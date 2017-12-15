@@ -119,7 +119,6 @@ class AuthorContentController extends Controller
     {
         /** @var \Doctrine\ORM\EntityManager $em */
         $em = $container->get('doctrine.orm.entity_manager');
-//        $em = $this->getDoctrine()->getManager();
         $content = $em->getRepository('AppBundle:Content')
             ->findOneBy(['slug' => $slug, 'contentType' => $contentType]);
         if (!$content) {
@@ -134,8 +133,6 @@ class AuthorContentController extends Controller
         $this->contentHelper->prepareRenderableData($content, $renderData);
         $html = $container->get('twig')->render('author/content/author_content_show.html.twig', $renderData);
         return new Response($html);
-//        return $container->render('author/content/author_content_show.html.twig', $renderData );
-//        return $this->render('author/content/author_content_show.html.twig', $renderData );
     }
 
     /**
@@ -313,15 +310,5 @@ class AuthorContentController extends Controller
 //            ]
 //        );
     }
-
-    /**
-     * @Route("/things", name="things")
-     * @Security("has_role('ROLE_AUTHOR') or has_role('ROLE_ADMIN') or has_role('ROLE_SUPER_ADMIN')")
-     */
-//    public function things()
-//    {
-//        return new \Symfony\Component\HttpFoundation\Response('Things think');
-//    }
-
 
 }
