@@ -28,9 +28,22 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @Gedmo\Tree(type="nested")
  * @ORM\Table(name="content")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ContentRepository")
+ * @ORM\HasLifecycleCallbacks
  */
 class Content
 {
+    /**
+     * What to prepend to a title to show that the content is not available.
+     */
+    const NOT_AVAILABLE_MARKER = '(NA) ';
+
+    /**
+     * Content objects have multiple groups of uploads, like Attached files.
+     * The groups are created when modeling (with Doctrine relationships) the content entity.
+     * Each group is a virtual field for the user. The group name also serves as
+     * the name of the SQL table relating uploaded files to their content items.
+     */
+    const UPLOAD_GROUPS = ['content_media', 'content_attached_file', 'content_attached_file_hidden'];
 
     /**
      * Constructor.
@@ -38,6 +51,7 @@ class Content
     public function __construct()
     {
 //        $this->isAvailable = true;
+        $this->whenCreated = new \DateTime();
         $this->keywords = new ArrayCollection();
         $this->rubricItems = new ArrayCollection();
         $this->attachedPublicFiles = new ArrayCollection();
@@ -115,6 +129,13 @@ class Content
      * Pattern content only.
      */
     protected $patternAction;
+
+    /**
+     * Median belonging to this content object.
+     * @ManyToMany(targetEntity="AppBundle\Entity\UploadedFile", inversedBy="contentMedia")
+     * @JoinTable(name="content_media")
+     */
+    protected $media;
 
     /**
      * Many content objects have many attached files.
@@ -250,11 +271,11 @@ class Content
     }
 
     /**
-     * @param \DateTime $whenUpdated
+     * @ORM\PreUpdate()
      */
-    public function setWhenUpdated($whenUpdated)
+    public function preUpdate()
     {
-        $this->whenUpdated = $whenUpdated;
+        $this->whenUpdated= new \DateTime();
     }
 
     /**
@@ -274,6 +295,18 @@ class Content
     }
 
     /**
+     * Change the title of the content, if it is not available.
+     * Can't do this in get, because sometimes we don't want the
+     * title to be adjusted, e.g., in a content report for admin.
+     */
+    public function changeTitleIfNotAvailable()
+    {
+        if ( ! $this->isAvailable() ) {
+            $this->setTitle( self::NOT_AVAILABLE_MARKER . $this->getTitle() );
+        }
+    }
+
+    /**
      * @return string
      */
     public function getShortMenuTreeTitle()
@@ -287,6 +320,18 @@ class Content
     public function setShortMenuTreeTitle($shortMenuTreeTitle)
     {
         $this->shortMenuTreeTitle = $shortMenuTreeTitle;
+    }
+
+    /**
+     * Change the short menu tree title of the content, if it is not available.
+     * Can't do this in get, because sometimes we don't want the
+     * title to be adjusted, e.g., in a content report for admin.
+     */
+    public function changeShortMenuTreeTitleIfNotAvailable()
+    {
+        if ( ! $this->isAvailable() ) {
+            $this->setShortMenuTreeTitle( self::NOT_AVAILABLE_MARKER . $this->getShortMenuTreeTitle() );
+        }
     }
 
     /**
@@ -356,7 +401,7 @@ class Content
     /**
      * @return boolean
      */
-    public function getIsAvailable()
+    public function isAvailable()
     {
         return $this->isAvailable;
     }
