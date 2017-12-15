@@ -19,6 +19,8 @@ use Doctrine\ORM\Mapping\ManyToOne;
  */
 class Enrollment
 {
+
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -27,16 +29,16 @@ class Enrollment
     protected $id;
 
     /**
-     * Many enrollments have ons user.
+     * Many enrollments have one user.
      * @ManyToOne(targetEntity="User", inversedBy="enrollments")
-     * @JoinColumn(name="user_id", referencedColumnName="id")
+     * @JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     protected $user;
 
     /**
      * Many enrollments for one class.
      * @ManyToOne(targetEntity="AppBundle\Entity\Clss", inversedBy="enrollments")
-     * @JoinColumn(name="class_id", referencedColumnName="id")
+     * @JoinColumn(name="class_id", referencedColumnName="id", nullable=false)
      */
     protected $clss;
 
@@ -46,4 +48,63 @@ class Enrollment
      * @ORM\Column(type="string")
      */
     protected $roles;
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClss()
+    {
+        return $this->clss;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @param User $user
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * @param Clss $clss
+     */
+    public function setClss($clss)
+    {
+        $this->clss = $clss;
+    }
+
+    /**
+     * @param mixed $roles
+     */
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
+    }
+
+
+
 }
