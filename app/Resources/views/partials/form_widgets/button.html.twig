@@ -45,7 +45,7 @@
         {% if attr.title is defined %} title="{{ attr.title }}" {% endif %}
         {% if attr.help is defined %} aria-describedby="{{ attr.id }}help" {% endif %}
         {% if attr.type == 'link' %} href="{{ attr.href }}"{% endif %}
-    >{{ buttonCaption }}
+    >{% if attr.icon is defined %}<i class="fas fa-{{ attr.icon }}"></i> {% endif %}{{ buttonCaption|raw }}
     {% if attr.type == 'submit' or attr.type == 'button' %}
         </button>
     {% elseif attr.type == 'link' %}
