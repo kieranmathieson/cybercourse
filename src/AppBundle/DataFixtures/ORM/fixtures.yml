@@ -17,7 +17,7 @@ AppBundle\Entity\User:
         firstName: <firstName()>
         aboutMe: <paragraph()>
         enabled: true
-        roles: ['ROLE_USER', 'ROLE_INSTRUCTOR']
+        roles: ['ROLE_USER']
         updatedAt: <dateTimeBetween('now', '+3 days')>
     grader{1..2}:
         username: grader<current()>
@@ -27,7 +27,7 @@ AppBundle\Entity\User:
         firstName: <firstName()>
         aboutMe: <paragraph()>
         enabled: true
-        roles: ['ROLE_USER', 'ROLE_GRADER']
+        roles: ['ROLE_USER']
         updatedAt: <dateTimeBetween('now', '+3 days')>
     author{1..2}:
         username: author<current()>
@@ -57,7 +57,7 @@ AppBundle\Entity\User:
         firstName: <firstName()>
         aboutMe: <paragraph()>
         enabled: true
-        roles: ['ROLE_USER', 'ROLE_STUDENT']
+        roles: ['ROLE_USER']
         updatedAt: <dateTimeBetween('now', '+3 days')>
 AppBundle\Entity\RubricItem:
     rubric_item{1..10}:
@@ -82,14 +82,14 @@ AppBundle\Entity\Enrollment:
         roles: 'ROLE_STUDENT'
 AppBundle\Entity\Keyword:
     keyword{1..10}:
-        text: <word()>
+        title: <word()>
         notes: <paragraph()>
 AppBundle\Entity\Content:
     # Need the first to be the root.
     lesson{1..21}:
         contentType: lesson
-        title: <sentence()>
-        shortMenuTreeTitle: <word()>
+        shortMenuTreeTitle: <current()>
+        title: <current()> <sentence()>
         slug: lesson<current()>
         keywords: '2x @keyword*'
         summary: <paragraph()>
