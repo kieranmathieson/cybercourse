@@ -27,6 +27,14 @@ parameters:
     app.base_uploads_uri: '/uploads'
     # Items per page for reports.
     app.items_per_page: 20
+
+
+    # Site title. Shows in header on every page.
+    app.site_title: 'Skill course test'
+
+    # Who to ask about accounts. Shows, e.g., on the registration page when registration is disabled.
+    app.who_to_ask_about_accounts: ' ... er, someone.'
+
 framework:
     translator: ~
     secret: '%secret%'
@@ -54,13 +62,18 @@ framework:
 # Twig Configuration
 twig:
     form_themes:
+        # Templates for form widgets.
         - 'partials/form_widgets/text_row.html.twig'
-#        - 'partials/form_widgets/textarea_row.html.twig'
-#        - 'partials/form_widgets/checkbox_row.html.twig'
+        - 'partials/form_widgets/textarea_row.html.twig'
+        - 'partials/form_widgets/checkbox_row.html.twig'
+        - 'partials/form_widgets/integer_row.html.twig'
+        - 'partials/form_widgets/password_row.html.twig'
         - 'partials/form_widgets/label.html.twig'
-##        - 'partials/form_widgets/submit.html.twig'
+        - 'partials/form_widgets/button.html.twig'
         - 'partials/form_widgets/form_errors.html.twig'
+        - 'partials/form_widgets/widget_errors.html.twig'
         - 'partials/form_widgets/widget_attribs.html.twig'
+        - 'partials/form_widgets/compute_button_format.html.twig'
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     globals:
