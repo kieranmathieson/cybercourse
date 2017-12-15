@@ -2,10 +2,12 @@
 
 namespace AppBundle\Controller\Content;
 
+use AppBundle\Controller\Author\AuthorContentController;
 use AppBundle\Entity\Keyword;
 use AppBundle\Entity\User;
-use AppBundle\Helper\ContentTypes;
+use AppBundle\Helper\ContentHelper;
 use AppBundle\Helper\LessonTreeMaker;
+use AppBundle\Helper\UserHelper;
 use AppBundle\Service\RstTransformer;
 use AppBundle\Twig\Extension\LastLesson;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -23,15 +25,37 @@ class ContentController extends Controller
     /** @var RstTransformer $rstTransformer */
     protected $rstTransformer;
 
+    /** @var SessionInterface $session */
+    protected $session;
+
+    /** @var UserHelper $userHelper */
+    protected $userHelper;
+
+    /** @var ContentHelper $contentHelper */
+    protected $contentHelper;
+
     /**
      * ContentController constructor. Load dependencies.
      *
      * @param LessonTreeMaker $lessonTreeMaker Service that can make a lesson tree.
+     * @param RstTransformer $rstTransformer
+     * @param SessionInterface $session
+     * @param UserHelper $userHelper
+     * @param ContentHelper $contentHelper
      */
-    public function __construct(LessonTreeMaker $lessonTreeMaker, RstTransformer $rstTransformer)
+    public function __construct(
+        LessonTreeMaker $lessonTreeMaker,
+        RstTransformer $rstTransformer,
+        SessionInterface $session,
+        UserHelper $userHelper,
+        ContentHelper $contentHelper
+    )
     {
         $this->lessonTreeMaker = $lessonTreeMaker;
         $this->rstTransformer = $rstTransformer;
+        $this->session = $session;
+        $this->userHelper = $userHelper;
+        $this->contentHelper = $contentHelper;
     }
 
     /**
@@ -42,40 +66,30 @@ class ContentController extends Controller
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Exception
      */
-
-    public function listContentAction($contentType, SessionInterface $session)
+    public function listContentAction($contentType)
     {
-        if (!in_array($contentType, ContentTypes::CONTENT_TYPES)) {
+        if (!in_array($contentType, ContentHelper::CONTENT_TYPES)) {
             throw new \Exception('listContentAction: bad content type: '.$contentType);
         }
-        $session->set('lastList', $contentType);
-
-
-        //Load the logged in user.
-        /** @var User|string $loggedInUser */
-        $loggedInUser = $this->getUser();
-        //Most users only see content that is marked available.
-        $authorOrBetter = false;
-        if (!is_null($loggedInUser)) {
-            $authorOrBetter = $loggedInUser->isAuthorOrBetter();
+        //If an author, use a more capable controller.
+        //This approach lets the controllers be written separately, with different security contexts in mind.
+        if ( $this->userHelper->isLoggedInUserAuthorOrBetter() ) {
+            //This doesn't seem like the right way to do this.
+            //Could change the author controller so that its constructor uses ->get('service') to init everything,
+            //rather than passing the services in.
+            $authorController = new AuthorContentController(
+                $this->lessonTreeMaker, $this->rstTransformer, $this->session, $this->userHelper, $this->contentHelper
+            );
+            return $authorController->authorListContentAction($contentType, $this->container);
         }
         /** @var \AppBundle\Repository\ContentRepository $contentRepo */
-        $contentRepo = $this->getDoctrine()
-            ->getRepository('AppBundle:Content');
-        $content = $contentRepo->findAllContentByTitle($contentType, $authorOrBetter);
-//        //Make a lesson tree, with no current lesson.
-//        //Todo: Expand to show most recent lesson?
-//        $lessonTree = json_encode( $this->lessonTreeMaker
-//                ->setMakeLinks(true)
-//                ->makeTree()->getLessonTree()
-//        );
+        $contentRepo = $this->getDoctrine()->getRepository('AppBundle:Content');
+        $content = $contentRepo->findAllContentByTitle($contentType, false);
         return $this->render(
             'content/content_list.html.twig',
             [
-//                'lessonTree' => $lessonTree,
                 'contentType' => $contentType,
-                'contentTypeDisplayName' => ContentTypes::CONTENT_TYPE_DISPLAY_NAMES[$contentType],
-                'authorOrBetter' => $authorOrBetter,
+                'contentTypeDisplayName' => ContentHelper::CONTENT_TYPE_DISPLAY_NAMES[$contentType],
                 'content' => $content,
             ]
         );
@@ -89,15 +103,16 @@ class ContentController extends Controller
      * @param $slug
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showContentAction($contentType, $slug, SessionInterface $session)
+    public function showContentAction($contentType, $slug)
     {
-        //Load the logged in user.
-        /** @var User|string $loggedInUser */
-        $loggedInUser = $this->getUser();
-        //Most users only see content that is marked available.
-        $authorOrBetter = false;
-        if (!is_null($loggedInUser)) {
-            $authorOrBetter = $loggedInUser->isAuthorOrBetter();
+        //If an author, use a more capable controller.
+        //This approach lets the controllers be written separately, with different security contexts in mind.
+        if ( $this->userHelper->isLoggedInUserAuthorOrBetter() ) {
+            //This doesn't seem like the right way to do this.
+            $authorController = new AuthorContentController(
+                $this->lessonTreeMaker, $this->rstTransformer, $this->session, $this->userHelper, $this->contentHelper
+            );
+            return $authorController->authorShowContentAction($contentType, $slug, $this->container);
         }
         /** @var \Doctrine\ORM\EntityManager $em */
         $em = $this->getDoctrine()->getManager();
@@ -106,94 +121,15 @@ class ContentController extends Controller
         if (!$content) {
             throw $this->createNotFoundException($contentType.' not found: '.$slug);
         }
+        //Check availability.
+        if ( ! $content->isAvailable() ) {
+            throw $this->createNotFoundException($contentType.' not found: '.$slug);
+        }
         //Gather the data to be rendered.
-        $renderData = [
-            'contentType' => $contentType,
-            //Flag that is true when a single lesson is being shown. In that case, it makes sense to activate
-            //The current lesson in the lesson tree.
-            'showingLesson' => ( $contentType === ContentTypes::LESSON ),
-            'authorOrBetter' => $authorOrBetter,
-            'slug' => $slug,
-            'content' => $content,
-        ];
-        if ( $contentType === ContentTypes::LESSON ) {
-            //Add lesson nav deets.
-            $lessonNavLinkHelper = $this->get('app.lesson_nav_link_helper');
-            $lessonNavLinkHelper->findFriends($content);
-            $renderData['lessonNavLinks'] = [
-                'parent' => $lessonNavLinkHelper->getParent(),
-                'left' => $lessonNavLinkHelper->getLeftSib(),
-                'right' => $lessonNavLinkHelper->getRightSib(),
-                'children' => $lessonNavLinkHelper->getChildren(),
-             ];
-        }
-        //Make a lesson tree, showing the current lesson as active.
-//        $lessonTree = json_encode( $this->lessonTreeMaker
-//            ->setMakeLinks(true)
-//            ->setExpandActive(true)
-//            ->setActiveId($content->getId())
-//            ->makeTree()->getLessonTree()
-//        );
-//        $renderData['lessonTree'] = $lessonTree;
-        if ( $contentType == ContentTypes::LESSON ) {
-            //In the session, record this as the last lesson shown.
-            //It's used by a Twig extension to show the last session accessed.
-            $session->set( LastLesson::LAST_LESSON_SESSION_KEY, $content->getId() );
-        }
-        //ReST transform.
-        $renderData['renderableBody'] = $this->rstTransformer->transform($content->getBody());
+        $renderData = [];
+        $this->contentHelper->prepareRenderableData($content, $renderData);
+        //Render.
         return $this->render('content/content_show.html.twig', $renderData );
     }
 
-    /**
-     * @Route("/content/lesson/reorder", name="reorder_lessons")
-     * @Security("has_role('ROLE_ADMIN', 'ROLE_SUPER_ADMIN', 'ROLE_AUTHOR')")
-     */
-    public function reorderLessonsAction()
-    {
-        //Load the logged in user.
-        /** @var User|string $loggedInUser */
-        $loggedInUser = $this->getUser();
-        //Most users only see content that is marked available.
-        $authorOrBetter = false;
-        if (!is_null($loggedInUser) && $loggedInUser !== 'anon.') {
-            $authorOrBetter = $loggedInUser->isAuthorOrBetter();
-        }
-        //Check user has permission.
-        if ( ! $authorOrBetter ) {
-            throw new NotFoundHttpException();
-        }
-        $repo = $this->entityManager->getRepository('AppBundle:Content');
-        //Todo: just get the root node(s).
-        $nodes = $repo->findLessonsForTree($authorOrBetter);
-        //Todo: multiple roots.
-        $tree = $repo->childrenHierarchy($nodes[0]);
-        //Convert array to something we can pass as JSON to FancyTree.
-        //If there is one root, the tree starts with the root's children at the top level.
-        //If there is more than one root, each root has its own tree, with the root shown.
-        $treeDisplayOptions = [
-            'makeLinks' => false,
-            'expandAll' => true,
-            'expandActive' => false,
-            'checkBoxes' => true,
-            'markUnavailable' => true,
-            'stripUnavailable' => false,
-        ];
-        $treeDisplay = []; //If there are no roots, the array will be MT.
-        if ( count($tree) == 1 ) {
-            //There is just one root.
-            $treeDisplay = $this->toDisplayArray($tree[0]['__children'], $treeDisplayOptions);
-        }
-        elseif ( count($tree) > 1 ) {
-            //There is more than one root.
-            $treeDisplay = $this->toDisplayArray($tree, $treeDisplayOptions);
-        }
-        return $this->render(
-            'content/reorder_lessons.html.twig',
-            [
-                'authorOrBetter' => $authorOrBetter,
-                'lessonReorderTree' => json_encode($treeDisplay),
-            ]
-        );
-    }
 }
