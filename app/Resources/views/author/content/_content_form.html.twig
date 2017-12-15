@@ -3,13 +3,30 @@
     {#{% include 'partials/form_errors.html.twig' %}#}
 {{ form_start(contentForm) }}
 {{ form_widget(contentForm) }}
-<h2>CAMELS</h2>
-    <input type="submit" value="send">
+    {#<input type="submit" value="send">#}
+{# Page actions and form actions are defined differently. Probably should merge them. #}
+<nav class="form-actions">
+    {% include 'partials/form_widgets/button.html.twig' with {
+    'attr': {
+    'type': 'submit',
+    'icon': 'check',
+    'caption': 'Save',
+    'title': 'Save the data',
+    }
+    } %}
+    {% include 'partials/form_widgets/button.html.twig' with {
+    'attr': {
+    'type': 'link',
+    'icon': 'times',
+    'caption': 'Cancel',
+    'variant': 'secondary',
+    'title': 'Fuggedaboudit',
+    'href': cancel_destination
+    }
+    } %}
+</nav>
 
 {{ form_end(contentForm) }}
 
-DOOOG
-DOOOG
-hhhhhhhhhhhhhhhhh asdfasfd
 
 

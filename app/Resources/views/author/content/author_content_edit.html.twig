@@ -1,8 +1,22 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    {# Todo: move fineuploader line into file bucket. #}
+    {% include 'partials/fineuploader_css.html.twig' %}
+    {% include 'partials/file_bucket/file_bucket_css.html.twig' %}
+{% endblock %}
+
 {% block title %}Edit {{ contentType }}{% endblock %}
 {% block page_header %}Edit {{ contentType }}{% endblock %}
 
 {% block body %}
     {{ include('author/content/_content_form.html.twig') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {# Todo: move fineuploader line into file bucket. #}
+    {% include 'partials/fineuploader.html.twig' %}
+    {% include 'partials/file_bucket/file_bucket_js.html.twig' %}
 {% endblock %}

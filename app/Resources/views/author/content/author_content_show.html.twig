@@ -1,0 +1,62 @@
+{# Show content to author or better. #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ content.title }}{% endblock %}
+{% block page_header %}{{ content.title }}{% endblock %}
+{% block body %}
+
+    {%  if contentType == constant('AppBundle\\Helper\\ContentHelper::LESSON') %}
+        {% set buttons = [
+            {
+                'caption': 'New sibling',
+                'url': path('author_content_new', {'contentType': 'lesson', 'relationship': 'sibling'}),
+                'title': 'Add a new {{ contentType }}, as a sibing of this content'
+            },
+            {
+                'caption': 'New child',
+                'url': path('author_content_new', {'contentType': 'lesson', 'relationship': 'child'}),
+                'title': 'Add a new {{ contentType }}, as a child of this content'
+            }] %}
+    {% else %}
+        {% set buttons = [
+            {
+                'caption': 'New',
+                'url': path('author_content_new', {'contentType': contentType}),
+                'title': 'Add a new {{ contentType }}'
+            }
+        ] %}
+    {% endif %}
+    {% set editButton = [
+        {
+            'caption': 'Edit',
+            'url': path('author_content_edit', {'contentType': contentType, 'id': content.id}),
+            'title': 'Edit this content'
+        }
+    ] %}
+    {% set buttons = buttons|merge(editButton) %}
+    {% include 'partials/page_actions.html.twig' with buttons %}
+
+    {% if content.keywords|length > 0 %}
+        <p>Keywords:</p>
+            <ul class="keyword-list">
+            {% for keyword in content.keywords %}
+                <li><a href="{{ path('keyword_show', {'id': keyword.id}) }}">{{ keyword.title }}</a></li>
+            {% endfor %}
+            </ul>
+
+    {% endif %}
+
+    {% if contentType == constant('AppBundle\\Helper\\ContentHelper::LESSON') %}
+        {% include ':partials:lesson_navigation.html.twig' with { 'showChildren': false } %}
+    {% endif %}
+
+    <article>
+        {{ content.body }}
+    </article>
+
+    {% if contentType == constant('AppBundle\\Helper\\ContentHelper::LESSON') %}
+        {# Don't show child links in lesson nav. #}
+        {% include ':partials:lesson_navigation.html.twig' with { 'showChildren': false } %}
+    {% endif %}
+
+{% endblock %}
