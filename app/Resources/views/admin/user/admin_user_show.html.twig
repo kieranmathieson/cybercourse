@@ -8,38 +8,24 @@
 {% block body %}
     {{ dump() }}
     <p>Here is the user's profile.</p>
-    <div class="form-group page-actions">
-        {% include 'partials/form_widgets/link_button.html.twig' with {
-            'widget': {
-                'caption': 'Edit',
-                'variant': 'primary',
-                'href': path('admin_user_edit', {'id': user.id})
-            }
-        } %}
-        {% if user.enabled %}
-            {% set cappy = 'Disable' %}
-            {% set titley = "Disable this user's account. The user will not be able to log in." %}
-        {% else %}
-            {% set cappy = 'Enable' %}
-            {% set titley = "Enable this user's account. The user will be able to log in." %}
-        {% endif %}
-        {% include 'partials/form_widgets/link_button.html.twig' with {
-            'widget': {
-                'caption': cappy,
-                'variant': 'primary',
-                'href': path('not_implemented_yet'),
-                'title': titley,
-            }
-        } %}
-        {% include 'partials/form_widgets/link_button.html.twig' with {
-            'widget': {
-                'caption': 'Delete',
-                'variant': 'danger',
-                'href': path('not_implemented_yet'),
-                'title': 'Delete this user\'s account, and all of it\'s content (e.g., submissions).',
-            }
-        } %}
-    </div>
+
+    {% set buttons = [{
+        'caption': 'Edit',
+        'url': path('admin_user_edit', {'id': user.id}),
+        'title': 'Edit the user'
+    }, {
+        'caption': user.enabled ?  'Disable' : 'Enable',
+        'url': path('not_implemented_yet'),
+        'title': user.enabled
+            ? 'Disable the account. The user will not be able to log in.'
+            : 'Enable the account. The user will be able to log in.'
+    }, {
+        'caption': 'Delete',
+        'url': path('not_implemented_yet'),
+        'style': 'danger',
+        'title': 'Delete this user\'s account, and all of it\'s content (e.g., submissions).',
+    }] %}
+    {% include 'partials/page_actions.html.twig' with buttons %}
 
     <p>{{ 'profile.show.username'|trans }}: {{ user.username }}</p>
     <p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
@@ -76,5 +62,14 @@
         {% endfor %}
         </ul>
     {% endif %}
-
+    <p>Enrollments</p>
+    {% if user.enrollments|length == 0 %}
+        <p>(No enrollments for this class.)</p>
+    {% else %}
+        <ul>
+            {% for enrollment in user.enrollments %}
+                <li>{{ enrollment.title }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock %}

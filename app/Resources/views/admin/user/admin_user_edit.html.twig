@@ -6,135 +6,33 @@
 {% block page_header %}Edit user{% endblock %}
 
 {% block body %}
-    {{ dump() }}
-    {# render any "global" errors #}
-    {% include 'partials/form_errors.html.twig' %}
     {{ form_start(form) }}
-    {#{{ form_label(form.id) }}#}
-    {#{{ form_widget(form.id) }}#}
-    {#{{ form_errors(form.id) }}#}
+    {{ form_widget(form) }}
+    {#<input type="submit" value="send">#}
+    {# Page actions and form actions are defined differently. Probably should merge them. #}
+    <nav class="form-actions">
+        {% include 'partials/form_widgets/button.html.twig' with {
+        'attr': {
+        'type': 'submit',
+        'caption': 'Save',
+        'title': 'Save the data',
+        }
+        } %}
+        {% include 'partials/form_widgets/button.html.twig' with {
+        'attr': {
+        'type': 'link',
+        'caption': 'Cancel',
+        'variant': 'secondary',
+        'title': 'Fuggedaboudit',
+        'href': cancel_destination
+        }
+        } %}
+    </nav>
 
-    {% include 'partials/form_widgets/input.html.twig' with {
-        'widget': {
-            'type': 'text',
-            'label': 'Username',
-            'value': form.children.username.vars.value,
-            'id': 'app_bundle_admin_edit_user_username',
-            'name': 'app_bundle_admin_edit_user[username]',
-            'help': 'Unique username for this account',
-            'required': true
-    } } %}
-    {% include 'partials/form_widgets/input.html.twig' with {
-        'widget': {
-            'type': 'password',
-            'label': 'New password',
-            'value': '',
-            'id': 'app_bundle_admin_edit_user_plainPassword',
-            'errors': form.children.plainPassword.vars.errors,
-            'name': 'app_bundle_admin_edit_user[plainPassword]',
-            'help': 'New password, if you want to change it',
-            'required': false
-    } } %}
-    {% include 'partials/form_widgets/input.html.twig' with {
-        'widget': {
-            'type': 'password',
-            'label': 'Repeat password',
-            'value': '',
-            'id': 'app_bundle_admin_edit_user_plainPasswordRepeat',
-            'name': 'app_bundle_admin_edit_user[plainPasswordRepeat]',
-            'errors': form.children.plainPasswordRepeat.vars.errors,
-            'help': 'Repeat the new password, if you are changing the user\'s password',
-            'required': false
-        }
-    } %}
-    {% include 'partials/form_widgets/input.html.twig' with {
-        'widget': {
-            'type': 'email',
-            'label': 'Email address',
-            'value': form.children.email.vars.value,
-            'id': 'app_bundle_admin_edit_user_email',
-            'name': 'app_bundle_admin_edit_user[email]',
-            'help': 'E.g., ann@example.com<br>Each user must have their own email address',
-            'required': true
-        }
-    } %}
-    {% include 'partials/form_widgets/input.html.twig' with {
-        'widget': {
-            'type': 'text',
-            'label': 'First name',
-            'value': form.children.firstName.vars.value,
-            'id': 'app_bundle_admin_edit_user_firstName',
-            'name': 'app_bundle_admin_edit_user[firstName]',
-            'help': 'E.g., Jackie',
-            'required': true
-        }
-    } %}
-    {% include 'partials/form_widgets/input.html.twig' with {
-        'widget': {
-            'type': 'text',
-            'label': 'Last name',
-            'value': form.children.lastName.vars.value,
-            'id': 'app_bundle_admin_edit_user_lastName',
-            'name': 'app_bundle_admin_edit_user[lastName]',
-            'help': 'E.g., Robinson',
-            'required': true
-        }
-    } %}
-    {% include 'partials/form_widgets/textarea.html.twig' with {
-        'widget': {
-            'type': 'textarea',
-            'label': 'About',
-            'value': form.children.aboutMe.vars.value,
-            'id': 'app_bundle_admin_edit_user_aboutMe',
-            'name': 'app_bundle_admin_edit_user[aboutMe]',
-            'help': 'Whatever the user wants us to know',
-            'rows': 5,
-            'required': false
-        }
-    } %}
-    {% include 'partials/form_widgets/checkbox.html.twig' with {
-        'widget': {
-            'type': 'checkbox',
-            'label': 'Enabled',
-            'value': form.children.enabled.vars.data,
-            'id': 'app_bundle_admin_edit_user_enabled',
-            'name': 'app_bundle_admin_edit_user[enabled]',
-            'help': 'Is this account active?',
-            'required': false
-        }
-    } %}
-    {% include 'partials/form_widgets/checkbox.html.twig' with {
-        'widget': {
-            'type': 'checkbox',
-            'label': 'Share deets with class',
-            'value': form.children.shareDeetsWithClass.vars.data,
-            'id': 'app_bundle_admin_edit_user_shareDeetsWithClass',
-            'name': 'app_bundle_admin_edit_user[shareDeetsWithClass]',
-            'help': 'If checked, other students in the same classes can see this user\'s name, about, and photos.',
-            'required': false
-        }
-    } %}
     <div class="form-group">
         <label>User photos</label>
         <p><small>Each user can have up to {{ max_num_photos }} photos.</small></p>
         <div id="uploader"></div>
-    </div>
-    <div class="form-group">
-        {% include 'partials/form_widgets/submit.html.twig' with {
-            'widget': {
-                'caption': 'Save',
-                'variant': 'primary',
-            }
-        } %}
-        {# URL to return to on cancel. "Go back to where you came from!" - DT #}
-        {% set cancelHref = app.request.server.get('HTTP_REFERER')|default(path('admin_user_show', {'id': form.vars.data.id})) %}
-        {% include 'partials/form_widgets/link_button.html.twig' with {
-            'widget': {
-                'caption': 'Cancel',
-                'variant': 'secondary',
-                'href': cancelHref
-            }
-        } %}
     </div>
     {# Don't forget the CSRF token. #}
     {{ form_widget(form._token) }}
