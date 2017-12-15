@@ -135,7 +135,7 @@ class FileHelperTest extends WebTestCase
     function testConvertFileNameToThumbnailname() {
         $imageName = 'teagan.jpg';
         $expectedThumbnailName = 'teagan_thumb.jpg';
-        $actualThumbnailName = $this->fh->convertFileNameToThumbnailname($imageName);
+        $actualThumbnailName = $this->fh->convertImageFileNameToThumbnailName($imageName);
         $this->assertEquals($expectedThumbnailName, $actualThumbnailName, 'Computed thumbnail name');
     }
 
