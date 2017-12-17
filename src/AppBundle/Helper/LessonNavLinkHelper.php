@@ -78,7 +78,6 @@ class LessonNavLinkHelper
          * This is not an array of Content objects, but an array of array elements, one for each Content object.
          */
         $lessonTree = $this->lessonTreeMaker->getLessonTree();
-
         $node = null; //The node for the content in the tree.
         $parent = null; //The node's parent.
         $idToFind = $contentItem->getId();
@@ -87,55 +86,89 @@ class LessonNavLinkHelper
         if ( ! $contentItem->isAvailable() && ! $userIsAuthorOrBetter ) {
             throw new \Exception('Tried to findFriends of unavailable item.');
         }
-        //Loop over top nodes, stop when find the target.
-        //Top of lessonTree is an array of nodes.
-        foreach ($lessonTree as $topNode) {
-            //Only check available nodes.
-            if ( $topNode['isAvailable'] || $userIsAuthorOrBetter ) {
-                if ($topNode['id'] === $idToFind) {
-                    $node = $topNode;
-                    //Leave $parent as null.
-                    break;
-                }
-                $result = $this->findContentInTree($topNode, $idToFind, $userIsAuthorOrBetter);
-                if (!is_null($result)) {
-                    list($node, $parent) = $result;
+        //Root lesson is special.
+        /** @var Content $root */
+        $root = $contentItem->getRoot();
+        if ( $contentItem->getId() === $root->getId() ) {
+            $parent = null;
+            $leftSib = null;
+            $rightSib = null;
+            //Compute the right sib - only one that could exist.
+            //Pick up the first one that is available.
+            foreach( $lessonTree as $lesson ) {
+                if ( $lesson['isAvailable'] || $userIsAuthorOrBetter ) {
+                    $rightSib = $lesson;
                     break;
                 }
             }
-        }
-        if ( is_null($node) ) {
-            //Didn't find the node.
-            throw new \Exception('findFriends could not find node: ' . $idToFind);
-        }
-        //Compute friends.
-        //Find the sibs.
-        list($leftSib, $rightSib) = $this->findSibs(
-            $node, is_null($parent) ? $lessonTree : $parent['__children']
-        );
-        //Package the nav link data for sending around.
-        $this->contentLessonNavLink = new LessonNavLink(
-            $node['id'], $node['slug'], $node['title'], $node['shortMenuTreeTitle']
-        );
-        if ( ! is_null($parent) ) {
-            $this->parentLessonNavLink = new LessonNavLink(
-                $parent['id'], $parent['slug'], $parent['title'], $parent['shortMenuTreeTitle']
+            //Package the nav link data for sending around.
+            $this->contentLessonNavLink = new LessonNavLink(
+                $contentItem->getId(),
+                $contentItem->getSlug(),
+                $contentItem->getTitle(),
+                $contentItem->getShortMenuTreeTitle()
             );
+            foreach( $lessonTree as $lesson ) {
+                if ( $lesson['isAvailable'] || $userIsAuthorOrBetter ) {
+                    $this->childrenLessonNavLinks[] = new LessonNavLink(
+                        $lesson['id'], $lesson['slug'], $lesson['title'], $lesson['shortMenuTreeTitle']
+                    );
+                }
+            }
         }
-        if ( ! is_null($leftSib) ) {
-            $this->leftSibLessonNavLink = new LessonNavLink(
-                $leftSib['id'], $leftSib['slug'], $leftSib['title'], $leftSib['shortMenuTreeTitle']
+        else {
+            //Not the root lesson.
+            //Loop over top nodes, stop when find the target.
+            //Top of lessonTree is an array of nodes.
+            foreach ($lessonTree as $topNode) {
+                //Only check available nodes.
+                if ($topNode['isAvailable'] || $userIsAuthorOrBetter) {
+                    if ($topNode['id'] === $idToFind) {
+                        $node = $topNode;
+                        //Leave $parent as null.
+                        break;
+                    }
+                    $result = $this->findContentInTree($topNode, $idToFind, $userIsAuthorOrBetter);
+                    if (!is_null($result)) {
+                        list($node, $parent) = $result;
+                        break;
+                    }
+                }
+            }
+            if (is_null($node)) {
+                //Didn't find the node.
+                throw new \Exception('findFriends could not find node: '.$idToFind);
+            }
+            //Compute friends.
+            //Find the sibs.
+            list($leftSib, $rightSib) = $this->findSibs(
+                $node,
+                is_null($parent) ? $lessonTree : $parent['__children']
             );
-        }
-        if ( ! is_null($rightSib) ) {
-            $this->rightSibLessonNavLink = new LessonNavLink(
-                $rightSib['id'], $rightSib['slug'], $rightSib['title'], $rightSib['shortMenuTreeTitle']
+            //Package the nav link data for sending around.
+            $this->contentLessonNavLink = new LessonNavLink(
+                $node['id'], $node['slug'], $node['title'], $node['shortMenuTreeTitle']
             );
-        }
-        foreach( $node['__children'] as $child ) {
-            $this->childrenLessonNavLinks[] = new LessonNavLink(
-                $child['id'], $child['slug'], $child['title'], $child['shortMenuTreeTitle']
-            );
+            if ( ! is_null($parent) ) {
+                $this->parentLessonNavLink = new LessonNavLink(
+                    $parent['id'], $parent['slug'], $parent['title'], $parent['shortMenuTreeTitle']
+                );
+            }
+            if ( ! is_null($leftSib) ) {
+                $this->leftSibLessonNavLink = new LessonNavLink(
+                    $leftSib['id'], $leftSib['slug'], $leftSib['title'], $leftSib['shortMenuTreeTitle']
+                );
+            }
+            if ( ! is_null($rightSib) ) {
+                $this->rightSibLessonNavLink = new LessonNavLink(
+                    $rightSib['id'], $rightSib['slug'], $rightSib['title'], $rightSib['shortMenuTreeTitle']
+                );
+            }
+            foreach( $node['__children'] as $child ) {
+                $this->childrenLessonNavLinks[] = new LessonNavLink(
+                    $child['id'], $child['slug'], $child['title'], $child['shortMenuTreeTitle']
+                );
+            }
         }
     }
 
