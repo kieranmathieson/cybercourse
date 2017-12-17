@@ -81,8 +81,9 @@ class ContentHelper
         $renderData ['content'] = $content;
         if ( $content->getContentType() === self::LESSON ) {
             //Add lesson nav deets.
+            //findFriends() updates refs in the helper object, for getNavBarLinks to use.
             $this->lessonNavLinkHelper->findFriends($content);
-            $renderData['lessonNavLinks'] = $this->lessonNavLinkHelper->getNavbarLinks();
+            $renderData['lessonNavLinks'] = $this->lessonNavLinkHelper->getLessonNavbarSlugs();
             //In the session, record this as the last lesson shown.
             //It's used by a Twig extension to show the last session accessed.
             $this->session->set( LastLesson::LAST_LESSON_SESSION_KEY, $content->getId() );
