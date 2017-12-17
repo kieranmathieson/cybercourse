@@ -16,7 +16,8 @@
                 'caption': 'New child',
                 'url': path('author_content_new', {'contentType': 'lesson', 'relationship': 'child'}),
                 'title': 'Add a new {{ contentType }}, as a child of this content'
-            }] %}
+            }
+        ] %}
     {% else %}
         {% set buttons = [
             {
@@ -34,6 +35,17 @@
         }
     ] %}
     {% set buttons = buttons|merge(editButton) %}
+    {% if contentType == constant('AppBundle\\Helper\\ContentHelper::LESSON') %}
+        {% set extraButtons = [
+            {
+            'caption': 'Reorder',
+            'url': path('author_reorder_lessons'),
+            'title': 'Change the order of lessons in the tree'
+            }
+        ] %}
+        {% set buttons = buttons|merge(extraButtons) %}
+    {% endif %}
+
     {% include 'partials/page_actions.html.twig' with buttons %}
 
     {% if content.keywords|length > 0 %}
