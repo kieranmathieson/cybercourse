@@ -26,19 +26,19 @@ class LessonTreeMaker
     protected $router;
 
     /** @var bool Make links from title. */
-    protected $makeLinks = false;
+//    protected $makeLinks = false;
 
     /** @var bool Expand all nodes on tree display. */
-    protected $expandAll = false;
+//    protected $expandAll = false;
 
     /** @var bool Expand the active node. Requires an active id. */
-    protected $expandActive = false;
+//    protected $expandActive = false;
 
     /** @var int Active node's id. */
-    protected $activeId = 0;
+//    protected $activeId = 0;
 
     /** @var bool Add spans to titles for placing controls for editing. */
-    protected $addControlSpans = false;
+//    protected $addControlSpans = false;
 
     /** @var bool Whether the user is an author or better. */
     protected $userIsAuthorOrBetter = false;
@@ -59,32 +59,54 @@ class LessonTreeMaker
         $this->entityManager = $entityManager;
         $this->userHelper = $userHelper;
         $this->router = $router;
+        //Clear lesson tree.
+        $this->lessonTree = null;
     }
 
 
     /**
-     * Make a lesson tree, using the current settings.
+     * Make a lesson tree if it hasn't been made already, using the current settings.
      * @return $this For chaining.
      */
-    public function makeTree() {
-        $this->userIsAuthorOrBetter = $this->userHelper->isLoggedInUserAuthorOrBetter();
-        /** @var ContentRepository $repo */
-        $repo = $this->entityManager->getRepository('AppBundle:Content');
-        //Find the single root lesson. There must be exactly one.
-        $rootNode = $repo->findRootLesson();
-        //Use Doctrine tree method to make a tree.
-        $tree = $repo->childrenHierarchy($rootNode);
-        //Change the data structure into something FancyTree can use.
-        $treeDisplay = $this->toDisplayArray($tree);
-        $this->lessonTree = $treeDisplay;
+    public function makeTreeDataStructure() {
+        if ( is_null($this->lessonTree) ) {
+            $this->userIsAuthorOrBetter = $this->userHelper->isLoggedInUserAuthorOrBetter();
+            /** @var ContentRepository $repo */
+            $repo = $this->entityManager->getRepository('AppBundle:Content');
+            //Find the single root lesson. There must be exactly one.
+            $rootNode = $repo->findRootLesson();
+            //Use Doctrine tree method to make a tree.
+            $this->lessonTree = $repo->childrenHierarchy($rootNode);
+//            $tree = $repo->childrenHierarchy($rootNode);
+            //Change the data structure into something FancyTree can use.
+//            $treeDisplay = $this->toDisplayArray($tree);
+//            $this->lessonTree = $treeDisplay;
+        }
         return $this;
     }
 
+
     /**
-     * @param $nodes
-     * @return array
+     * Make tree display from the tree data structure.
+     * @param bool $makeLinks If true, make links for all lessons.
+     * @param bool $expandAll If true, expand all branches.
+     * @param bool $expandActive If true, expand branches leading to an active node.
+     * @param int $activeId Id of the active node.
+     * @return array Tree data ready for display with FancyTree.
      */
-    public function toDisplayArray($nodes) {
+    public function makeTreeDisplay(
+            bool $makeLinks=true, bool $expandAll=false, bool $expandActive=false, int $activeId=0)
+    {
+        //Get current tree data. Make it if haven't done so already.
+        $nodes = $this->getLessonTree();
+        //Generate the display data.
+        $display = $this->toDisplayArray($nodes, $makeLinks, $expandAll, $expandActive, $activeId);
+        return $display;
+    }
+
+
+    protected function toDisplayArray($nodes, bool $makeLinks, bool $expandAll, bool $expandActive, int $activeId)
+    {
         $results = [];
         foreach( $nodes as $node ) {
             //Unavailable nodes are visible only to some users.
@@ -98,7 +120,8 @@ class LessonTreeMaker
                 if (! $node['isAvailable']) {
                     $title = Content::NOT_AVAILABLE_MARKER . $title;
                 }
-                if ($this->isMakeLinks()) {
+                if ($makeLinks) {
+//                if ($this->isMakeLinks()) {
                     //Turn the title into a link.
                     $url = $this->router->generate(
                         'content_show',
@@ -107,14 +130,17 @@ class LessonTreeMaker
                     $title = '<a href="'.$url.'">'.$title.'</a>';
                 }
                 $result['title'] = $title;
-                if ($this->isExpandAll()) {
+                if ($expandAll) {
+//                if ($this->isExpandAll()) {
                     $result['expanded'] = true;
                 }
-                if ($this->IsExpandActive() && $node['id'] === $this->getActiveId()) {
+                if ($expandActive && $node['id'] === $activeId) {
+//                if ($this->IsExpandActive() && $node['id'] === $this->getActiveId()) {
                     $result['active'] = true;
                 }
                 if (count($node['__children']) > 0) {
-                    $result['children'] = $this->toDisplayArray($node['__children']);
+                    $result['children'] = $this->toDisplayArray($node['__children'],
+                        $makeLinks, $expandAll, $expandActive, $activeId);
                 }
                 $results[] = $result;
             } //End available test.
@@ -127,10 +153,10 @@ class LessonTreeMaker
      *
      * @return bool
      */
-    public function isMakeLinks(): bool
-    {
-        return $this->makeLinks;
-    }
+//    public function isMakeLinks(): bool
+//    {
+//        return $this->makeLinks;
+//    }
 
     /**
      * Set flag showing whether to make links from title.
@@ -138,21 +164,21 @@ class LessonTreeMaker
      * @param bool $makeLinks
      * @return LessonTreeMaker
      */
-    public function setMakeLinks(bool $makeLinks): LessonTreeMaker
-    {
-        $this->makeLinks = $makeLinks;
-        return $this;
-    }
+//    public function setMakeLinks(bool $makeLinks): LessonTreeMaker
+//    {
+//        $this->makeLinks = $makeLinks;
+//        return $this;
+//    }
 
     /**
      * Flag showing whether to expand all nodes on tree display.
      *
      * @return bool
      */
-    public function isExpandAll(): bool
-    {
-        return $this->expandAll;
-    }
+//    public function isExpandAll(): bool
+//    {
+//        return $this->expandAll;
+//    }
 
     /**
      * Flag showing whether to expand all nodes on tree display.
@@ -160,21 +186,21 @@ class LessonTreeMaker
      * @param bool $expandAll
      * @return LessonTreeMaker
      */
-    public function setExpandAll(bool $expandAll): LessonTreeMaker
-    {
-        $this->expandAll = $expandAll;
-        return $this;
-    }
+//    public function setExpandAll(bool $expandAll): LessonTreeMaker
+//    {
+//        $this->expandAll = $expandAll;
+//        return $this;
+//    }
 
     /**
      * Flag showing whether to expand the active node. Requires an active id.
      *
      * @return bool
      */
-    public function isExpandActive(): bool
-    {
-        return $this->expandActive;
-    }
+//    public function isExpandActive(): bool
+//    {
+//        return $this->expandActive;
+//    }
 
     /**
      * Flag showing whether to expand the active node. Requires an active id.
@@ -182,21 +208,21 @@ class LessonTreeMaker
      * @param bool $expandActive
      * @return LessonTreeMaker
      */
-    public function setExpandActive(bool $expandActive): LessonTreeMaker
-    {
-        $this->expandActive = $expandActive;
-        return $this;
-    }
+//    public function setExpandActive(bool $expandActive): LessonTreeMaker
+//    {
+//        $this->expandActive = $expandActive;
+//        return $this;
+//    }
 
     /**
      * Active node's id. Used with setExpandActive().
      *
      * @return int
      */
-    public function getActiveId(): int
-    {
-        return $this->activeId;
-    }
+//    public function getActiveId(): int
+//    {
+//        return $this->activeId;
+//    }
 
     /**
      * Active node's id. Used with setExpandActive().
@@ -204,21 +230,21 @@ class LessonTreeMaker
      * @param int $activeId
      * @return LessonTreeMaker
      */
-    public function setActiveId(int $activeId): LessonTreeMaker
-    {
-        $this->activeId = $activeId;
-        return $this;
-    }
+//    public function setActiveId(int $activeId): LessonTreeMaker
+//    {
+//        $this->activeId = $activeId;
+//        return $this;
+//    }
 
     /**
      * Flag showing whether to add spans to titles for placing controls for editing.
      *
      * @return bool
      */
-    public function isAddControlSpans(): bool
-    {
-        return $this->addControlSpans;
-    }
+//    public function isAddControlSpans(): bool
+//    {
+//        return $this->addControlSpans;
+//    }
 
     /**
      * Flag showing whether to add spans to titles for placing controls for editing.
@@ -226,19 +252,21 @@ class LessonTreeMaker
      * @param bool $addControlSpans
      * @return LessonTreeMaker
      */
-    public function setAddControlSpans(bool $addControlSpans): LessonTreeMaker
-    {
-        $this->addControlSpans = $addControlSpans;
-        return $this;
-    }
-
+//    public function setAddControlSpans(bool $addControlSpans): LessonTreeMaker
+//    {
+//        $this->addControlSpans = $addControlSpans;
+//        return $this;
+//    }
 
     /**
-     * Get the lesson tree ready for JS, hopefully after it is populated.
+     * Get the lesson tree ready for JS.
      *
      * @return array Lesson tree for sending to FancyTree.
      */
     public function getLessonTree() {
+        if ( is_null($this->lessonTree) ) {
+            $this->makeTreeDataStructure();
+        }
         return $this->lessonTree;
     }
 

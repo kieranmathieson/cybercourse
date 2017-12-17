@@ -17,20 +17,20 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class LessonNavLinkHelper
 {
-    /** @var Content The item that is the focus of the investigation. Helping Symfony with its enquiries. */
-    protected $contentItem = null;
+    /** @var LessonNavLink The item that is the focus of the investigation. Helping Symfony with its enquiries. */
+    protected $contentLessonNavLink = null;
 
-    /** @var Content The lesson's parent in the lesson tree. */
-    protected $parent = null;
+    /** @var LessonNavLink The slug of the lesson's parent in the lesson tree. */
+    protected $parentLessonNavLink = null;
 
-    /** @var Content The lesson's left sibling in the lesson tree. */
-    protected $leftSib = null;
+    /** @var LessonNavLink The slug of the lesson's left sibling in the lesson tree. */
+    protected $leftSibLessonNavLink = null;
 
-    /** @var Content The lesson's right sibling in the lesson tree. */
-    protected $rightSib = null;
+    /** @var LessonNavLink The slug of the lesson's right sibling in the lesson tree. */
+    protected $rightSibLessonNavLink = null;
 
-    /** @var Content[] The lesson's children in the lesson tree. */
-    protected $children = null;
+    /** @var LessonNavLink[] The slugs of the lesson's children in the lesson tree. */
+    protected $childrenLessonNavLinks = [];
 
     /** @var EntityManagerInterface $entityManager */
     protected $entityManager;
@@ -41,18 +41,26 @@ class LessonNavLinkHelper
     /** @var User $loggedInUser */
     protected $loggedInUser;
 
+    /** @var LessonTreeMaker $lessonTreeMaker */
+    protected $lessonTreeMaker;
+
     /**
      * LessonNavLinkHelper constructor.
      * @param EntityManagerInterface $entityManager
      * @param TokenStorageInterface $tokenStorage
-     * @throws \Exception
+     * @param LessonTreeMaker $lessonTreeMaker
      * @internal param string $parentSlug
      */
-    public function __construct(EntityManagerInterface $entityManager, TokenStorageInterface $tokenStorage)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        TokenStorageInterface $tokenStorage,
+        LessonTreeMaker $lessonTreeMaker
+    )
     {
         $this->entityManager = $entityManager;
         $this->repository = $this->entityManager->getRepository('AppBundle:Content');
         $this->loggedInUser = $tokenStorage->getToken()->getUser();
+        $this->lessonTreeMaker = $lessonTreeMaker;
     }
 
     /**
@@ -66,100 +74,140 @@ class LessonNavLinkHelper
         if ( $contentItem->getContentType() !== ContentHelper::LESSON ) {
             throw new \Exception('Not a lesson:' . $contentItem->getContentType());
         }
-        $this->contentItem = $contentItem;
-        $authorOrBetter = ( $this->loggedInUser && $this->loggedInUser !== 'anon.' && $this->loggedInUser->isAuthorOrBetter() );
-        //Compute the left sibling, if there is one.
-        $leftSibs = $this->repository->getPrevSiblings($contentItem);
-        if ( count($leftSibs) > 0 ) {
-            /** @var Content $leftSib */
-            $leftSib = end($leftSibs);
-            //Is it available?
-            if ( $leftSib->isAvailable() || $authorOrBetter ) {
-                $this->leftSib = $leftSib;
-                $this->leftSib->changeShortMenuTreeTitleIfNotAvailable();
-            }
+        /** @var array $lessonTree
+         * This is not an array of Content objects, but an array of array elements, one for each Content object.
+         */
+        $lessonTree = $this->lessonTreeMaker->getLessonTree();
+
+        $node = null; //The node for the content in the tree.
+        $parent = null; //The node's parent.
+        $idToFind = $contentItem->getId();
+        $userIsAuthorOrBetter = ( $this->loggedInUser && $this->loggedInUser !== 'anon.' && $this->loggedInUser->isAuthorOrBetter() );
+        //Is the content unavailable? Shouldn't happen.
+        if ( ! $contentItem->isAvailable() && ! $userIsAuthorOrBetter ) {
+            throw new \Exception('Tried to findFriends of unavailable item.');
         }
-        //Compute the right sibling, if there is one.
-        // todo: could be first lesson in next subtree.
-        $rightSibs = $this->repository->getNextSiblings($contentItem);
-        if ( count($rightSibs) > 0 ) {
-            /** @var Content $rightSib */
-            $rightSib = $rightSibs[0];
-            //Is it available?
-            if ( $rightSib->isAvailable() || $authorOrBetter ) {
-                $this->rightSib = $rightSib;
-                $this->rightSib->changeShortMenuTreeTitleIfNotAvailable();
-            }
-        }
-        //Parent.
-        $path = $this->repository->getPath($contentItem);
-        if ( count($path) > 1 ) {
-            /** @var Content $parent */
-            $parent = $path[ count($path) - 2 ];
-            //Can't go up to the root - it is not shown.
-            $rootLesson = $this->repository->findRootLesson();
-            if ( $rootLesson !== $parent ) {
-                //Is it available, or is user special?
-                if ($parent->isAvailable() || $authorOrBetter) {
-                    $this->parent = $parent;
-                    $this->parent->changeShortMenuTreeTitleIfNotAvailable();
+        //Loop over top nodes, stop when find the target.
+        //Top of lessonTree is an array of nodes.
+        foreach ($lessonTree as $topNode) {
+            //Only check available nodes.
+            if ( $topNode['isAvailable'] || $userIsAuthorOrBetter ) {
+                if ($topNode['id'] === $idToFind) {
+                    $node = $topNode;
+                    //Leave $parent as null.
+                    break;
+                }
+                $result = $this->findContentInTree($topNode, $idToFind, $userIsAuthorOrBetter);
+                if (!is_null($result)) {
+                    list($node, $parent) = $result;
+                    break;
                 }
             }
         }
-        //Children.
-        /** @var Content $child */
-        foreach ($this->repository->children($contentItem, true) as $child) {
-            if ( $child->isAvailable() || $authorOrBetter ) {
-                $child->changeShortMenuTreeTitleIfNotAvailable();
-                $this->children[] = $child;
+        if ( is_null($node) ) {
+            //Didn't find the node.
+            throw new \Exception('findFriends could not find node: ' . $idToFind);
+        }
+        //Compute friends.
+        //Find the sibs.
+        list($leftSib, $rightSib) = $this->findSibs(
+            $node, is_null($parent) ? $lessonTree : $parent['__children']
+        );
+        //Package the nav link data for sending around.
+        $this->contentLessonNavLink = new LessonNavLink(
+            $node['id'], $node['slug'], $node['title'], $node['shortMenuTreeTitle']
+        );
+        if ( ! is_null($parent) ) {
+            $this->parentLessonNavLink = new LessonNavLink(
+                $parent['id'], $parent['slug'], $parent['title'], $parent['shortMenuTreeTitle']
+            );
+        }
+        if ( ! is_null($leftSib) ) {
+            $this->leftSibLessonNavLink = new LessonNavLink(
+                $leftSib['id'], $leftSib['slug'], $leftSib['title'], $leftSib['shortMenuTreeTitle']
+            );
+        }
+        if ( ! is_null($rightSib) ) {
+            $this->rightSibLessonNavLink = new LessonNavLink(
+                $rightSib['id'], $rightSib['slug'], $rightSib['title'], $rightSib['shortMenuTreeTitle']
+            );
+        }
+        foreach( $node['__children'] as $child ) {
+            $this->childrenLessonNavLinks[] = new LessonNavLink(
+                $child['id'], $child['slug'], $child['title'], $child['shortMenuTreeTitle']
+            );
+        }
+    }
+
+    public function findContentInTree(array $node, int $contentId, bool $userIsAuthorOrBetter) {
+        //If node not available, skip it.
+        if ( $node['isAvailable'] || $userIsAuthorOrBetter ) {
+            if (count($node['__children']) > 0) {
+                foreach ($node['__children'] as $child) {
+                    //If child not available, skip it.
+                    if ($child['isAvailable'] || $userIsAuthorOrBetter) {
+                        if ($child['id'] === $contentId) {
+                            return [$child, $node];
+                        }
+                        $result = $this->findContentInTree($child, $contentId, $userIsAuthorOrBetter);
+                        if ( ! is_null($result) ) {
+                            return $result;
+                        }
+                    }
+                }
             }
         }
     }
 
-
     /**
-     * @return Content|null
+     * Node is somewhere in sibsList.
+     * @param array $node The node being sought.
+     * @param array $sibsList Array of nodes that includes the node we are looking for.
+     * @return array Left and right sibs.
+     * @throws \Exception
      */
-    public function getParent()
-    {
-        return $this->parent;
+    protected function findSibs($node, $sibsList){
+        //Find the node in the top level.
+        $leftSib = null;
+        $rightSib = null;
+        for ( $i = 0; $i < count($sibsList); $i++ ) {
+            if ( $sibsList[$i]['id'] === $node['id'] ) {
+                //Found the node.
+                //If this is the first node, there is no left sib, so leave it as null.
+                if ( $i > 0 ) {
+                    //Not the first node, it is the left sib.
+                    $leftSib = $sibsList[$i - 1];
+                }
+                //If there are children, use the first child as the right sib. That is the natural reading order.
+                if ( count($node['__children']) > 0 ) {
+                    $rightSib = $node['__children'][0];
+                }
+                else {
+                    //Kidless.
+                    //Leave right sib null if the node is the last one.
+                    if (($i + 1) < count($sibsList)) {
+                        $rightSib = $sibsList[$i + 1];
+                    }
+                }
+                break;
+            }
+        }
+        return [$leftSib, $rightSib];
     }
 
-    /**
-     * @return Content|null
-     */
-    public function getLeftSib()
-    {
-        return $this->leftSib;
-    }
 
     /**
-     * @return Content|null
-     */
-    public function getRightSib()
-    {
-        return $this->rightSib;
-    }
-
-    /**
-     * @return Content[]|null
-     */
-    public function getChildren()
-    {
-        return $this->children;
-    }
-
-    /**
-     * Get all the links needed to make a lesson nav bar.
+     * Get all of the slugs needed to make a lesson nav bar.
      *
-     * @return array All the links.
+     * @return array All if the links.
      */
-    public function getNavbarLinks() {
+    public function getLessonNavbarSlugs() {
         $result = [
-            'parent' => $this->getParent(),
-            'left' => $this->getLeftSib(),
-            'right' => $this->getRightSib(),
-            'children' => $this->getChildren(),
+            'contentLessonNavLink' => $this->contentLessonNavLink,
+            'parentLessonNavLink' => $this->parentLessonNavLink,
+            'leftLessonNavLink' => $this->leftSibLessonNavLink,
+            'rightLessonNavLink' => $this->rightSibLessonNavLink,
+            'childrenLessonNavLinks' => $this->childrenLessonNavLinks,
         ];
         return $result;
     }
