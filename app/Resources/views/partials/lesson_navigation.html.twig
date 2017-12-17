@@ -1,37 +1,38 @@
 {% if lessonNavLinks is defined %}
+{{ dump() }}
     {# Start of prev/next/up. #}
     <div class="row lesson-nav" role="navigation">
         <div class="col-sm left-nav">
-            {% if not (lessonNavLinks.left is null) %}
+            {% if not (lessonNavLinks.leftLessonNavLink is null) %}
                 <a class="btn btn-primary" role="button"
-                   href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.left.slug }) }}"
+                   href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.leftLessonNavLink.slug }) }}"
                 ><img src="{{ asset('images/octicons/triangle-left-white.svg') }}" alt="Previous" title="Previous"
-                    >{{ lessonNavLinks.left.shortMenuTreeTitle }}</a>
+                    >{{ lessonNavLinks.leftLessonNavLink.shortMenuTitle }}</a>
             {% endif %}
         </div>
         <div class="col-sm up-nav">
-            {% if not (lessonNavLinks.parent is null) %}
+            {% if not (lessonNavLinks.parentLessonNavLink is null) %}
                 <a class="btn btn-primary" role="button"
-                   href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.parent.slug }) }}"
+                   href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.parentLessonNavLink.slug }) }}"
                 ><img src="{{ asset('images/octicons/triangle-up-white.svg') }}" alt="Up" title="Up"
-                    >{{ lessonNavLinks.parent.shortMenuTreeTitle }}</a>
+                    >{{ lessonNavLinks.parentLessonNavLink.shortMenuTitle }}</a>
             {% endif %}
         </div>
         <div class="col-sm right-nav">
-            {% if not (lessonNavLinks.right is null) %}
+            {% if not (lessonNavLinks.rightLessonNavLink is null) %}
                 <a class="btn btn-primary" role="button"
-                   href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.right.slug }) }}"
-                >{{ lessonNavLinks.right.shortMenuTreeTitle }}<img
+                   href="{{ path('content_show', {'contentType': contentType, 'slug': lessonNavLinks.rightLessonNavLink.slug }) }}"
+                >{{ lessonNavLinks.rightLessonNavLink.shortMenuTitle }}<img
                             src="{{ asset('images/octicons/triangle-right-white.svg') }}" alt="Next" title="Next"
                     ></a>
             {% else %}
                 {# There is no right link. If there is a child, use it as the right link. #}
-                {% if not (lessonNavLinks.children is null) %}
-                    {% if lessonNavLinks.children|length > 0 %}
-                        {% set firstChild = lessonNavLinks.children[0] %}
+                {% if not (lessonNavLinks.childrenLessonNavLinks is null) %}
+                    {% if lessonNavLinks.childrenLessonNavLinks|length > 0 %}
+                        {% set firstChild = lessonNavLinks.childrenLessonNavLinks[0] %}
                         <a class="btn btn-primary" role="button"
                            href="{{ path('content_show', {'contentType': contentType, 'slug': firstChild.slug }) }}"
-                        >{{ firstChild.shortMenuTreeTitle }}<img
+                        >{{ firstChild.shortMenuTitle }}<img
                                     src="{{ asset('images/octicons/triangle-right-white.svg') }}" alt="Next" title="Next"
                             ></a>
                     {% endif %}
@@ -42,9 +43,9 @@
     {% if showChildren and not (lessonNavLinks.children is null) %}
         {# Show the children. #}
         <ul>
-            {% for child in lessonNavLinks.children %}
+            {% for childSlug in lessonNavLinks.childrenLessonNavLinks %}
                 <li><a href="{{ path('content_show', {'contentType': contentType, 'slug': child.slug }) }}"
-                    >{{ child.shortMenuTreeTitle }}</a></li>
+                    >{{ child.shortMenuTitle }}</a></li>
             {% endfor %}
         </ul>
     {% endif %}
