@@ -10,31 +10,108 @@
     </p>
 
     <div id="lessonReorderTree"></div>
+
+    <nav class="form-actions">
+        {% include 'partials/form_widgets/button.html.twig' with {
+            'attr': {
+                'id': 'save-new-order',
+                'type': 'button',
+                'icon': 'check',
+                'caption': 'Save',
+                'title': 'Save the data',
+            }
+        } %}
+        {% include 'partials/form_widgets/button.html.twig' with {
+            'attr': {
+                'id': 'cancel-button',
+                'type': 'link',
+                'icon': 'times',
+                'caption': 'Cancel',
+                'variant': 'secondary',
+                'title': 'Fuggedaboudit',
+                'href': cancel_destination,
+                'confirmIfDataChanged': true
+            }
+        } %}
+    </nav>
+
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+    <span id="node-toolbar">
+        <span id="change-availability" class="node-toolbarwidget" title="Toggle availability">Availability</span>
+        <span id="change-title" class="node-toolbarwidget" title="Change the title">Title</span>
+        <span id="change-short-title" class="node-toolbarwidget" title="Change the short title">Short title</span>
+        <span id="change-new-sib" class="node-toolbarwidget" title="Add a new lesson after this one">New sibling</span>
+        <span id="change-new-child" class="node-toolbarwidget" title="Add a new lesson as a child of this one">New child</span>
+    </span>
+    <style>
+        #node-toolbar {
+            position: absolute;
+            padding-left: 1rem;
+        }
+        #node-toolbar span.node-toolbarwidget {
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: blue;
+        }
+        #node-toolbar span.node-toolbarwidget:hover {
+            text-decoration: underline;
+        }
+
+        #lessonReorderTree {
+            margin-bottom: 2rem;
+        }
+
+        #lessonReorderTree span.short-title {
+            color: darkgreen;
+        }
+        #lessonReorderTree span.not-available {
+            color: darkred;
+        }
+    </style>
     <script>
         "use strict";
         var SkillCourse = SkillCourse || {};
         (function($) {
-            /**
-             * Add a span to teach title, to place controls in.
-             *
-             * @param nodes Tree of nodes for FancyMenu.
-             */
-            SkillCourse.addControlSpans = function (nodes) {
+            SkillCourse.nodes = '';
+            SkillCourse.activeNode = null;
+            SkillCourse.newNodeCount = 0;
+            SkillCourse.formatDisplayLabel = function(contentTitle, contentShortTitle, available) {
+                var shortTitle = contentShortTitle ? contentShortTitle : 'No short title';
+                var availLabel = available ? '' : '<span class="not-available">(NA)</span>';
+                return availLabel + '<span class="short-title">[' + shortTitle + ']</span> ' + contentTitle;
+            };
+            SkillCourse.changeNodeLabels = function (nodes) {
+                SkillCourse.nodes = nodes;
                 nodes.forEach(function (node) {
-                    node.title += '<span data-id="' + node.key + '"></span>'
+                    node.title = SkillCourse.formatDisplayLabel(
+                        node.contentTitle, node.contentShortTitle, node.available
+                    );
                     if (node.children && node.children.length > 0) {
-                        SkillCourse.addControlSpans(node.children);
+                        SkillCourse.changeNodeLabels(node.children);
                     }
                 });
             };
+            /**
+             * Hide the toolbar off the screen. using jQuery .hide() interferes with positioning.
+             */
+            SkillCourse.hideToolbar = function() {
+                SkillCourse.toolbar.offset( {
+                    'left': -1000,
+                    'top': -1000
+                } );
+            };
             $(document).ready(function () {
                 var nodes = {{ lessonReorderTree|raw }};
-                //Add places for controls to appear when a node is selected.
-                SkillCourse.addControlSpans(nodes);
+                SkillCourse.nodes = nodes;
+                //Change labels in tree for this interface.
+                SkillCourse.changeNodeLabels(nodes);
+                SkillCourse.toolbar = $('#node-toolbar');
+                SkillCourse.toolbar.hide();
                 //Show the lesson tree.
                 var lessonReorderTreeContainer = $("#lessonReorderTree");
                 var lessonReorderTreeData = {
@@ -42,10 +119,22 @@
                     selectMode: 1, //Single selection.
                     extensions: ["dnd5", "edit"],
                     activate: function(event, data) {
-                        console.log('activate ' + data.node.title);
+                        console.log('activate. data: ', data);
+                        console.log('event: ', event);
+//                        data.node.setTitle('cussnt');
+                        SkillCourse.activeNode = data.node;
+//                        SkillCourse.activeDomElement = $(event.originalEvent.target);
+//                        $(event.originalEvent.target).append(SkillCourse.toolbar);
+                        var target = $(data.widget.tree.activeNode.span).find('.fancytree-title');
+//                        var target = $(event.originalEvent.target);
+                        var left = target.offset().left + target.width();
+                        var top = target.offset().top;
+                        SkillCourse.toolbar.offset( {'left': left, 'top': top} );
+                        SkillCourse.toolbar.show();
                     },
                     deactivate: function(event, data) {
-                        console.log('deactivate ' + data.node.title);
+                        console.log('deactivate ', data);
+//                        SkillCourse.toolbar.hide();
                     },
                     dnd5: {
                         // Available options with their default:
@@ -62,12 +151,16 @@
 //                    scrollSpeed: 5,               // Pixel per event
                         // Events (drag support)
                         dragStart: function(node, data) {
+                            SkillCourse.hideToolbar();
+                            SkillCourse.dataChanged = true;
                             return true;
                         },
                         dragDrag: function(node, data) {
                             data.dataTransfer.dropEffect = "move";
                         },
                         dragEnd: function(node, data) {
+                            node.setActive();
+                            SkillCourse.recalcToolbarPos(node);
                         },
                         // Events (drop support)
                         dragEnter: function(node, data) {
@@ -105,6 +198,117 @@
                         }
                     }
                 };
+                /**
+                 * Make a display new label for a node in the tree.
+                 */
+                SkillCourse.computeDisplayLabel = function(node) {
+                    return SkillCourse.formatDisplayLabel(
+                        node.data.contentTitle,
+                        node.data.contentShortTitle,
+                        node.data.available
+                    );
+                };
+                SkillCourse.recalcToolbarPos = function(node) {
+                    var titleDomId = $(node.li).attr('id');
+                    var titleElement = $('#' + titleDomId).find('.fancytree-title');
+                    var titleOffset = titleElement.offset();
+                    var titleWidth = titleElement.width();
+                    SkillCourse.toolbar.offset( {
+                        'left': titleOffset.left + titleWidth,
+                        'top': titleOffset.top
+                    } );
+                };
+                /**
+                 * User clicked change title link.
+                 */
+                $('#change-title').on('click', function(e) {
+                    var node = SkillCourse.activeNode;
+                    var currentTitle = node.data.contentTitle;
+                    var newTitle = prompt('New title', currentTitle);
+                    if ( newTitle && newTitle.trim() ) {
+                        SkillCourse.dataChanged = true;
+                        node.data.contentTitle = newTitle;
+                        var newLabel = SkillCourse.computeDisplayLabel(node);
+                        node.setTitle(newLabel);
+                        //Recalc toolbar position.
+                        SkillCourse.recalcToolbarPos(node);
+                    }
+                });
+                /**
+                 * User clicked change short title link.
+                 */
+                $('#change-short-title').on('click', function(e) {
+                    var node = SkillCourse.activeNode;
+                    var currentShortTitle = node.data.contentShortTitle;
+                    var newShortTitle = prompt('New title', currentShortTitle);
+                    if ( newShortTitle && newShortTitle.trim() ) {
+                        SkillCourse.dataChanged = true;
+                        node.data.contentShortTitle = newShortTitle;
+                        var newLabel = SkillCourse.computeDisplayLabel(node);
+                        node.setTitle(newLabel);
+                        //Recalc toolbar position.
+                        SkillCourse.recalcToolbarPos(node);
+                    }
+                });
+                /**
+                 * User clicked make new child link.
+                 */
+                $('#change-new-child').on('click', function(e) {
+                    SkillCourse.newNodeCount++;
+                    SkillCourse.dataChanged = true;
+                    var contentTitle = 'New lesson';
+                    var contentShortTitle = 'New lesson';
+                    var available = true;
+                    var label = SkillCourse.formatDisplayLabel(contentTitle, contentShortTitle, available);
+                    var nodeData =                         {
+                        'key': 'new' + SkillCourse.newNodeCount,
+                        'title': label,
+                        'contentTitle': contentTitle,
+                        'contentShortTitle': contentShortTitle,
+                        'available': available
+                    };
+                    var newNode = SkillCourse.activeNode.addChildren(nodeData);
+                    newNode.setActive();
+                });
+                /**
+                 * User clicked make new sibling node.
+                 */
+                $('#change-new-sib').on('click', function(e) {
+                    SkillCourse.dataChanged = true;
+                    SkillCourse.newNodeCount++;
+                    var contentTitle = 'New lesson';
+                    var contentShortTitle = 'New lesson';
+                    var available = true;
+                    var label = SkillCourse.formatDisplayLabel(contentTitle, contentShortTitle, available);
+                    var nodeData =                         {
+                        'key': 'new' + SkillCourse.newNodeCount,
+                        'title': label,
+                        'contentTitle': contentTitle,
+                        'contentShortTitle': contentShortTitle,
+                        'available': available
+                    };
+                    var newNode = SkillCourse.activeNode.appendSibling(nodeData);
+                    newNode.setActive();
+                });
+                /**
+                 * User clicked toggle availability.
+                 */
+                $('#change-availability').on('click', function(e) {
+                    SkillCourse.dataChanged = true;
+                    var node = SkillCourse.activeNode;
+                    node.data.available = ! node.data.available;
+                    var newLabel = SkillCourse.computeDisplayLabel(node);
+                    node.setTitle(newLabel);
+                    //Recalc toolbar position.
+                    SkillCourse.recalcToolbarPos(node);
+                });
+                /**
+                 * Save the data.
+                 */
+                $('#save-new-order').on('click', function() {
+                    alert('dog');
+                });
+                //Render the tree.
                 lessonReorderTreeContainer.fancytree(lessonReorderTreeData);
             });
 

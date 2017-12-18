@@ -183,9 +183,11 @@ class AuthorContentController extends Controller
     /**
      * @Route("/author/{contentType}/{id}/edit", name="author_content_edit")
      * @Security("has_role('ROLE_AUTHOR') or has_role('ROLE_ADMIN') or has_role('ROLE_SUPER_ADMIN')")
+     * @param $contentType
+     * @param $id
      * @param Request $request
      * @param Content $content
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     public function editContentAction($contentType, $id, Request $request, Content $content)
     {
@@ -258,57 +260,22 @@ class AuthorContentController extends Controller
     /**
      * @Route("/content/lesson/reorder", name="author_reorder_lessons")
      * @Security("has_role('ROLE_AUTHOR') or has_role('ROLE_ADMIN') or has_role('ROLE_SUPER_ADMIN')")
-     * @param EntityManager $entityManager
-     * @param LessonTreeMaker $lessonTreeMaker
      * @return Response
      */
-    public function reorderLessonsAction(EntityManager $entityManager, LessonTreeMaker $lessonTreeMaker)
+    public function reorderLessonsAction()
     {
-        $lessonReorderTree = json_encode( $lessonTreeMaker
-            ->setExpandAll(true)
-            ->setMakeLinks(false)
-//            ->setExpandActive(false)
-            ->makeTree()->getLessonTree()
+        $lessonReorderTree = json_encode(
+            $this->lessonTreeMaker->makeTreeDisplay(false, true)
         );
         return $this->render(
             'author/content/author_lessons_reorder.html.twig',
             [
                 'lessonReorderTree' => $lessonReorderTree,
+                'cancel_destination' => $this->generateUrl('content_list', [
+                    'contentType' => ContentHelper::LESSON,
+                ])
             ]
         );
-//        /** @var ContentRepository $repo */
-//        $repo = $entityManager->getRepository('AppBundle:Content');
-//        //Todo: just get the root node(s).
-//        $nodes = $repo->findLessonsForTree($authorOrBetter);
-//        //Todo: multiple roots.
-//        $tree = $repo->childrenHierarchy($nodes[0]);
-//        //Convert array to something we can pass as JSON to FancyTree.
-//        //If there is one root, the tree starts with the root's children at the top level.
-//        //If there is more than one root, each root has its own tree, with the root shown.
-//        $treeDisplayOptions = [
-//            'makeLinks' => false,
-//            'expandAll' => true,
-//            'expandActive' => false,
-//            'checkBoxes' => true,
-//            'markUnavailable' => true,
-//            'stripUnavailable' => false,
-//        ];
-//        $treeDisplay = []; //If there are no roots, the array will be MT.
-//        if ( count($tree) == 1 ) {
-//            //There is just one root.
-//            $treeDisplay = $this->toDisplayArray($tree[0]['__children'], $treeDisplayOptions);
-//        }
-//        elseif ( count($tree) > 1 ) {
-//            //There is more than one root.
-//            $treeDisplay = $this->toDisplayArray($tree, $treeDisplayOptions);
-//        }
-//        return $this->render(
-//            'content/reorder_lessons.html.twig',
-//            [
-//                'authorOrBetter' => $authorOrBetter,
-//                'lessonReorderTree' => json_encode($treeDisplay),
-//            ]
-//        );
     }
 
 }
