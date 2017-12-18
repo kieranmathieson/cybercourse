@@ -2,7 +2,7 @@
 {# Buttons are defined in templates, not in form classes, so they are configured differently from other widgets. #}
 {# Caller needs to wrap this to define approprriate group, like <nav class="page-tools"> #}
 {# If help is set, need an id as well. #}
-    {% if attrib.id is defined %}
+    {% if attr.id is defined %}
         {% set buttonId = attr.id %}
     {% else %}
         {# id is not defined. #}
@@ -31,7 +31,7 @@
     {% elseif attr.type == 'link' %}
         <a
     {% elseif attr.type == 'button' %}
-        <button type="submit"
+        <button type="button"
     {% else %}
         <p class="widget-error">Unknown button type: {{ attr.type }}</p>
         <p
@@ -55,5 +55,24 @@
     {% endif %}
     {% if attr.help is defined %}
         <small id="{{ buttonId }}help" class="form-text text-muted">{{ attr.help|raw }}</small>
+    {% endif %}
+    {# Add code to confirm button action, if SkillCourse.dataChanged is true. #}
+    {% if attr.confirmIfDataChanged is defined and buttonId is defined %}
+        {% if attr.confirmIfDataChanged %}
+            <script>
+                "use strict";
+                var SkillCourse = SkillCourse || {};
+                (function($) {
+                    SkillCourse.dataChanged = false;
+                    $(document).ready(function(){
+                        $('#{{ buttonId }}').on('click', function(){
+                            if ( SkillCourse.dataChanged ) {
+                                return confirm('Data has changed. Are you sure you want to leave?');
+                            }
+                        });
+                    });
+                }(jQuery));
+            </script>
+        {% endif %}
     {% endif %}
 {# End the wrapper. Everybody off. </nav>#}
