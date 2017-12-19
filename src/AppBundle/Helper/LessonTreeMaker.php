@@ -115,10 +115,10 @@ class LessonTreeMaker
                 //Set item key, so can refer to it in JS.
                 $result['key'] = $node['id'];
                 //Use the short menu tree title if it is set.
-                $title = isset($node['shortMenuTreeTitle']) ? $node['shortMenuTreeTitle'] : $node['title'];
+                $label = isset($node['shortMenuTreeTitle']) ? $node['shortMenuTreeTitle'] : $node['title'];
                 //Add unavailable marker?
                 if (! $node['isAvailable']) {
-                    $title = Content::NOT_AVAILABLE_MARKER . $title;
+                    $label = Content::NOT_AVAILABLE_MARKER . $label;
                 }
                 if ($makeLinks) {
 //                if ($this->isMakeLinks()) {
@@ -127,9 +127,12 @@ class LessonTreeMaker
                         'content_show',
                         ['contentType' => $node['contentType'], 'slug' => $node['slug']]
                     );
-                    $title = '<a href="'.$url.'">'.$title.'</a>';
+                    $label = '<a href="'.$url.'">'.$label.'</a>';
                 }
-                $result['title'] = $title;
+                $result['title'] = $label;
+                $result['contentTitle'] = $node['title'];
+                $result['contentShortTitle'] = isset($node['shortMenuTreeTitle']) ? $node['shortMenuTreeTitle'] : '';
+                $result['available'] = $node['isAvailable'];
                 if ($expandAll) {
 //                if ($this->isExpandAll()) {
                     $result['expanded'] = true;

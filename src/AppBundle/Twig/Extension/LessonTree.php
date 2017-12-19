@@ -25,12 +25,14 @@ class LessonTree extends \Twig_Extension
     public function getLessonTree() {
         //Make a lesson tree, showing a lesson as active.
         //The active lesson (which one is) is set on the client.
-        $lessonTree = json_encode( $this->lessonTreeMaker
-            ->setMakeLinks(true)
-            ->setExpandActive(true)
-            ->makeTree()->getLessonTree()
-        );
-        return $lessonTree;
+        $lessonTreeDisplay = $this->lessonTreeMaker->makeTreeDisplay(true, false, true);
+        return json_encode($lessonTreeDisplay);
+//        $lessonTree = json_encode( $this->lessonTreeMaker
+//            ->setMakeLinks(true)
+//            ->setExpandActive(true)
+//            ->makeTree()->getLessonTree()
+//        );
+//        return $lessonTree;
     }
 
     /**

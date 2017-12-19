@@ -137,6 +137,10 @@ When delete node, remove its files.
 
 Check that max number files works.
 
+What happens when the root lesson is not available?
+
+
+
 
 Classes
 -------
