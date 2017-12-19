@@ -175,7 +175,17 @@ div.lesson-nav .right-nav img {
 }
 
 
+/* ---------- Exercise inserted ---------- */
+.inserted-exercise {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    margin-left: 5rem;
+    background-color: #ffffdd;
+}
+
+
 /* ---------- Helpers ---------- */
 .indent1 {
     margin-left: 4rem;
 }
+

@@ -123,7 +123,7 @@ class ContentController extends Controller
         }
         //Check availability.
         if ( ! $content->isAvailable() ) {
-            throw $this->createNotFoundException($contentType.' not found: '.$slug);
+            throw $this->createAccessDeniedException('Access denied for '.$slug);
         }
         //Gather the data to be rendered.
         $renderData = [];

@@ -4,6 +4,7 @@
 {% block title %}{{ content.title }}{% endblock %}
 {% block page_header %}{{ content.title }}{% endblock %}
 {% block body %}
+    {#{{ dump() }}#}
 
     {%  if contentType == constant('AppBundle\\Helper\\ContentHelper::LESSON') %}
         {% set buttons = [
@@ -63,7 +64,7 @@
     {% endif %}
 
     <article>
-        {{ content.body }}
+        {{ renderableBody|raw }}
     </article>
 
     {% if contentType == constant('AppBundle\\Helper\\ContentHelper::LESSON') %}
